@@ -192,6 +192,7 @@ The project documentation set is intended to live with the source repository. Th
 | `08-AWS-DEPLOYMENT.md` | EC2, RDS, S3, IAM, and CloudWatch deployment guidance |
 | `09-TESTING.md` | Test strategy and acceptance criteria |
 | `10-FUTURE-SCOPE.md` | Optional enhancements and change control |
+| `11-IMPLEMENTATION-PLAN.md` | Phased AI-agent workflow, verification gates, and anti-hallucination rules |
 
 Keep the README, source code, and these documents synchronized. When implementation decisions change, update the relevant documents rather than letting this guide promise behavior the code does not provide.
 
