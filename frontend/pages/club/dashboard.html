@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Club Dashboard — CampusHub</title>
+  <link rel="stylesheet" href="/css/global.css">
+  <link rel="stylesheet" href="/css/club.css">
+</head>
+<body>
+  <div class="app-layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main class="main-content">
+      <header class="topbar" id="topbar">
+        <h1>Club Dashboard</h1>
+      </header>
+      <div class="page-content">
+        
+        <div class="stats-grid">
+          <div class="stat-card">
+            <h3>Total Events</h3>
+            <div class="stat-value" id="statTotalEvents">...</div>
+          </div>
+          <div class="stat-card">
+            <h3>Upcoming Events</h3>
+            <div class="stat-value" id="statUpcomingEvents">...</div>
+          </div>
+          <div class="stat-card">
+            <h3>Total Registrations</h3>
+            <div class="stat-value" id="statTotalRegistrations">...</div>
+          </div>
+          <div class="stat-card">
+            <h3>Today's Events</h3>
+            <div class="stat-value" id="statTodayEvents">...</div>
+          </div>
+        </div>
+
+        <div class="quick-actions" style="margin-top: 24px; display: flex; gap: 16px;">
+          <a href="/pages/club/create-event.html" class="btn btn-primary">Create Event</a>
+          <a href="/pages/club/scanner.html" class="btn btn-secondary">Open Scanner</a>
+        </div>
+
+        <div class="content-grid" style="margin-top: 24px; display: grid; grid-template-columns: 2fr 1fr; gap: 24px;">
+          <section class="card">
+            <header class="card-header">
+              <h2>Upcoming Events</h2>
+              <a href="/pages/club/manage-events.html" class="btn btn-text">View All</a>
+            </header>
+            <div class="card-body">
+              <table class="table" id="upcomingEventsTable">
+                <thead>
+                  <tr>
+                    <th>Event</th>
+                    <th>Date</th>
+                    <th>Registrations</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="upcomingEventsList">
+                  <tr><td colspan="4" class="text-center text-muted">Loading...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="card">
+            <header class="card-header">
+              <h2>Recent Registrations</h2>
+            </header>
+            <div class="card-body">
+              <ul class="activity-list" id="recentRegistrationsList">
+                <li class="text-center text-muted">Loading...</li>
+              </ul>
+            </div>
+          </section>
+        </div>
+
+      </div>
+    </main>
+  </div>
+  <nav class="bottom-nav" id="bottomNav"></nav>
+
+  <script type="module">
+    import { requireAuth, requireRole } from '/js/auth/auth.js';
+    import { renderNavigation } from '/js/utils/navigation.js';
+    import api from '/js/api/client.js';
+
+    requireAuth();
+    requireRole('CLUB_MEMBER');
+    renderNavigation('CLUB_MEMBER');
+
+    async function loadDashboard() {
+      try {
+        const eventsRes = await fetch('/api/v1/events?filter=club_upcoming');
+        const eventsData = await eventsRes.json();
+        
+        const regRes = await fetch('/api/v1/club/registrations/recent');
+        const regData = await regRes.json();
+
+        // Update Stats
+        document.getElementById('statTotalEvents').textContent = eventsData.stats?.total || 0;
+        document.getElementById('statUpcomingEvents').textContent = eventsData.stats?.upcoming || 0;
+        document.getElementById('statTotalRegistrations').textContent = eventsData.stats?.totalRegistrations || 0;
+        document.getElementById('statTodayEvents').textContent = eventsData.stats?.today || 0;
+
+        // Upcoming Events
+        const upcomingList = document.getElementById('upcomingEventsList');
+        if (eventsData.data && eventsData.data.length > 0) {
+          upcomingList.innerHTML = eventsData.data.map(event => `
+            <tr>
+              <td><strong>${event.title}</strong></td>
+              <td>${new Date(event.date).toLocaleDateString()}</td>
+              <td>${event.registrationCount} / ${event.capacity}</td>
+              <td>
+                <a href="/pages/club/manage-events.html?id=${event.id}" class="btn btn-sm btn-outline">Manage</a>
+                <a href="/pages/club/scanner.html?eventId=${event.id}" class="btn btn-sm btn-primary">Scan</a>
+              </td>
+            </tr>
+          `).join('');
+        } else {
+          upcomingList.innerHTML = '<tr><td colspan="4" class="text-center text-muted">No upcoming events</td></tr>';
+        }
+
+        // Recent Registrations
+        const regList = document.getElementById('recentRegistrationsList');
+        if (regData.data && regData.data.length > 0) {
+          regList.innerHTML = regData.data.map(reg => `
+            <li class="activity-item">
+              <div class="activity-content">
+                <strong>${reg.studentName}</strong> registered for <strong>${reg.eventTitle}</strong>
+                <div class="text-muted text-sm">${new Date(reg.createdAt).toLocaleString()}</div>
+              </div>
+            </li>
+          `).join('');
+        } else {
+          regList.innerHTML = '<li class="text-center text-muted">No recent registrations</li>';
+        }
+
+      } catch (error) {
+        console.error('Error loading dashboard:', error);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', loadDashboard);
+  </script>
+</body>
+</html>

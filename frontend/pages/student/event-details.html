@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Event Details — CampusHub</title>
+  <link rel="stylesheet" href="/css/global.css">
+  <link rel="stylesheet" href="/css/student.css">
+  <style>
+    .event-header { margin-bottom: 24px; }
+    .event-poster { width: 100%; height: 300px; object-fit: cover; border-radius: 8px; background: #E6E6E6; margin-bottom: 24px; }
+    .badges { display: flex; gap: 8px; margin-bottom: 12px; }
+    .badge { padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 500; }
+    .badge-category { background: #E5E7EB; color: #374151; }
+    .badge-status { background: #DBEAFE; color: #1D4ED8; }
+    .event-title { font-size: 28px; margin: 0 0 16px 0; color: #171717; }
+    .meta-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px; padding: 16px; background: #F9FAFB; border-radius: 8px; border: 1px solid #E6E6E6; }
+    .meta-item { font-size: 14px; }
+    .meta-label { color: #666666; margin-bottom: 4px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .meta-value { color: #171717; font-weight: 500; }
+    .section-title { font-size: 18px; margin: 24px 0 12px 0; padding-bottom: 8px; border-bottom: 1px solid #E6E6E6; }
+    .description { color: #4B5563; line-height: 1.6; }
+    .rules-list { padding-left: 20px; color: #4B5563; }
+    .action-panel { position: sticky; bottom: 20px; background: #fff; padding: 16px; border-radius: 8px; border: 1px solid #E6E6E6; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin-top: 40px; display: flex; justify-content: space-between; align-items: center; }
+    .btn { padding: 10px 24px; border-radius: 6px; font-size: 16px; font-weight: 500; cursor: pointer; border: none; }
+    .btn-primary { background: #2563EB; color: white; }
+    .btn-success { background: #16A34A; color: white; cursor: default; }
+    .btn-disabled { background: #E5E7EB; color: #9CA3AF; cursor: not-allowed; }
+    .toast { position: fixed; top: 20px; right: 20px; padding: 12px 24px; border-radius: 6px; color: white; font-weight: 500; display: none; z-index: 1000; }
+    .toast.success { background: #16A34A; }
+    .toast.error { background: #DC2626; }
+  </style>
+</head>
+<body>
+  <div class="app-layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main class="main-content">
+      <header class="topbar" id="topbar"></header>
+      <div class="page-content" id="content">
+        <div style="text-align:center; padding:40px; color:#666;">Loading event details...</div>
+      </div>
+    </main>
+  </div>
+  <nav class="bottom-nav" id="bottomNav"></nav>
+
+  <div id="toast" class="toast"></div>
+
+  <script type="module">
+    import { requireAuth } from '/js/auth/auth.js';
+    import { renderNavigation } from '/js/utils/navigation.js';
+    import apiClient from '/js/api/client.js';
+
+    requireAuth();
+    renderNavigation('STUDENT');
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const eventId = urlParams.get('id');
+    
+    function showToast(msg, type = 'success') {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.className = `toast ${type}`;
+      toast.style.display = 'block';
+      setTimeout(() => toast.style.display = 'none', 3000);
+    }
+
+    async function loadEvent() {
+      if (!eventId) {
+        document.getElementById('content').innerHTML = '<div style="color:#DC2626; padding:20px;">Invalid event ID.</div>';
+        return;
+      }
+      
+      try {
+        // Run both requests in parallel if possible, but here we can just await sequentially for simplicity
+        const eventRes = await apiClient.get(`/events/${eventId}`);
+        const event = eventRes.data;
+        
+        let isRegistered = false;
+        try {
+          const myEventsRes = await apiClient.get('/students/me/events');
+          isRegistered = myEventsRes.data?.some(e => e.eventId === eventId) || false;
+        } catch(e) {}
+
+        const now = new Date();
+        const eventDate = new Date(event.date);
+        const deadline = event.registrationDeadline ? new Date(event.registrationDeadline) : eventDate;
+        
+        const isClosed = now > deadline;
+        const isCompleted = event.status === 'COMPLETED' || now > eventDate;
+        const seatsLeft = event.capacity ? (event.capacity - (event.registeredCount || 0)) : 999;
+        const isFull = seatsLeft <= 0;
+
+        let btnHtml = '';
+        if (isCompleted) {
+          btnHtml = `<button class="btn btn-disabled" disabled>Event Completed</button>`;
+        } else if (isRegistered) {
+          btnHtml = `<button class="btn btn-success">✓ Registered</button>`;
+        } else if (isClosed) {
+          btnHtml = `<button class="btn btn-disabled" disabled>Registration Closed</button>`;
+        } else if (isFull) {
+          btnHtml = `<button class="btn btn-disabled" disabled>Registration Full</button>`;
+        } else {
+          btnHtml = `<button id="registerBtn" class="btn btn-primary">Register Now</button>`;
+        }
+
+        document.getElementById('content').innerHTML = `
+          <div class="event-header">
+            ${event.posterUrl ? `<img src="${event.posterUrl}" class="event-poster" alt="Event Poster">` : ''}
+            <div class="badges">
+              <span class="badge badge-category">${event.category || 'Event'}</span>
+              <span class="badge badge-status">${event.status || 'Published'}</span>
+            </div>
+            <h1 class="event-title">${event.title}</h1>
+          </div>
+
+          <div class="meta-grid">
+            <div class="meta-item"><div class="meta-label">Date</div><div class="meta-value">${eventDate.toLocaleDateString()}</div></div>
+            <div class="meta-item"><div class="meta-label">Time</div><div class="meta-value">${event.startTime} - ${event.endTime}</div></div>
+            <div class="meta-item"><div class="meta-label">Venue</div><div class="meta-value">${event.venue}</div></div>
+            <div class="meta-item"><div class="meta-label">Seats</div><div class="meta-value">${event.capacity ? `${seatsLeft} remaining` : 'Unlimited'}</div></div>
+            <div class="meta-item"><div class="meta-label">Club</div><div class="meta-value">${event.clubName || 'General'}</div></div>
+            ${event.guestSpeaker ? `<div class="meta-item"><div class="meta-label">Guest</div><div class="meta-value">${event.guestSpeaker}</div></div>` : ''}
+          </div>
+
+          <h2 class="section-title">Description</h2>
+          <div class="description">${event.description || 'No description provided.'}</div>
+
+          ${event.rules ? `
+            <h2 class="section-title">Rules</h2>
+            <div class="description">${event.rules}</div>
+          ` : ''}
+
+          <div class="action-panel">
+            <div>
+              ${!isRegistered && !isClosed && !isFull && !isCompleted ? `<div style="font-size: 14px; color: #666;">Deadline: ${deadline.toLocaleDateString()}</div>` : ''}
+            </div>
+            <div>${btnHtml}</div>
+          </div>
+        `;
+
+        const regBtn = document.getElementById('registerBtn');
+        if (regBtn) {
+          regBtn.addEventListener('click', async () => {
+            regBtn.disabled = true;
+            regBtn.textContent = 'Registering...';
+            try {
+              await apiClient.post(`/events/${eventId}/register`, {});
+              showToast('Successfully registered!');
+              setTimeout(() => location.reload(), 1500);
+            } catch (err) {
+              const msg = err.response?.data?.message || 'Failed to register';
+              showToast(msg, 'error');
+              regBtn.disabled = false;
+              regBtn.textContent = 'Register Now';
+            }
+          });
+        }
+      } catch (err) {
+        document.getElementById('content').innerHTML = '<div style="color:#DC2626; padding:20px;">Failed to load event details.</div>';
+      }
+    }
+
+    loadEvent();
+  </script>
+</body>
+</html>

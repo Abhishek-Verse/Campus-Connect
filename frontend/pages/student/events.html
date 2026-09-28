@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Events — CampusHub</title>
+  <link rel="stylesheet" href="/css/global.css">
+  <link rel="stylesheet" href="/css/student.css">
+  <style>
+    .filters { display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }
+    .search-input { padding: 8px 12px; border: 1px solid #E6E6E6; border-radius: 6px; flex: 1; min-width: 200px; }
+    .category-select { padding: 8px 12px; border: 1px solid #E6E6E6; border-radius: 6px; }
+    .events-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+    .event-card { border: 1px solid #E6E6E6; border-radius: 8px; background: #fff; overflow: hidden; display: flex; flex-direction: column; }
+    .event-poster { height: 140px; background: #f3f4f6; object-fit: cover; width: 100%; }
+    .event-content { padding: 16px; flex: 1; display: flex; flex-direction: column; }
+    .event-title { font-size: 16px; font-weight: 600; margin: 0 0 8px 0; color: #171717; }
+    .event-meta { font-size: 13px; color: #666666; margin-bottom: 12px; line-height: 1.5; }
+    .badge { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 11px; background: #E5E7EB; color: #374151; margin-bottom: 8px; }
+    .btn { background: #2563EB; color: #fff; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-size: 14px; text-align: center; border: none; cursor: pointer; margin-top: auto; }
+    .pagination { display: flex; justify-content: center; gap: 8px; margin-top: 32px; }
+    .page-btn { padding: 6px 12px; border: 1px solid #E6E6E6; background: #fff; border-radius: 4px; cursor: pointer; }
+    .page-btn[disabled] { opacity: 0.5; cursor: not-allowed; }
+    .empty-state { text-align: center; padding: 48px 20px; color: #666666; grid-column: 1 / -1; }
+  </style>
+</head>
+<body>
+  <div class="app-layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main class="main-content">
+      <header class="topbar" id="topbar"></header>
+      <div class="page-content">
+        <h1>Events</h1>
+        
+        <div class="filters">
+          <input type="text" id="searchInput" class="search-input" placeholder="Search events...">
+          <select id="categorySelect" class="category-select">
+            <option value="">All Categories</option>
+            <option value="TECHNICAL">Technical</option>
+            <option value="CULTURAL">Cultural</option>
+            <option value="SPORTS">Sports</option>
+            <option value="WORKSHOP">Workshop</option>
+          </select>
+          <button id="searchBtn" class="btn" style="margin-top: 0;">Search</button>
+        </div>
+
+        <div id="eventsGrid" class="events-grid">
+          <div class="empty-state">Loading events...</div>
+        </div>
+
+        <div class="pagination" id="pagination">
+          <button class="page-btn" id="prevBtn" disabled>Previous</button>
+          <span id="pageInfo" style="display: flex; align-items: center; font-size: 14px;">Page 1</span>
+          <button class="page-btn" id="nextBtn" disabled>Next</button>
+        </div>
+      </div>
+    </main>
+  </div>
+  <nav class="bottom-nav" id="bottomNav"></nav>
+
+  <script type="module">
+    import { requireAuth } from '/js/auth/auth.js';
+    import { renderNavigation } from '/js/utils/navigation.js';
+    import apiClient from '/js/api/client.js';
+
+    requireAuth();
+    renderNavigation('STUDENT');
+
+    let currentPage = 1;
+    const limit = 9;
+
+    const eventsGrid = document.getElementById('eventsGrid');
+    const searchInput = document.getElementById('searchInput');
+    const categorySelect = document.getElementById('categorySelect');
+    const searchBtn = document.getElementById('searchBtn');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const pageInfo = document.getElementById('pageInfo');
+
+    async function loadEvents() {
+      eventsGrid.innerHTML = '<div class="empty-state">Loading events...</div>';
+      try {
+        const title = searchInput.value;
+        const category = categorySelect.value;
+        let url = `/events?page=${currentPage}&limit=${limit}&status=PUBLISHED`;
+        if (title) url += `&title=${encodeURIComponent(title)}`;
+        if (category) url += `&category=${category}`;
+
+        const res = await apiClient.get(url);
+        const data = res.data || [];
+        const total = res.meta?.total || data.length;
+
+        if (data.length === 0) {
+          eventsGrid.innerHTML = '<div class="empty-state">No events found matching your criteria.</div>';
+        } else {
+          eventsGrid.innerHTML = data.map(event => `
+            <div class="event-card">
+              <div class="event-poster" style="${event.posterUrl ? `background-image: url(${event.posterUrl}); background-size: cover; background-position: center;` : ''}"></div>
+              <div class="event-content">
+                <span class="badge">${event.category || 'EVENT'}</span>
+                <h3 class="event-title">${event.title}</h3>
+                <div class="event-meta">
+                  📅 ${new Date(event.date).toLocaleDateString()}<br>
+                  ⏰ ${event.startTime} - ${event.endTime}<br>
+                  📍 ${event.venue}<br>
+                  👥 ${event.capacity ? (event.capacity - (event.registeredCount || 0)) + ' seats left' : 'Open'}
+                </div>
+                <a href="/pages/student/event-details.html?id=${event.id}" class="btn">View Details</a>
+              </div>
+            </div>
+          `).join('');
+        }
+
+        pageInfo.textContent = `Page ${currentPage}`;
+        prevBtn.disabled = currentPage === 1;
+        nextBtn.disabled = data.length < limit;
+
+      } catch (err) {
+        eventsGrid.innerHTML = '<div class="empty-state" style="color: #DC2626;">Failed to load events.</div>';
+      }
+    }
+
+    searchBtn.addEventListener('click', () => {
+      currentPage = 1;
+      loadEvents();
+    });
+    
+    prevBtn.addEventListener('click', () => {
+      if (currentPage > 1) { currentPage--; loadEvents(); }
+    });
+    
+    nextBtn.addEventListener('click', () => {
+      currentPage++; loadEvents();
+    });
+
+    loadEvents();
+  </script>
+</body>
+</html>

@@ -1,0 +1,155 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  name      String   @db.VarChar(100)
+  email     String   @unique @db.VarChar(255)
+  password  String   @db.VarChar(255)
+  rollNo    String   @unique @map("roll_no") @db.VarChar(50)
+  qrToken   String   @unique @map("qr_token") @db.VarChar(100)
+  role      String   @default("STUDENT") @db.VarChar(30)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  clubMemberships ClubMember[]
+  registrations   Registration[]
+  attendance      Attendance[]   @relation("StudentAttendance")
+  scannedBy       Attendance[]   @relation("ScannedByUser")
+
+  @@map("users")
+}
+
+model Club {
+  id          String   @id @default(uuid())
+  name        String   @db.VarChar(150)
+  description String?  @db.Text
+  logoUrl     String?  @map("logo_url") @db.Text
+  status      String   @default("ACTIVE") @db.VarChar(30)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  members ClubMember[]
+  events  Event[]
+  notices Notice[]
+
+  @@map("clubs")
+}
+
+model ClubMember {
+  id        String   @id @default(uuid())
+  clubId    String   @map("club_id")
+  userId    String   @map("user_id")
+  role      String   @default("MEMBER") @db.VarChar(50)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  club Club @relation(fields: [clubId], references: [id])
+  user User @relation(fields: [userId], references: [id])
+
+  @@unique([clubId, userId])
+  @@map("club_members")
+}
+
+model Venue {
+  id        String   @id @default(uuid())
+  name      String   @db.VarChar(150)
+  location  String?  @db.VarChar(255)
+  capacity  Int?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  events Event[]
+
+  @@map("venues")
+}
+
+model Event {
+  id                   String    @id @default(uuid())
+  clubId               String    @map("club_id")
+  venueId              String?   @map("venue_id")
+  title                String    @db.VarChar(200)
+  description          String?   @db.Text
+  category             String?   @db.VarChar(100)
+  eventDate            DateTime  @map("event_date") @db.Date
+  startTime            String    @map("start_time") @db.VarChar(10)
+  endTime              String    @map("end_time") @db.VarChar(10)
+  capacity             Int
+  posterUrl            String?   @map("poster_url") @db.Text
+  guestName            String?   @map("guest_name") @db.VarChar(150)
+  registrationDeadline DateTime? @map("registration_deadline")
+  rules                String[]  @default([])
+  status               String    @default("DRAFT") @db.VarChar(30)
+  createdAt            DateTime  @default(now()) @map("created_at")
+  updatedAt            DateTime  @updatedAt @map("updated_at")
+
+  club          Club           @relation(fields: [clubId], references: [id])
+  venue         Venue?         @relation(fields: [venueId], references: [id])
+  registrations Registration[]
+  attendance    Attendance[]
+  notices       Notice[]
+
+  @@index([clubId])
+  @@index([status])
+  @@index([eventDate])
+  @@map("events")
+}
+
+model Registration {
+  id           String   @id @default(uuid())
+  studentId    String   @map("student_id")
+  eventId      String   @map("event_id")
+  status       String   @default("REGISTERED") @db.VarChar(30)
+  ticketS3Key  String?  @map("ticket_s3_key") @db.Text
+  registeredAt DateTime @default(now()) @map("registered_at")
+
+  student    User         @relation(fields: [studentId], references: [id])
+  event      Event        @relation(fields: [eventId], references: [id])
+  attendance Attendance[]
+
+  @@unique([studentId, eventId])
+  @@index([eventId])
+  @@index([studentId])
+  @@map("registrations")
+}
+
+model Attendance {
+  id             String   @id @default(uuid())
+  eventId        String   @map("event_id")
+  studentId      String   @map("student_id")
+  registrationId String   @map("registration_id")
+  checkInTime    DateTime @default(now()) @map("check_in_time")
+  scannedById    String   @map("scanned_by")
+  status         String   @default("PRESENT") @db.VarChar(30)
+
+  event        Event        @relation(fields: [eventId], references: [id])
+  student      User         @relation("StudentAttendance", fields: [studentId], references: [id])
+  registration Registration @relation(fields: [registrationId], references: [id])
+  scannedBy    User         @relation("ScannedByUser", fields: [scannedById], references: [id])
+
+  @@unique([studentId, eventId])
+  @@index([eventId])
+  @@index([studentId])
+  @@map("attendance")
+}
+
+model Notice {
+  id          String    @id @default(uuid())
+  clubId      String    @map("club_id")
+  eventId     String?   @map("event_id")
+  title       String    @db.VarChar(200)
+  content     String    @db.Text
+  priority    String    @default("NORMAL") @db.VarChar(30)
+  status      String    @default("DRAFT") @db.VarChar(30)
+  publishedAt DateTime? @map("published_at")
+  expiresAt   DateTime? @map("expires_at")
+
+  club  Club   @relation(fields: [clubId], references: [id])
+  event Event? @relation(fields: [eventId], references: [id])
+
+  @@map("notices")
+}

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register - CampusHub</title>
+  <link rel="stylesheet" href="/css/global.css">
+  <link rel="stylesheet" href="/css/auth.css">
+</head>
+<body class="auth-page">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <h1>CampusHub</h1>
+      <p>Create your student account</p>
+    </div>
+    
+    <div id="auth-error"></div>
+    
+    <form id="register-form" class="auth-form">
+      <div class="form-group">
+        <label for="name" class="form-label">Full Name</label>
+        <input type="text" id="name" name="name" class="form-input" required>
+      </div>
+      
+      <div class="form-group">
+        <label for="rollNo" class="form-label">Roll Number</label>
+        <input type="text" id="rollNo" name="rollNo" class="form-input" required>
+      </div>
+      
+      <div class="form-group">
+        <label for="email" class="form-label">Email Address</label>
+        <input type="email" id="email" name="email" class="form-input" required>
+      </div>
+      
+      <div class="form-group">
+        <label for="password" class="form-label">Password</label>
+        <input type="password" id="password" name="password" class="form-input" required minlength="6">
+      </div>
+      
+      <div class="form-group">
+        <label for="confirmPassword" class="form-label">Confirm Password</label>
+        <input type="password" id="confirmPassword" name="confirmPassword" class="form-input" required minlength="6">
+      </div>
+      
+      <button type="submit" class="btn btn-primary w-full mt-2">Register</button>
+    </form>
+    
+    <div class="auth-footer">
+      Already have an account? <a href="/pages/auth/login.html">Login here</a>
+    </div>
+  </div>
+
+  <script type="module">
+    import { api } from '/js/api/client.js';
+    import { isAuthenticated, getUserRole } from '/js/auth/auth.js';
+    import { qs, preventDoubleSubmit } from '/js/utils/helpers.js';
+
+    // Redirect if already logged in
+    if (isAuthenticated()) {
+      const role = getUserRole();
+      window.location.href = role === 'club' ? '/pages/club/dashboard.html' : '/pages/student/dashboard.html';
+    }
+
+    const form = qs('#register-form');
+    const errorDiv = qs('#auth-error');
+    const btn = form.querySelector('button[type="submit"]');
+
+    preventDoubleSubmit(form);
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      errorDiv.textContent = '';
+      
+      const name = qs('#name').value;
+      const rollNo = qs('#rollNo').value;
+      const email = qs('#email').value;
+      const password = qs('#password').value;
+      const confirmPassword = qs('#confirmPassword').value;
+      
+      if (password !== confirmPassword) {
+        errorDiv.textContent = 'Passwords do not match.';
+        btn.disabled = false;
+        return;
+      }
+      
+      btn.textContent = 'Registering...';
+      
+      try {
+        await api.auth.register({ name, rollNo, email, password, role: 'student' });
+        
+        // Redirect to login with success message parameter
+        window.location.href = '/pages/auth/login.html?registered=true';
+      } catch (error) {
+        errorDiv.textContent = error.message || 'Registration failed. Please try again.';
+        btn.textContent = 'Register';
+        btn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>

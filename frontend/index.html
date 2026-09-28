@@ -1,12 +1,131 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CampusHub - College Event Management Platform</title>
+  <link rel="stylesheet" href="/css/global.css">
+  <style>
+    .landing-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: var(--space-4) var(--space-6);
+      border-bottom: 1px solid var(--color-border);
+      background-color: var(--color-surface);
+    }
+    .landing-logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--color-text);
+      text-decoration: none;
+    }
+    .landing-logo:hover {
+      text-decoration: none;
+    }
+    .hero {
+      text-align: center;
+      padding: var(--space-16) var(--space-4);
+      background-color: var(--color-surface-subtle);
+      border-bottom: 1px solid var(--color-border);
+    }
+    .hero h1 {
+      font-size: 3rem;
+      margin-bottom: var(--space-4);
+      color: var(--color-text);
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .hero p {
+      font-size: 1.25rem;
+      color: var(--color-text-secondary);
+      max-width: 600px;
+      margin: 0 auto var(--space-6) auto;
+    }
+    .features {
+      padding: var(--space-16) var(--space-4);
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: var(--space-6);
+    }
+    .feature-card {
+      background-color: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-card);
+      padding: var(--space-6);
+    }
+    .feature-icon {
+      font-size: 2rem;
+      margin-bottom: var(--space-4);
+    }
+    .feature-card h3 {
+      margin-bottom: var(--space-2);
+    }
+    .footer {
+      text-align: center;
+      padding: var(--space-8);
+      border-top: 1px solid var(--color-border);
+      color: var(--color-text-secondary);
+      background-color: var(--color-surface);
+    }
+    @media (max-width: 768px) {
+      .hero h1 { font-size: 2rem; }
+      .hero p { font-size: 1rem; }
+    }
+  </style>
 </head>
+<body>
+  <header class="landing-header">
+    <a href="/" class="landing-logo">CampusHub</a>
+    <div class="flex gap-4">
+      <a href="/pages/auth/login.html" class="btn btn-secondary">Login</a>
+      <a href="/pages/auth/register.html" class="btn btn-primary">Register</a>
+    </div>
+  </header>
 
-<body></body>
+  <main>
+    <section class="hero">
+      <h1>College Event Management Platform</h1>
+      <p>Streamline event discovery, registration, and attendance tracking with a single, unified system for students and clubs.</p>
+      <div class="flex justify-center gap-4 mt-6">
+        <a href="/pages/auth/register.html" class="btn btn-primary">Get Started</a>
+        <a href="/pages/auth/login.html" class="btn btn-secondary">Login</a>
+      </div>
+    </section>
 
+    <section class="features">
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">📅</div>
+          <h3>Event Discovery</h3>
+          <p class="text-muted">Browse and register for all campus events in one centralized location. Never miss out.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📱</div>
+          <h3>Universal QR</h3>
+          <p class="text-muted">A single QR code for all your event registrations. Quick and hassle-free entry.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">✅</div>
+          <h3>Smart Attendance</h3>
+          <p class="text-muted">Lightning-fast QR scanning for clubs to track attendance securely and instantly.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📊</div>
+          <h3>Club Management</h3>
+          <p class="text-muted">Powerful dashboard for clubs to create events, manage registrations, and export data.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>&copy; 2026 CampusHub. All rights reserved.</p>
+  </footer>
+</body>
 </html>

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile — CampusHub</title>
+  <link rel="stylesheet" href="/css/global.css">
+  <link rel="stylesheet" href="/css/student.css">
+  <style>
+    .profile-card { max-width: 600px; margin: 0 auto; background: #fff; border: 1px solid #E6E6E6; border-radius: 8px; padding: 32px; }
+    .form-group { margin-bottom: 20px; }
+    .form-label { display: block; margin-bottom: 8px; font-size: 14px; font-weight: 500; color: #171717; }
+    .form-input { width: 100%; padding: 10px 12px; border: 1px solid #E6E6E6; border-radius: 6px; font-size: 14px; box-sizing: border-box; font-family: inherit; }
+    .form-input:disabled, .form-input[readonly] { background: #F9FAFB; color: #666; cursor: not-allowed; }
+    .btn { background: #2563EB; color: #fff; padding: 10px 20px; border: none; border-radius: 6px; font-size: 14px; font-weight: 500; cursor: pointer; width: 100%; }
+    .btn:disabled { background: #9CA3AF; cursor: not-allowed; }
+    .toast { position: fixed; top: 20px; right: 20px; padding: 12px 24px; border-radius: 6px; color: white; font-weight: 500; display: none; z-index: 1000; }
+    .toast.success { background: #16A34A; }
+    .toast.error { background: #DC2626; }
+    .qr-token-box { margin-top: 32px; padding-top: 24px; border-top: 1px solid #E6E6E6; }
+    .qr-token { font-family: monospace; font-size: 12px; color: #8A8A8A; word-break: break-all; background: #F9FAFB; padding: 8px; border-radius: 4px; border: 1px solid #E6E6E6; margin-top: 8px; }
+  </style>
+</head>
+<body>
+  <div class="app-layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main class="main-content">
+      <header class="topbar" id="topbar"></header>
+      <div class="page-content">
+        <h1 style="text-align: center; margin-bottom: 32px;">My Profile</h1>
+        
+        <div class="profile-card">
+          <form id="profileForm">
+            <div class="form-group">
+              <label class="form-label" for="name">Full Name</label>
+              <input type="text" id="name" class="form-input" required>
+            </div>
+            
+            <div class="form-group">
+              <label class="form-label" for="rollNo">Roll Number</label>
+              <input type="text" id="rollNo" class="form-input" readonly>
+            </div>
+            
+            <div class="form-group">
+              <label class="form-label" for="email">Email Address</label>
+              <input type="email" id="email" class="form-input" readonly>
+            </div>
+            
+            <button type="submit" class="btn" id="saveBtn">Save Changes</button>
+          </form>
+
+          <div class="qr-token-box">
+            <label class="form-label">Active QR Token</label>
+            <div class="qr-token" id="qrTokenDisplay">Loading...</div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+  <nav class="bottom-nav" id="bottomNav"></nav>
+
+  <div id="toast" class="toast"></div>
+
+  <script type="module">
+    import { requireAuth, getUser } from '/js/auth/auth.js';
+    import { renderNavigation } from '/js/utils/navigation.js';
+    import apiClient from '/js/api/client.js';
+
+    const user = requireAuth();
+    renderNavigation('STUDENT');
+
+    const nameInput = document.getElementById('name');
+    const rollNoInput = document.getElementById('rollNo');
+    const emailInput = document.getElementById('email');
+    const qrTokenDisplay = document.getElementById('qrTokenDisplay');
+    const form = document.getElementById('profileForm');
+    const saveBtn = document.getElementById('saveBtn');
+    
+    function showToast(msg, type = 'success') {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.className = `toast ${type}`;
+      toast.style.display = 'block';
+      setTimeout(() => toast.style.display = 'none', 3000);
+    }
+
+    async function loadProfileData() {
+      try {
+        const res = await apiClient.get('/students/me');
+        const profile = res.data;
+        nameInput.value = profile.name || user.name || '';
+        rollNoInput.value = profile.rollNo || user.rollNo || '';
+        emailInput.value = profile.email || user.email || '';
+        
+        const qrRes = await apiClient.get('/students/me/qr').catch(() => null);
+        if (qrRes?.data?.qrToken) {
+          qrTokenDisplay.textContent = qrRes.data.qrToken;
+        } else {
+          qrTokenDisplay.textContent = 'No active QR token';
+        }
+      } catch (err) {
+        showToast('Failed to load profile data', 'error');
+      }
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      saveBtn.disabled = true;
+      saveBtn.textContent = 'Saving...';
+      
+      try {
+        await apiClient.patch('/students/me', {
+          name: nameInput.value
+        });
+        showToast('Profile updated successfully!');
+        
+        // Update local user object if needed
+        const u = JSON.parse(localStorage.getItem('user') || '{}');
+        u.name = nameInput.value;
+        localStorage.setItem('user', JSON.stringify(u));
+        
+      } catch (err) {
+        const msg = err.response?.data?.message || 'Failed to update profile';
+        showToast(msg, 'error');
+      } finally {
+        saveBtn.disabled = false;
+        saveBtn.textContent = 'Save Changes';
+      }
+    });
+
+    loadProfileData();
+  </script>
+</body>
+</html>

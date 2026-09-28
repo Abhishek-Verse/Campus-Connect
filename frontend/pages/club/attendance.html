@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Attendance Dashboard — CampusHub</title>
+  <link rel="stylesheet" href="/css/global.css">
+  <link rel="stylesheet" href="/css/club.css">
+  <style>
+    .summary-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; margin-bottom: 24px; }
+    .summary-card { background: #fff; padding: 16px; border-radius: 8px; border: 1px solid #E6E6E6; text-align: center; }
+    .summary-card h4 { margin: 0 0 8px 0; color: #666; font-size: 14px; font-weight: 500; }
+    .summary-card .val { font-size: 24px; font-weight: 600; color: #171717; }
+    .header-actions { display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+    .status-present { color: #166534; font-weight: 600; }
+    .status-absent { color: #991B1B; font-weight: 600; }
+  </style>
+</head>
+<body>
+  <div class="app-layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main class="main-content">
+      <header class="topbar" id="topbar">
+        <h1>Attendance Dashboard</h1>
+      </header>
+      <div class="page-content">
+        
+        <div style="margin-bottom: 24px; display: flex; gap: 16px; align-items: center;">
+          <select id="eventSelector" class="form-control" style="max-width: 300px; padding: 8px 12px;">
+            <option value="">Select an Event...</option>
+          </select>
+          <input type="text" id="searchInput" class="form-control" placeholder="Search by name or roll no..." style="max-width: 300px; padding: 8px 12px;">
+        </div>
+
+        <div id="contentArea" style="display: none;">
+          <div class="header-actions">
+            <a href="#" id="linkScanner" class="btn btn-primary">Open Scanner</a>
+            <button id="btnExportXlsx" class="btn btn-secondary">Export XLSX</button>
+            <button id="btnExportCsv" class="btn btn-secondary">Export CSV</button>
+          </div>
+
+          <div class="summary-cards">
+            <div class="summary-card">
+              <h4>Capacity</h4>
+              <div class="val" id="valCapacity">0</div>
+            </div>
+            <div class="summary-card">
+              <h4>Registered</h4>
+              <div class="val" id="valRegistered">0</div>
+            </div>
+            <div class="summary-card">
+              <h4>Present</h4>
+              <div class="val" id="valPresent">0</div>
+            </div>
+            <div class="summary-card">
+              <h4>Absent</h4>
+              <div class="val" id="valAbsent">0</div>
+            </div>
+            <div class="summary-card">
+              <h4>Rate</h4>
+              <div class="val" id="valRate">0%</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-body">
+              <table class="table" style="width: 100%; text-align: left;">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Roll No</th>
+                    <th>Email</th>
+                    <th>Status</th>
+                    <th>Check-in Time</th>
+                  </tr>
+                </thead>
+                <tbody id="attendanceTable">
+                  <tr><td colspan="5" class="text-center">Loading...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div id="emptyState" class="text-center text-muted" style="margin-top: 40px; display: none;">
+          Please select an event to view attendance.
+        </div>
+
+      </div>
+    </main>
+  </div>
+  <nav class="bottom-nav" id="bottomNav"></nav>
+
+  <script type="module">
+    import { requireAuth, requireRole } from '/js/auth/auth.js';
+    import { renderNavigation } from '/js/utils/navigation.js';
+
+    requireAuth();
+    requireRole('CLUB_MEMBER');
+    renderNavigation('CLUB_MEMBER');
+
+    const eventSelector = document.getElementById('eventSelector');
+    const searchInput = document.getElementById('searchInput');
+    const contentArea = document.getElementById('contentArea');
+    const emptyState = document.getElementById('emptyState');
+    const attendanceTable = document.getElementById('attendanceTable');
+    
+    let allData = [];
+
+    async function loadEvents() {
+      try {
+        const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+        const res = await fetch('/api/v1/events?scope=club', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+        
+        if (data.data && data.data.length > 0) {
+          data.data.forEach(ev => {
+            const opt = document.createElement('option');
+            opt.value = ev.id;
+            opt.textContent = ev.title;
+            opt.dataset.capacity = ev.capacity;
+            eventSelector.appendChild(opt);
+          });
+
+          const urlParams = new URLSearchParams(window.location.search);
+          const initialEventId = urlParams.get('eventId');
+          if (initialEventId) {
+            eventSelector.value = initialEventId;
+            loadAttendance(initialEventId);
+          } else {
+            emptyState.style.display = 'block';
+          }
+        }
+      } catch (err) {
+        console.error('Error loading events:', err);
+      }
+    }
+
+    async function loadAttendance(eventId) {
+      emptyState.style.display = 'none';
+      contentArea.style.display = 'block';
+      document.getElementById('linkScanner').href = `/pages/club/scanner.html?eventId=${eventId}`;
+      attendanceTable.innerHTML = '<tr><td colspan="5" class="text-center">Loading attendance...</td></tr>';
+
+      try {
+        const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+        const res = await fetch(`/api/v1/events/${eventId}/attendance`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+        allData = data.data || [];
+
+        const opt = eventSelector.options[eventSelector.selectedIndex];
+        const capacity = parseInt(opt.dataset.capacity || 0);
+        const registered = allData.length;
+        const present = allData.filter(d => d.attendanceStatus === 'PRESENT').length;
+        const absent = registered - present;
+        const rate = registered > 0 ? Math.round((present / registered) * 100) : 0;
+
+        document.getElementById('valCapacity').textContent = capacity;
+        document.getElementById('valRegistered').textContent = registered;
+        document.getElementById('valPresent').textContent = present;
+        document.getElementById('valAbsent').textContent = absent;
+        document.getElementById('valRate').textContent = `${rate}%`;
+
+        renderTable();
+      } catch (err) {
+        console.error(err);
+        attendanceTable.innerHTML = '<tr><td colspan="5" class="text-center text-error">Failed to load attendance data.</td></tr>';
+      }
+    }
+
+    function renderTable() {
+      const q = searchInput.value.toLowerCase();
+      const filtered = allData.filter(r => 
+        (r.studentName && r.studentName.toLowerCase().includes(q)) ||
+        (r.rollNo && r.rollNo.toLowerCase().includes(q))
+      );
+
+      if (filtered.length === 0) {
+        attendanceTable.innerHTML = '<tr><td colspan="5" class="text-center text-muted">No records found.</td></tr>';
+        return;
+      }
+
+      attendanceTable.innerHTML = filtered.map(r => {
+        const isPresent = r.attendanceStatus === 'PRESENT';
+        return `
+          <tr>
+            <td>${r.studentName || '-'}</td>
+            <td>${r.rollNo || '-'}</td>
+            <td>${r.email || '-'}</td>
+            <td class="${isPresent ? 'status-present' : 'status-absent'}">${isPresent ? 'Present' : 'Absent'}</td>
+            <td>${isPresent && r.checkInTime ? new Date(r.checkInTime).toLocaleString() : '-'}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function downloadExport(format) {
+      const eventId = eventSelector.value;
+      if(!eventId) return;
+      const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+      // Typically we'd construct a download link with a short-lived token or use fetch and Blob
+      fetch(`/api/v1/events/${eventId}/attendance/export?format=${format}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      })
+      .then(res => res.blob())
+      .then(blob => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `attendance_${eventId}.${format}`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+      })
+      .catch(console.error);
+    }
+
+    document.getElementById('btnExportXlsx').addEventListener('click', () => downloadExport('xlsx'));
+    document.getElementById('btnExportCsv').addEventListener('click', () => downloadExport('csv'));
+
+    eventSelector.addEventListener('change', (e) => {
+      if (e.target.value) {
+        loadAttendance(e.target.value);
+        window.history.replaceState({}, '', `?eventId=${e.target.value}`);
+      } else {
+        contentArea.style.display = 'none';
+        emptyState.style.display = 'block';
+      }
+    });
+
+    searchInput.addEventListener('input', renderTable);
+
+    document.addEventListener('DOMContentLoaded', loadEvents);
+  </script>
+</body>
+</html>

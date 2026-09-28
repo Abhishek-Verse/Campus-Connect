@@ -1,0 +1,109 @@
+/* Student Dashboard & Events */
+.event-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: var(--space-6);
+}
+
+.event-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.event-card-header {
+  margin-bottom: var(--space-3);
+}
+
+.event-card-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: var(--space-1);
+  color: var(--color-text);
+}
+
+.event-card-club {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+}
+
+.event-card-body {
+  flex-grow: 1;
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+}
+
+.event-meta {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-border);
+}
+
+.event-meta-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.event-card-footer {
+  margin-top: var(--space-4);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Event Detail */
+.event-detail-header {
+  margin-bottom: var(--space-8);
+}
+.event-detail-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  margin-top: var(--space-4);
+  color: var(--color-text-secondary);
+}
+.event-detail-content {
+  line-height: 1.6;
+}
+
+/* QR Code Page */
+.qr-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-8) var(--space-4);
+  text-align: center;
+}
+.qr-card {
+  background: white;
+  padding: var(--space-6);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+  margin-bottom: var(--space-6);
+}
+.qr-code-wrapper {
+  margin: var(--space-4) 0;
+  padding: var(--space-4);
+  background: white;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-input);
+}
+.qr-student-info h2 {
+  margin-bottom: var(--space-1);
+}
+.qr-student-info p {
+  color: var(--color-text-secondary);
+}
+
+/* Profile Form */
+.profile-form {
+  max-width: 600px;
+}

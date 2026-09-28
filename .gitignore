@@ -1,10 +1,43 @@
+# Dependencies
 node_modules/
-dist/
-build/
-coverage/
+
+# Environment
 .env
-.env.*
-!.env.example
-*.log
+.env.local
+.env.production
+
+# Prisma
+backend/prisma/*.db
+
+# OS files
 .DS_Store
 Thumbs.db
+desktop.ini
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Build
+dist/
+build/
+
+# AWS
+.aws/
+
+# Uploads
+uploads/
+
+# Generated
+*.xlsx
+*.csv
+
+# Kilo
+.kilo/

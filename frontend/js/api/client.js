@@ -1,0 +1,96 @@
+const API_BASE = '/api/v1';
+
+async function apiRequest(endpoint, options = {}) {
+  const token = localStorage.getItem('token');
+  const headers = {
+    'Content-Type': 'application/json',
+    ...(options.headers || {})
+  };
+
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+
+  const config = {
+    ...options,
+    headers
+  };
+
+  if (config.body && typeof config.body === 'object') {
+    config.body = JSON.stringify(config.body);
+  }
+
+  try {
+    const response = await fetch(`${API_BASE}${endpoint}`, config);
+    const data = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+      throw {
+        code: response.status,
+        message: data.message || data.error || 'An error occurred',
+        details: data
+      };
+    }
+
+    return data;
+  } catch (error) {
+    if (error.code) throw error;
+    throw {
+      code: 500,
+      message: 'Network error or server is unreachable',
+      details: error
+    };
+  }
+}
+
+export const api = {
+  auth: {
+    register(data) { return apiRequest('/auth/register', { method: 'POST', body: data }); },
+    login(data) { return apiRequest('/auth/login', { method: 'POST', body: data }); },
+    logout() { return apiRequest('/auth/logout', { method: 'POST' }); },
+    me() { return apiRequest('/auth/me'); }
+  },
+  students: {
+    me() { return apiRequest('/students/me'); },
+    updateMe(data) { return apiRequest('/students/me', { method: 'PUT', body: data }); },
+    myQr() { return apiRequest('/students/me/qr'); },
+    myEvents() { return apiRequest('/students/me/events'); },
+    myAttendance() { return apiRequest('/students/me/attendance'); }
+  },
+  events: {
+    list(params) {
+      const qs = params ? '?' + new URLSearchParams(params).toString() : '';
+      return apiRequest(`/events${qs}`);
+    },
+    get(id) { return apiRequest(`/events/${id}`); },
+    create(data) { return apiRequest('/events', { method: 'POST', body: data }); },
+    update(id, data) { return apiRequest(`/events/${id}`, { method: 'PUT', body: data }); },
+    publish(id) { return apiRequest(`/events/${id}/publish`, { method: 'POST' }); },
+    cancel(id) { return apiRequest(`/events/${id}/cancel`, { method: 'POST' }); },
+    delete(id) { return apiRequest(`/events/${id}`, { method: 'DELETE' }); }
+  },
+  registrations: {
+    register(eventId) { return apiRequest(`/events/${eventId}/register`, { method: 'POST' }); },
+    cancel(eventId) { return apiRequest(`/events/${eventId}/register`, { method: 'DELETE' }); },
+    mine() { return apiRequest('/registrations/mine'); },
+    forEvent(eventId) { return apiRequest(`/events/${eventId}/registrations`); }
+  },
+  attendance: {
+    scan(eventId, qrToken) { return apiRequest(`/events/${eventId}/attendance`, { method: 'POST', body: { qrToken } }); },
+    forEvent(eventId) { return apiRequest(`/events/${eventId}/attendance`); },
+    async export(eventId, format = 'csv') {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${API_BASE}/events/${eventId}/attendance/export?format=${format}`, {
+        headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+      });
+      if (!response.ok) throw new Error('Export failed');
+      return response.blob();
+    }
+  },
+  notices: {
+    list() { return apiRequest('/notices'); },
+    create(data) { return apiRequest('/notices', { method: 'POST', body: data }); },
+    update(id, data) { return apiRequest(`/notices/${id}`, { method: 'PUT', body: data }); },
+    delete(id) { return apiRequest(`/notices/${id}`, { method: 'DELETE' }); }
+  }
+};

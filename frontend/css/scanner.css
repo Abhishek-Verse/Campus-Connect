@@ -1,0 +1,119 @@
+/* Scanner specific styles */
+.scanner-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: #000;
+  color: #fff;
+}
+
+.scanner-header {
+  padding: var(--space-4);
+  background-color: rgba(0,0,0,0.8);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 10;
+}
+
+.scanner-header-title {
+  font-weight: 600;
+  font-size: 1.125rem;
+}
+
+.scanner-viewport {
+  flex-grow: 1;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#reader {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Override html5-qrcode styles */
+#reader button {
+  background-color: var(--color-primary);
+  color: white;
+  border: none;
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-button);
+  cursor: pointer;
+}
+#reader video {
+  width: 100% !important;
+  object-fit: cover;
+}
+
+.scan-overlay {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 20;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+
+.scan-overlay.success {
+  background-color: rgba(22, 163, 74, 0.9);
+  opacity: 1;
+}
+
+.scan-overlay.error {
+  background-color: rgba(220, 38, 38, 0.9);
+  opacity: 1;
+}
+
+.scan-status-icon {
+  font-size: 4rem;
+  margin-bottom: var(--space-4);
+}
+
+.scan-status-text {
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: var(--space-2);
+}
+
+.scan-status-subtext {
+  font-size: 1rem;
+  text-align: center;
+  opacity: 0.9;
+}
+
+.scanner-footer {
+  padding: var(--space-4);
+  background-color: rgba(0,0,0,0.8);
+  z-index: 10;
+}
+
+.recent-scan {
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  border-radius: var(--radius-card);
+  padding: var(--space-3);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.recent-scan-info {
+  flex-grow: 1;
+}
+.recent-scan-name {
+  font-weight: 600;
+}
+.recent-scan-time {
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+}

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — CampusHub</title>
+  <link rel="stylesheet" href="/css/global.css">
+  <link rel="stylesheet" href="/css/student.css">
+  <style>
+    .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; margin-bottom: 24px; }
+    .stat-card { background: #fff; border: 1px solid #E6E6E6; border-radius: 8px; padding: 16px; text-align: center; }
+    .stat-card .value { font-size: 24px; font-weight: bold; color: #2563EB; }
+    .stat-card .label { font-size: 14px; color: #666666; margin-top: 4px; }
+    .dashboard-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 24px; }
+    @media (max-width: 768px) { .dashboard-grid { grid-template-columns: 1fr; } }
+    .section-card { background: #fff; border: 1px solid #E6E6E6; border-radius: 8px; padding: 20px; margin-bottom: 24px; }
+    .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .event-list, .notice-list { display: flex; flex-direction: column; gap: 12px; }
+    .event-item, .notice-item { border: 1px solid #E6E6E6; border-radius: 6px; padding: 12px; }
+    .btn { display: inline-block; background: #2563EB; color: #fff; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-size: 14px; cursor: pointer; border: none; }
+    .btn-outline { background: transparent; color: #2563EB; border: 1px solid #2563EB; }
+    .empty-state { padding: 20px; text-align: center; color: #8A8A8A; font-style: italic; }
+    .loading-state { padding: 20px; text-align: center; color: #666666; }
+    .error-state { padding: 20px; text-align: center; color: #DC2626; }
+  </style>
+</head>
+<body>
+  <div class="app-layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main class="main-content">
+      <header class="topbar" id="topbar"></header>
+      <div class="page-content">
+        <div class="section-header">
+          <h1 id="greeting">Welcome back!</h1>
+          <a href="/pages/student/my-qr.html" class="btn">Show My QR</a>
+        </div>
+
+        <div class="stats-row" id="statsRow">
+          <div class="stat-card"><div class="value" id="statRegistered">-</div><div class="label">Registered Events</div></div>
+          <div class="stat-card"><div class="value" id="statAttended">-</div><div class="label">Attended</div></div>
+          <div class="stat-card"><div class="value" id="statUpcoming">-</div><div class="label">Upcoming</div></div>
+        </div>
+
+        <div class="dashboard-grid">
+          <div class="section-card">
+            <div class="section-header">
+              <h2>Upcoming Events</h2>
+              <a href="/pages/student/events.html" class="btn btn-outline" style="padding: 4px 12px;">View All</a>
+            </div>
+            <div id="upcomingEventsContainer" class="event-list">
+              <div class="loading-state">Loading events...</div>
+            </div>
+          </div>
+          <div class="section-card">
+            <div class="section-header">
+              <h2>Recent Notices</h2>
+            </div>
+            <div id="recentNoticesContainer" class="notice-list">
+              <div class="loading-state">Loading notices...</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+  <nav class="bottom-nav" id="bottomNav"></nav>
+
+  <script type="module">
+    import { requireAuth, getUser } from '/js/auth/auth.js';
+    import { renderNavigation } from '/js/utils/navigation.js';
+    import apiClient from '/js/api/client.js';
+
+    const user = requireAuth();
+    renderNavigation('STUDENT');
+
+    document.getElementById('greeting').textContent = `Welcome back, ${user?.name || 'Student'}!`;
+
+    async function loadDashboard() {
+      try {
+        // Load stats
+        const statsRes = await apiClient.get('/students/me/dashboard-stats').catch(() => null);
+        if (statsRes?.data) {
+          document.getElementById('statRegistered').textContent = statsRes.data.registered || 0;
+          document.getElementById('statAttended').textContent = statsRes.data.attended || 0;
+          document.getElementById('statUpcoming').textContent = statsRes.data.upcoming || 0;
+        } else {
+          document.getElementById('statRegistered').textContent = '0';
+          document.getElementById('statAttended').textContent = '0';
+          document.getElementById('statUpcoming').textContent = '0';
+        }
+
+        // Load upcoming events
+        const eventsRes = await apiClient.get('/events?limit=3&status=PUBLISHED').catch(() => null);
+        const eventsContainer = document.getElementById('upcomingEventsContainer');
+        if (eventsRes?.data?.length) {
+          eventsContainer.innerHTML = eventsRes.data.map(event => `
+            <div class="event-item">
+              <h3 style="margin: 0 0 4px 0; font-size: 16px;">${event.title}</h3>
+              <p style="margin: 0 0 8px 0; font-size: 14px; color: #666666;">
+                📅 ${new Date(event.date).toLocaleDateString()} | 📍 ${event.venue}
+              </p>
+              <a href="/pages/student/event-details.html?id=${event.id}" class="btn" style="padding: 4px 12px;">Register</a>
+            </div>
+          `).join('');
+        } else {
+          eventsContainer.innerHTML = '<div class="empty-state">No upcoming events found.</div>';
+        }
+
+        // Load notices
+        const noticesRes = await apiClient.get('/notices?limit=3').catch(() => null);
+        const noticesContainer = document.getElementById('recentNoticesContainer');
+        if (noticesRes?.data?.length) {
+          noticesContainer.innerHTML = noticesRes.data.map(notice => `
+            <div class="notice-item">
+              <h4 style="margin: 0 0 4px 0; font-size: 14px;">${notice.title}</h4>
+              <p style="margin: 0; font-size: 12px; color: #8A8A8A;">${new Date(notice.createdAt).toLocaleDateString()}</p>
+            </div>
+          `).join('');
+        } else {
+          noticesContainer.innerHTML = '<div class="empty-state">No recent notices.</div>';
+        }
+
+      } catch (err) {
+        document.getElementById('upcomingEventsContainer').innerHTML = '<div class="error-state">Failed to load data.</div>';
+        document.getElementById('recentNoticesContainer').innerHTML = '<div class="error-state">Failed to load data.</div>';
+      }
+    }
+
+    loadDashboard();
+  </script>
+</body>
+</html>
