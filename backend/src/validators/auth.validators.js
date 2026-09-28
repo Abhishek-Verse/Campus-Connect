@@ -5,6 +5,7 @@ export const registerSchema = z.object({
   email: z.string().email().max(255),
   password: z.string().min(6).max(255),
   rollNo: z.string().min(2).max(50),
+  role: z.string().optional().transform(r => r ? r.toUpperCase() : 'STUDENT'),
 });
 
 export const loginSchema = z.object({

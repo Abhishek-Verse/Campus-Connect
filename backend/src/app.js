@@ -19,10 +19,27 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 
-app.use(helmet());
+// Configure Helmet with CSP allowing fonts and CDN libraries (qrcode, html5-qrcode)
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "'unsafe-inline'", 'https://cdn.jsdelivr.net', 'https://unpkg.com'],
+        styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
+        fontSrc: ["'self'", 'https://fonts.gstatic.com'],
+        imgSrc: ["'self'", 'data:', 'blob:', '*'],
+        connectSrc: ["'self'", '*']
+      }
+    },
+    crossOriginEmbedderPolicy: false
+  })
+);
+
 app.use(cors());
 app.use(morgan('dev'));
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
@@ -32,6 +49,9 @@ app.use('/api/v1/auth', apiLimiter);
 
 // Serve frontend static files
 app.use(express.static(path.join(__dirname, '../../frontend')));
+
+// Serve uploaded assets
+app.use('/uploads', express.static(path.join(__dirname, '../../uploads')));
 
 // Health check
 app.get('/api/v1/health', (req, res) => {

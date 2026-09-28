@@ -91,28 +91,33 @@
 
     async function loadDashboard() {
       try {
-        const eventsRes = await fetch('/api/v1/events?filter=club_upcoming');
-        const eventsData = await eventsRes.json();
-        
-        const regRes = await fetch('/api/v1/club/registrations/recent');
-        const regData = await regRes.json();
+        const [statsRes, eventsRes, regRes] = await Promise.all([
+          api.get('/club/dashboard-stats').catch(() => ({ data: {} })),
+          api.get('/events?scope=club&limit=5').catch(() => ({ data: [] })),
+          api.get('/club/registrations/recent').catch(() => ({ data: [] }))
+        ]);
+
+        const stats = statsRes.data || {};
+        const events = eventsRes.data || [];
+        const registrations = regRes.data || [];
 
         // Update Stats
-        document.getElementById('statTotalEvents').textContent = eventsData.stats?.total || 0;
-        document.getElementById('statUpcomingEvents').textContent = eventsData.stats?.upcoming || 0;
-        document.getElementById('statTotalRegistrations').textContent = eventsData.stats?.totalRegistrations || 0;
-        document.getElementById('statTodayEvents').textContent = eventsData.stats?.today || 0;
+        document.getElementById('statTotalEvents').textContent = stats.total ?? 0;
+        document.getElementById('statUpcomingEvents').textContent = stats.upcoming ?? 0;
+        document.getElementById('statTotalRegistrations').textContent = stats.totalRegistrations ?? 0;
+        document.getElementById('statTodayEvents').textContent = stats.today ?? 0;
 
         // Upcoming Events
         const upcomingList = document.getElementById('upcomingEventsList');
-        if (eventsData.data && eventsData.data.length > 0) {
-          upcomingList.innerHTML = eventsData.data.map(event => `
+        if (events.length > 0) {
+          upcomingList.innerHTML = events.map(event => `
             <tr>
               <td><strong>${event.title}</strong></td>
-              <td>${new Date(event.date).toLocaleDateString()}</td>
-              <td>${event.registrationCount} / ${event.capacity}</td>
+              <td>${new Date(event.date || event.eventDate).toLocaleDateString()}</td>
+              <td>${event.registeredCount ?? 0} / ${event.capacity}</td>
               <td>
-                <a href="/pages/club/manage-events.html?id=${event.id}" class="btn btn-sm btn-outline">Manage</a>
+                <a href="/pages/club/edit-event.html?id=${event.id}" class="btn btn-sm btn-outline">Edit</a>
+                <a href="/pages/club/registrations.html?eventId=${event.id}" class="btn btn-sm btn-outline">Registrations</a>
                 <a href="/pages/club/scanner.html?eventId=${event.id}" class="btn btn-sm btn-primary">Scan</a>
               </td>
             </tr>
@@ -123,12 +128,12 @@
 
         // Recent Registrations
         const regList = document.getElementById('recentRegistrationsList');
-        if (regData.data && regData.data.length > 0) {
-          regList.innerHTML = regData.data.map(reg => `
-            <li class="activity-item">
+        if (registrations.length > 0) {
+          regList.innerHTML = registrations.map(reg => `
+            <li class="activity-item" style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;">
               <div class="activity-content">
-                <strong>${reg.studentName}</strong> registered for <strong>${reg.eventTitle}</strong>
-                <div class="text-muted text-sm">${new Date(reg.createdAt).toLocaleString()}</div>
+                <strong>${reg.studentName}</strong> (${reg.rollNo}) registered for <strong>${reg.eventTitle}</strong>
+                <div class="text-muted text-sm" style="font-size: 12px; color: #888;">${new Date(reg.createdAt).toLocaleString()}</div>
               </div>
             </li>
           `).join('');

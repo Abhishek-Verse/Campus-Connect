@@ -7,14 +7,16 @@
   <link rel="stylesheet" href="/css/global.css">
   <link rel="stylesheet" href="/css/student.css">
   <style>
-    .qr-container { max-width: 400px; margin: 40px auto; background: #fff; border: 1px solid #E6E6E6; border-radius: 12px; padding: 40px 20px; text-align: center; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
-    .student-name { font-size: 24px; font-weight: 600; color: #171717; margin: 0 0 4px 0; }
-    .roll-number { font-size: 16px; color: #666666; margin: 0 0 32px 0; }
-    #qrcode { display: flex; justify-content: center; margin-bottom: 24px; min-height: 250px; align-items: center; }
+    .qr-container { max-width: 420px; margin: 40px auto; background: #fff; border: 1px solid #E6E6E6; border-radius: 12px; padding: 40px 24px; text-align: center; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+    .student-name { font-size: 24px; font-weight: 700; color: #171717; margin: 0 0 4px 0; }
+    .roll-number { font-size: 16px; color: #666666; margin: 0 0 24px 0; font-weight: 500; }
+    #qrcode { display: flex; justify-content: center; align-items: center; margin: 0 auto 20px auto; min-height: 240px; }
+    #qrcode canvas, #qrcode img { margin: 0 auto; display: block; border: 8px solid #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+    .qr-badge { display: inline-block; font-family: monospace; font-size: 14px; background: #eff6ff; color: #2563eb; padding: 6px 14px; border-radius: 999px; font-weight: 600; margin-bottom: 20px; letter-spacing: 1px; }
     .instruction { color: #4B5563; font-size: 14px; line-height: 1.5; margin: 0; }
-    .error-msg { color: #DC2626; padding: 20px; }
+    .error-msg { color: #DC2626; padding: 20px; font-weight: 500; }
   </style>
-  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>
+  <script src="/js/lib/qrcode.min.js"></script>
 </head>
 <body>
   <div class="app-layout">
@@ -24,13 +26,15 @@
       <div class="page-content">
         <div class="qr-container">
           <h1 class="student-name" id="studentName">Student Name</h1>
-          <p class="roll-number" id="rollNo">Roll No</p>
+          <p class="roll-number" id="rollNo">Loading details...</p>
           
           <div id="qrcode">
             <span style="color:#8A8A8A;">Generating QR Code...</span>
           </div>
           
-          <p class="instruction">Show this QR at registered events.<br>This QR works for all CampusHub events.</p>
+          <div id="qrTokenBadge" class="qr-badge" style="display: none;">CH-XXXXXXXX</div>
+          
+          <p class="instruction">Show this QR at registered events.<br>This Universal QR works for all CampusHub events.</p>
         </div>
       </div>
     </main>
@@ -42,33 +46,57 @@
     import { renderNavigation } from '/js/utils/navigation.js';
     import apiClient from '/js/api/client.js';
 
-    const user = requireAuth();
+    const currentUser = requireAuth();
     renderNavigation('STUDENT');
 
-    document.getElementById('studentName').textContent = user?.name || 'Student Name';
-    document.getElementById('rollNo').textContent = user?.rollNo || 'Roll No';
+    const nameEl = document.getElementById('studentName');
+    const rollEl = document.getElementById('rollNo');
+    const qrContainer = document.getElementById('qrcode');
+    const badgeEl = document.getElementById('qrTokenBadge');
+
+    if (currentUser?.name) nameEl.textContent = currentUser.name;
+    if (currentUser?.rollNo) rollEl.textContent = `Roll No: ${currentUser.rollNo}`;
 
     async function loadQR() {
       try {
-        const res = await apiClient.get('/students/me/qr');
-        const token = res.data?.qrToken;
+        // Fetch full profile and QR token from API
+        const [meRes, qrRes] = await Promise.all([
+          apiClient.get('/students/me').catch(() => null),
+          apiClient.get('/students/me/qr').catch(() => null)
+        ]);
+
+        const profile = meRes?.data || currentUser;
+        if (profile?.name) nameEl.textContent = profile.name;
+        if (profile?.rollNo) rollEl.textContent = `Roll No: ${profile.rollNo}`;
+
+        const token = qrRes?.data?.qrToken || profile?.qrToken;
         
-        if (token) {
-          const qrContainer = document.getElementById('qrcode');
-          qrContainer.innerHTML = '';
-          QRCode.toCanvas(token, {
-            width: 250,
-            margin: 2,
-            color: { dark: '#171717', light: '#ffffff' }
-          }, function (err, canvas) {
-            if (err) throw err;
-            qrContainer.appendChild(canvas);
+        if (!token) {
+          throw new Error('No QR token received from server');
+        }
+
+        badgeEl.textContent = token;
+        badgeEl.style.display = 'inline-block';
+        qrContainer.innerHTML = '';
+
+        // Generate QR code using local qrcode.min.js
+        if (typeof QRCode !== 'undefined') {
+          new QRCode(qrContainer, {
+            text: token,
+            width: 220,
+            height: 220,
+            colorDark: "#171717",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel ? QRCode.CorrectLevel.H : 2
           });
         } else {
-          throw new Error('No QR token received');
+          // Fallback image using standard QR API if library not loaded
+          qrContainer.innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(token)}" alt="QR Code" style="width:220px;height:220px;">`;
         }
+
       } catch (err) {
-        document.getElementById('qrcode').innerHTML = '<div class="error-msg">Failed to generate QR code.</div>';
+        console.error('Failed to generate QR:', err);
+        qrContainer.innerHTML = `<div class="error-msg">Failed to generate QR code.<br><small style="color:#666;">${err.message || ''}</small></div>`;
       }
     }
 

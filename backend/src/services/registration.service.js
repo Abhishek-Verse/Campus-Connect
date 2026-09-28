@@ -3,27 +3,99 @@ import { AppError } from '../middleware/error.middleware.js';
 
 export const registerForEvent = async (studentId, eventId) => {
   return prisma.$transaction(async (tx) => {
-    const event = await tx.event.findUnique({ where: { id: eventId }, include: { _count: { select: { registrations: true } } } });
+    const event = await tx.event.findUnique({
+      where: { id: eventId },
+      include: { _count: { select: { registrations: true } } }
+    });
     if (!event) throw new AppError('Event not found', 404);
-    if (event.status !== 'PUBLISHED') throw new AppError('Event is not active', 400);
-    if (event.registrationDeadline && new Date() > new Date(event.registrationDeadline)) throw new AppError('Registration closed', 400);
-    if (event._count.registrations >= event.capacity) throw new AppError('Event full', 400);
+    if (event.status !== 'PUBLISHED') throw new AppError('Event is not active for registration', 400);
+    if (event.registrationDeadline && new Date() > new Date(event.registrationDeadline)) {
+      throw new AppError('Registration closed', 400);
+    }
+    if (event._count.registrations >= event.capacity) {
+      throw new AppError('Event full', 400);
+    }
 
-    const existing = await tx.registration.findUnique({ where: { studentId_eventId: { studentId, eventId } } });
+    const existing = await tx.registration.findUnique({
+      where: { studentId_eventId: { studentId, eventId } }
+    });
     if (existing) throw new AppError('Already registered', 400);
 
-    return tx.registration.create({ data: { studentId, eventId } });
+    return tx.registration.create({
+      data: { studentId, eventId }
+    });
   });
 };
 
 export const cancelRegistration = async (studentId, eventId) => {
-  return prisma.registration.delete({ where: { studentId_eventId: { studentId, eventId } } });
+  const reg = await prisma.registration.findUnique({
+    where: { studentId_eventId: { studentId, eventId } }
+  });
+  if (!reg) throw new AppError('Registration not found', 404);
+
+  return prisma.registration.delete({
+    where: { studentId_eventId: { studentId, eventId } }
+  });
 };
 
 export const getMyRegistrations = async (studentId) => {
-  return prisma.registration.findMany({ where: { studentId }, include: { event: true } });
+  const registrations = await prisma.registration.findMany({
+    where: { studentId },
+    include: {
+      event: {
+        include: {
+          club: { select: { name: true } },
+          venue: { select: { name: true } }
+        }
+      },
+      attendance: true
+    },
+    orderBy: { registeredAt: 'desc' }
+  });
+
+  return registrations.map(r => {
+    const isAttended = r.attendance && r.attendance.length > 0;
+    return {
+      id: r.id,
+      eventId: r.eventId,
+      eventTitle: r.event.title,
+      title: r.event.title,
+      eventDate: r.event.eventDate,
+      date: r.event.eventDate,
+      startTime: r.event.startTime,
+      endTime: r.event.endTime,
+      venue: r.event.venue?.name || 'TBD',
+      clubName: r.event.club?.name || '',
+      registrationStatus: r.status,
+      status: r.status,
+      attendanceStatus: isAttended ? 'PRESENT' : 'ABSENT',
+      attended: isAttended,
+      checkInTime: isAttended ? r.attendance[0].checkInTime : null,
+      registeredAt: r.registeredAt
+    };
+  });
 };
 
 export const getEventRegistrations = async (eventId, userId) => {
-  return prisma.registration.findMany({ where: { eventId }, include: { student: { select: { id: true, name: true, rollNo: true, email: true } } } });
+  const registrations = await prisma.registration.findMany({
+    where: { eventId },
+    include: {
+      student: { select: { id: true, name: true, rollNo: true, email: true } }
+    },
+    orderBy: { registeredAt: 'asc' }
+  });
+
+  return registrations.map(r => ({
+    id: r.id,
+    studentId: r.student.id,
+    eventId: r.eventId,
+    studentName: r.student.name,
+    name: r.student.name,
+    rollNo: r.student.rollNo,
+    email: r.student.email,
+    status: r.status,
+    createdAt: r.registeredAt,
+    registeredAt: r.registeredAt,
+    student: r.student
+  }));
 };

@@ -11,7 +11,10 @@ export const authenticate = async (req, res, next) => {
     }
     const token = authHeader.split(' ')[1];
     const decoded = jwt.verify(token, env.JWT_SECRET);
-    const user = await prisma.user.findUnique({ where: { id: decoded.userId } });
+    const user = await prisma.user.findUnique({
+      where: { id: decoded.userId },
+      include: { clubMemberships: true }
+    });
     if (!user) {
       throw new AppError('User not found', 401);
     }
@@ -20,4 +23,20 @@ export const authenticate = async (req, res, next) => {
   } catch (error) {
     next(new AppError('Unauthorized', 401));
   }
+};
+
+export const optionalAuth = async (req, res, next) => {
+  try {
+    const authHeader = req.headers.authorization;
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      const token = authHeader.split(' ')[1];
+      const decoded = jwt.verify(token, env.JWT_SECRET);
+      const user = await prisma.user.findUnique({
+        where: { id: decoded.userId },
+        include: { clubMemberships: true }
+      });
+      if (user) req.user = user;
+    }
+  } catch {}
+  next();
 };

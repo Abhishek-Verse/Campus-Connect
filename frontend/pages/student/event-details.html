@@ -82,11 +82,15 @@
         } catch(e) {}
 
         const now = new Date();
-        const eventDate = new Date(event.date);
-        const deadline = event.registrationDeadline ? new Date(event.registrationDeadline) : eventDate;
+        const eventDate = new Date(event.date || event.eventDate);
+        const [endHour = '23', endMin = '59'] = (event.endTime || '23:59').split(':');
+        const eventEndDateTime = new Date(eventDate);
+        eventEndDateTime.setHours(parseInt(endHour), parseInt(endMin), 0, 0);
+
+        const deadline = event.registrationDeadline ? new Date(event.registrationDeadline) : eventEndDateTime;
         
-        const isClosed = now > deadline;
-        const isCompleted = event.status === 'COMPLETED' || now > eventDate;
+        const isClosed = event.status === 'CANCELLED' || now > deadline;
+        const isCompleted = event.status === 'COMPLETED';
         const seatsLeft = event.capacity ? (event.capacity - (event.registeredCount || 0)) : 999;
         const isFull = seatsLeft <= 0;
 
@@ -145,10 +149,10 @@
             regBtn.textContent = 'Registering...';
             try {
               await apiClient.post(`/events/${eventId}/register`, {});
-              showToast('Successfully registered!');
-              setTimeout(() => location.reload(), 1500);
+              showToast('Successfully registered! See you at the event.');
+              setTimeout(() => location.reload(), 1200);
             } catch (err) {
-              const msg = err.response?.data?.message || 'Failed to register';
+              const msg = err.message || err.details?.message || err.details?.error || 'Registration failed';
               showToast(msg, 'error');
               regBtn.disabled = false;
               regBtn.textContent = 'Register Now';

@@ -4,6 +4,12 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "dev": "npm --prefix backend run dev",
+    "start": "npm --prefix backend run start",
+    "prisma:generate": "npm --prefix backend run prisma:generate",
+    "prisma:migrate": "npm --prefix backend run prisma:migrate",
+    "prisma:seed": "npm --prefix backend run prisma:seed",
+    "prisma:studio": "npm --prefix backend run prisma:studio",
     "test": "node --test"
   }
 }

@@ -42,8 +42,8 @@
 
     // Redirect if already logged in
     if (isAuthenticated()) {
-      const role = getUserRole();
-      window.location.href = role === 'club' ? '/pages/club/dashboard.html' : '/pages/student/dashboard.html';
+      const role = (getUserRole() || '').toUpperCase();
+      window.location.href = (role === 'CLUB_MEMBER' || role === 'ADMIN') ? '/pages/club/dashboard.html' : '/pages/student/dashboard.html';
     }
 
     const form = qs('#login-form');
@@ -63,10 +63,18 @@
       
       try {
         const response = await api.auth.login({ email, password });
-        setToken(response.token);
-        setUser(response.user);
+        const token = response.data?.token || response.token;
+        const user = response.data?.user || response.user;
         
-        if (response.user.role === 'club') {
+        if (!token || !user) {
+          throw new Error('Invalid response from server');
+        }
+
+        setToken(token);
+        setUser(user);
+        
+        const role = (user.role || '').toUpperCase();
+        if (role === 'CLUB_MEMBER' || role === 'ADMIN') {
           window.location.href = '/pages/club/dashboard.html';
         } else {
           window.location.href = '/pages/student/dashboard.html';

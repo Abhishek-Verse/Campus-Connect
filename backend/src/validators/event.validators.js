@@ -1,18 +1,54 @@
 import { z } from 'zod';
 
 export const createEventSchema = z.object({
-  title: z.string().min(3).max(200),
+  title: z.string().min(2).max(200),
+  description: z.string().optional().default(''),
+  category: z.string().optional().default('OTHER'),
+  eventDate: z.string().optional(),
+  date: z.string().optional(),
+  startTime: z.string().optional().default('10:00'),
+  endTime: z.string().optional().default('12:00'),
+  capacity: z.coerce.number().int().positive().default(50),
+  posterUrl: z.string().optional().nullable().transform(v => v ? v : null),
+  guestName: z.string().optional().nullable(),
+  guest: z.string().optional().nullable(),
+  registrationDeadline: z.string().optional().nullable(),
+  deadline: z.string().optional().nullable(),
+  rules: z.union([z.array(z.string()), z.string()]).optional().default([]),
+  venueId: z.string().optional().nullable(),
+  venue: z.string().optional().nullable(),
+  status: z.string().optional().default('DRAFT'),
+  clubId: z.string().optional()
+}).refine(data => data.eventDate || data.date, {
+  message: 'Event date is required'
+}).transform(data => ({
+  ...data,
+  eventDate: data.eventDate || data.date,
+  registrationDeadline: data.registrationDeadline || data.deadline || null,
+  guestName: data.guestName || data.guest || null
+}));
+
+export const updateEventSchema = z.object({
+  title: z.string().min(2).max(200).optional(),
   description: z.string().optional(),
   category: z.string().optional(),
-  eventDate: z.string().datetime(),
-  startTime: z.string(),
-  endTime: z.string(),
-  capacity: z.number().positive(),
-  posterUrl: z.string().url().optional(),
-  guestName: z.string().optional(),
-  registrationDeadline: z.string().datetime().optional(),
-  rules: z.array(z.string()).optional(),
-  venueId: z.string().uuid().optional(),
-});
-
-export const updateEventSchema = createEventSchema.partial();
+  eventDate: z.string().optional(),
+  date: z.string().optional(),
+  startTime: z.string().optional(),
+  endTime: z.string().optional(),
+  capacity: z.coerce.number().int().positive().optional(),
+  posterUrl: z.string().optional().nullable().transform(v => v ? v : null),
+  guestName: z.string().optional().nullable(),
+  guest: z.string().optional().nullable(),
+  registrationDeadline: z.string().optional().nullable(),
+  deadline: z.string().optional().nullable(),
+  rules: z.union([z.array(z.string()), z.string()]).optional(),
+  venueId: z.string().optional().nullable(),
+  venue: z.string().optional().nullable(),
+  status: z.string().optional()
+}).transform(data => ({
+  ...data,
+  ...(data.date && !data.eventDate ? { eventDate: data.date } : {}),
+  ...(data.deadline && !data.registrationDeadline ? { registrationDeadline: data.deadline } : {}),
+  ...(data.guest && !data.guestName ? { guestName: data.guest } : {})
+}));

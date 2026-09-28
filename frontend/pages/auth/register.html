@@ -57,8 +57,8 @@
 
     // Redirect if already logged in
     if (isAuthenticated()) {
-      const role = getUserRole();
-      window.location.href = role === 'club' ? '/pages/club/dashboard.html' : '/pages/student/dashboard.html';
+      const role = (getUserRole() || '').toUpperCase();
+      window.location.href = (role === 'CLUB_MEMBER' || role === 'ADMIN') ? '/pages/club/dashboard.html' : '/pages/student/dashboard.html';
     }
 
     const form = qs('#register-form');

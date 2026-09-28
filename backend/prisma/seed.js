@@ -10,8 +10,8 @@ async function main() {
   
   // Students
   const s1 = await prisma.user.create({ data: { name: 'Rahul Sharma', email: 'rahul@test.com', password: pw, rollNo: '101', qrToken: genQr(), role: 'STUDENT' }});
-  const s2 = await prisma.user.create({ data: { name: 'Priya Patel', email: 'priya@test.com', password: pw, rollNo: '102', qrToken: genQr(), role: 'STUDENT' }});
-  const s3 = await prisma.user.create({ data: { name: 'Amit Singh', email: 'amit@test.com', password: pw, rollNo: '103', qrToken: genQr(), role: 'STUDENT' }});
+  const s2 = await prisma.user.create({ data: { name: 'Priya Patel', email: 'priya@test.com', password: pw, rollNo: '102', qrToken: genQr(), role: 'CLUB_MEMBER' }});
+  const s3 = await prisma.user.create({ data: { name: 'Amit Singh', email: 'amit@test.com', password: pw, rollNo: '103', qrToken: genQr(), role: 'CLUB_MEMBER' }});
   const s4 = await prisma.user.create({ data: { name: 'Neha Gupta', email: 'neha@test.com', password: pw, rollNo: '104', qrToken: genQr(), role: 'STUDENT' }});
   const s5 = await prisma.user.create({ data: { name: 'Vikram Reddy', email: 'vikram@test.com', password: pw, rollNo: '105', qrToken: genQr(), role: 'STUDENT' }});
 

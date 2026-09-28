@@ -32,7 +32,7 @@
     .scan-item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f0f0f0; font-size: 14px; }
     .scan-item:last-child { border-bottom: none; }
   </style>
-  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+  <script src="/js/lib/html5-qrcode.min.js"></script>
 </head>
 <body>
   <div class="app-layout">
@@ -66,6 +66,11 @@
           <div class="controls">
             <button id="btnStart" class="btn btn-primary">Start Camera</button>
             <button id="btnStop" class="btn btn-secondary" style="display: none;">Stop Camera</button>
+          </div>
+
+          <div style="margin-top: 16px; display: flex; gap: 8px;">
+            <input type="text" id="manualQrInput" placeholder="Manual QR Token (e.g. CH-XXXXXXXX)" class="form-control" style="padding: 8px 12px; text-transform: uppercase;">
+            <button id="btnManualScan" class="btn btn-secondary" style="white-space: nowrap;">Check In</button>
           </div>
 
           <div id="statusArea" class="status-area status-neutral">
@@ -133,6 +138,9 @@
           if (eventId) {
             eventSelector.value = eventId;
             selectEvent(eventId);
+          } else if (data.data.length > 0) {
+            eventSelector.value = data.data[0].id;
+            selectEvent(data.data[0].id);
           }
         }
       } catch (err) {
@@ -207,35 +215,51 @@
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`
           },
-          body: JSON.stringify({ qrCode: decodedText })
+          body: JSON.stringify({ qrToken: decodedText })
         });
         
-        const data = await res.json();
+        const json = await res.json();
 
-        if (res.ok) {
-          if (data.status === 'ALREADY_SCANNED') {
-            setStatus('warning', 'Already Checked In', `${data.studentName} (${data.rollNo})`);
-            updateRecentScans(data.studentName, data.rollNo, 'Already Scanned', false);
-          } else {
-            setStatus('success', '✓ ENTRY ALLOWED', `${data.studentName} (${data.rollNo})`);
-            stats.present++;
-            updateStats();
-            updateRecentScans(data.studentName, data.rollNo, 'Allowed', true);
-          }
+        if (res.ok && json.success) {
+          const student = json.data || {};
+          const sName = student.name || 'Student';
+          const sRoll = student.rollNo || '';
+          const timeStr = new Date(student.checkInTime || Date.now()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+          setStatus('success', '✓ ENTRY ALLOWED', `${sName}<br>Roll No: ${sRoll}<br><span style="font-size:12px;color:#166534;">Attendance Marked • ${timeStr}</span>`);
+          stats.present++;
+          updateStats();
+          updateRecentScans(sName, sRoll, 'Allowed', true);
         } else {
-          setStatus('error', '✗ ENTRY DENIED', data.message || 'Not registered or Invalid');
-          updateRecentScans('Unknown', 'N/A', 'Denied', false);
+          const errCode = json.error || json.message || '';
+          let userMsg = 'Unable to mark attendance.';
+          if (errCode === 'ALREADY_ATTENDED') {
+            userMsg = 'Student has already checked in for this event.';
+            setStatus('warning', 'Already Attended', userMsg);
+          } else if (errCode === 'NOT_REGISTERED') {
+            userMsg = 'Student is not registered for this event.';
+            setStatus('error', '✕ ENTRY DENIED', userMsg);
+          } else if (errCode === 'INVALID_QR') {
+            userMsg = 'Invalid student QR code.';
+            setStatus('error', '✕ ENTRY DENIED', userMsg);
+          } else if (errCode === 'EVENT_NOT_ACTIVE') {
+            userMsg = 'Event is not currently active for attendance.';
+            setStatus('error', '✕ ENTRY DENIED', userMsg);
+          } else {
+            userMsg = json.error || 'Check event registration.';
+            setStatus('error', '✕ ENTRY DENIED', userMsg);
+          }
+          updateRecentScans(errCode, '', 'Denied', false);
         }
       } catch (error) {
-        setStatus('error', '✗ Error', 'Network or server error');
+        setStatus('error', '✕ Network Error', 'Unable to connect to server.');
       }
 
       setTimeout(() => {
-        if(scannerLocked) {
+        if (scannerLocked) {
           setStatus('neutral', 'Ready to scan', 'Point camera at a student\'s QR code');
           scannerLocked = false;
         }
-      }, 3000);
+      }, 2500);
     }
 
     function onScanFailure(error) {
@@ -265,6 +289,24 @@
         btnStop.style.display = 'none';
       }
     });
+
+    const manualInput = document.getElementById('manualQrInput');
+    const btnManualScan = document.getElementById('btnManualScan');
+    if (btnManualScan && manualInput) {
+      btnManualScan.addEventListener('click', () => {
+        const val = manualInput.value.trim().toUpperCase();
+        if (val) {
+          onScanSuccess(val);
+          manualInput.value = '';
+        }
+      });
+      manualInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          btnManualScan.click();
+        }
+      });
+    }
 
     eventSelector.addEventListener('change', (e) => {
       selectEvent(e.target.value);

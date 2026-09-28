@@ -12,7 +12,11 @@ export function removeToken() {
 
 export function getUser() {
   const user = localStorage.getItem('user');
-  return user ? JSON.parse(user) : null;
+  try {
+    return user ? JSON.parse(user) : null;
+  } catch {
+    return null;
+  }
 }
 
 export function setUser(user) {
@@ -29,7 +33,12 @@ export function isAuthenticated() {
 
 export function getUserRole() {
   const user = getUser();
-  return user ? user.role : null;
+  if (!user) return null;
+  const role = (user.role || '').toUpperCase();
+  if (role === 'CLUB_MEMBER' || role === 'ADMIN' || user.isClubMember) {
+    return 'CLUB_MEMBER';
+  }
+  return role || 'STUDENT';
 }
 
 export function requireAuth(redirectTo = '/pages/auth/login.html') {
@@ -37,16 +46,22 @@ export function requireAuth(redirectTo = '/pages/auth/login.html') {
     window.location.href = redirectTo;
     return false;
   }
-  return true;
+  return getUser();
 }
 
-export function requireRole(role, redirectTo = '/pages/auth/login.html') {
-  if (!requireAuth(redirectTo)) return false;
-  if (getUserRole() !== role) {
+export function requireRole(expectedRole, redirectTo = '/pages/auth/login.html') {
+  const user = requireAuth(redirectTo);
+  if (!user) return false;
+  
+  const userRole = (user.role || '').toUpperCase();
+  const target = (expectedRole || '').toUpperCase();
+
+  const isClubAuthorized = target === 'CLUB_MEMBER' && (userRole === 'CLUB_MEMBER' || userRole === 'ADMIN' || user.isClubMember);
+  if (userRole !== target && userRole !== 'ADMIN' && !isClubAuthorized) {
     window.location.href = redirectTo;
     return false;
   }
-  return true;
+  return user;
 }
 
 export function logout() {

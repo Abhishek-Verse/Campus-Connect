@@ -129,6 +129,9 @@
           if (initialEventId) {
             eventSelector.value = initialEventId;
             loadAttendance(initialEventId);
+          } else if (data.data.length > 0) {
+            eventSelector.value = data.data[0].id;
+            loadAttendance(data.data[0].id);
           } else {
             emptyState.style.display = 'block';
           }

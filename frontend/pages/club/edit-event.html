@@ -166,23 +166,25 @@
         document.getElementById('category').value = event.category || 'OTHER';
         document.getElementById('status').value = event.status || 'DRAFT';
         
-        if (event.date) {
-          const d = new Date(event.date);
+        const evtDate = event.date || event.eventDate;
+        if (evtDate) {
+          const d = new Date(evtDate);
           document.getElementById('date').value = d.toISOString().split('T')[0];
         }
         document.getElementById('startTime').value = event.startTime || '';
         document.getElementById('endTime').value = event.endTime || '';
-        document.getElementById('venue').value = event.venue || '';
+        document.getElementById('venue').value = typeof event.venue === 'object' ? (event.venue?.name || '') : (event.venue || '');
         document.getElementById('capacity').value = event.capacity || 50;
         
-        if (event.deadline) {
-          const d = new Date(event.deadline);
+        const evtDeadline = event.deadline || event.registrationDeadline;
+        if (evtDeadline) {
+          const d = new Date(evtDeadline);
           d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
           document.getElementById('deadline').value = d.toISOString().slice(0, 16);
         }
         
-        document.getElementById('guest').value = event.guest || '';
-        document.getElementById('rules').value = event.rules || '';
+        document.getElementById('guest').value = event.guest || event.guestName || '';
+        document.getElementById('rules').value = Array.isArray(event.rules) ? event.rules.join('\n') : (event.rules || '');
 
         if (event.posterUrl) {
           document.getElementById('currentPoster').innerHTML = `<img src="${event.posterUrl}" alt="Current Poster" style="max-height: 100px; border-radius: 4px;">`;
