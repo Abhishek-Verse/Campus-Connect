@@ -10,7 +10,8 @@ export const register = async (req, res, next) => {
 
 export const login = async (req, res, next) => {
   try {
-    const data = await authService.login(req.body.email, req.body.password);
+    const identifier = req.body.email || req.body.identifier || req.body.username || req.body.rollNo;
+    const data = await authService.login(identifier, req.body.password);
     sendSuccess(res, data);
   } catch (error) { next(error); }
 };

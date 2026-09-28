@@ -56,8 +56,14 @@ export function requireRole(expectedRole, redirectTo = '/pages/auth/login.html')
   const userRole = (user.role || '').toUpperCase();
   const target = (expectedRole || '').toUpperCase();
 
-  const isClubAuthorized = target === 'CLUB_MEMBER' && (userRole === 'CLUB_MEMBER' || userRole === 'ADMIN' || user.isClubMember);
-  if (userRole !== target && userRole !== 'ADMIN' && !isClubAuthorized) {
+  const isClubAuthorized = (userRole === 'CLUB_MEMBER' || userRole === 'ADMIN' || user.isClubMember);
+  if (target === 'CLUB_MEMBER' && !isClubAuthorized) {
+    alert('Access Denied: The Club Portal is restricted to official Club Accounts. Student accounts cannot access club management.');
+    window.location.href = '/pages/student/dashboard.html';
+    return false;
+  }
+
+  if (userRole !== target && userRole !== 'ADMIN') {
     window.location.href = redirectTo;
     return false;
   }

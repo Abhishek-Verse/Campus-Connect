@@ -63,6 +63,12 @@ describe('Auth Validators', () => {
     const parsed = loginSchema.parse(input);
     assert.equal(parsed.email, 'student@college.edu');
   });
+
+  it('should accept student roll number or club ID as login identifier', () => {
+    const input = { email: 'CLUB-CODING', password: 'secretpassword' };
+    const parsed = loginSchema.parse(input);
+    assert.equal(parsed.email, 'CLUB-CODING');
+  });
 });
 
 describe('Event Validators', () => {

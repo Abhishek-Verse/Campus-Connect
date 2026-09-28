@@ -11,27 +11,43 @@
   <div class="auth-card">
     <div class="auth-logo">
       <h1>CampusHub</h1>
-      <p>Sign in to your account</p>
+      <p id="portalSubtitle">Sign in to your account</p>
+    </div>
+
+    <!-- Dual Portal Navigation Tabs -->
+    <div class="portal-tabs">
+      <button type="button" class="portal-tab active" id="tabStudent">🎓 Student Portal</button>
+      <button type="button" class="portal-tab" id="tabClub">🏛️ Club Portal</button>
+    </div>
+
+    <div class="portal-desc" id="portalDesc">
+      <strong>Student Access:</strong> Discover events, view your attendance history, and present your unique Universal QR code.
     </div>
     
     <div id="auth-error"></div>
     
     <form id="login-form" class="auth-form">
       <div class="form-group">
-        <label for="email" class="form-label">Email</label>
-        <input type="email" id="email" name="email" class="form-input" required autofocus>
+        <label for="identifier" class="form-label" id="labelIdentifier">Student Email or Roll Number</label>
+        <input type="text" id="identifier" name="identifier" class="form-input" placeholder="e.g. rahul@test.com or 101" required autofocus>
       </div>
       
       <div class="form-group">
         <label for="password" class="form-label">Password</label>
-        <input type="password" id="password" name="password" class="form-input" required>
+        <input type="password" id="password" name="password" class="form-input" placeholder="••••••••" required>
       </div>
       
-      <button type="submit" class="btn btn-primary w-full mt-2">Login</button>
+      <button type="submit" class="btn btn-primary w-full mt-2" id="submitBtn">Login to Student Portal</button>
     </form>
     
-    <div class="auth-footer">
-      Don't have an account? <a href="/pages/auth/register.html">Register here</a>
+    <div class="credentials-hint" id="credentialsHint">
+      <strong>Demo Accounts:</strong><br>
+      • Student: <code>rahul@test.com</code> or Roll <code>101</code> (pw: <code>password123</code>)<br>
+      • Student: <code>priya@test.com</code> or Roll <code>102</code> (pw: <code>password123</code>)
+    </div>
+
+    <div class="auth-footer" id="authFooter">
+      Don't have a student account? <a href="/pages/auth/register.html">Register here</a>
     </div>
   </div>
 
@@ -40,29 +56,79 @@
     import { setToken, setUser, isAuthenticated, getUserRole } from '/js/auth/auth.js';
     import { qs, preventDoubleSubmit } from '/js/utils/helpers.js';
 
+    let currentPortal = 'STUDENT'; // 'STUDENT' or 'CLUB'
+
     // Redirect if already logged in
     if (isAuthenticated()) {
       const role = (getUserRole() || '').toUpperCase();
       window.location.href = (role === 'CLUB_MEMBER' || role === 'ADMIN') ? '/pages/club/dashboard.html' : '/pages/student/dashboard.html';
     }
 
+    const tabStudent = qs('#tabStudent');
+    const tabClub = qs('#tabClub');
+    const portalSubtitle = qs('#portalSubtitle');
+    const portalDesc = qs('#portalDesc');
+    const labelIdentifier = qs('#labelIdentifier');
+    const inputIdentifier = qs('#identifier');
+    const submitBtn = qs('#submitBtn');
+    const credentialsHint = qs('#credentialsHint');
+    const authFooter = qs('#authFooter');
     const form = qs('#login-form');
     const errorDiv = qs('#auth-error');
-    const btn = form.querySelector('button[type="submit"]');
+
+    function switchPortal(portal) {
+      currentPortal = portal;
+      errorDiv.textContent = '';
+      errorDiv.style.display = 'none';
+
+      if (portal === 'STUDENT') {
+        tabStudent.classList.add('active');
+        tabClub.classList.remove('active');
+        portalSubtitle.textContent = 'Student Portal Login';
+        portalDesc.innerHTML = '<strong>Student Access:</strong> Discover events, view your attendance history, and present your unique Universal QR code.';
+        labelIdentifier.textContent = 'Student Email or Roll Number';
+        inputIdentifier.placeholder = 'e.g. rahul@test.com or 101';
+        submitBtn.textContent = 'Login to Student Portal';
+        credentialsHint.innerHTML = '<strong>Demo Student Accounts:</strong><br>• <code>rahul@test.com</code> / Roll <code>101</code> (pw: <code>password123</code>)<br>• <code>priya@test.com</code> / Roll <code>102</code> (pw: <code>password123</code>)';
+        authFooter.style.display = 'block';
+      } else {
+        tabClub.classList.add('active');
+        tabStudent.classList.remove('active');
+        portalSubtitle.textContent = 'Club Organizer Portal Login';
+        portalDesc.innerHTML = '<strong>Club Access:</strong> Every club has dedicated credentials to manage their events, attendance scanner, and notices.';
+        labelIdentifier.textContent = 'Club ID or Official Email';
+        inputIdentifier.placeholder = 'e.g. codingclub@campushub.edu or CLUB-CODING';
+        submitBtn.textContent = 'Login to Club Portal';
+        credentialsHint.innerHTML = '<strong>Official Club Accounts:</strong><br>• Coding Club: <code>codingclub@campushub.edu</code> (pw: <code>password123</code>)<br>• Cultural Club: <code>culturalclub@campushub.edu</code> (pw: <code>password123</code>)';
+        authFooter.style.display = 'none';
+      }
+      inputIdentifier.focus();
+    }
+
+    tabStudent.addEventListener('click', () => switchPortal('STUDENT'));
+    tabClub.addEventListener('click', () => switchPortal('CLUB'));
+
+    // Check URL parameters for tab hint e.g. ?portal=club
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('portal') === 'club') {
+      switchPortal('CLUB');
+    }
 
     preventDoubleSubmit(form);
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       errorDiv.textContent = '';
+      errorDiv.style.display = 'none';
       
-      const email = qs('#email').value;
+      const identifier = inputIdentifier.value.trim();
       const password = qs('#password').value;
       
-      btn.textContent = 'Logging in...';
+      submitBtn.textContent = 'Authenticating...';
+      submitBtn.disabled = true;
       
       try {
-        const response = await api.auth.login({ email, password });
+        const response = await api.auth.login({ email: identifier, password });
         const token = response.data?.token || response.token;
         const user = response.data?.user || response.user;
         
@@ -70,19 +136,31 @@
           throw new Error('Invalid response from server');
         }
 
+        const role = (user.role || '').toUpperCase();
+        const isClub = (role === 'CLUB_MEMBER' || role === 'ADMIN' || user.isClubMember);
+
+        // Enforce strict separation: Students CANNOT use student credentials to enter Club Portal
+        if (currentPortal === 'CLUB' && !isClub) {
+          submitBtn.textContent = 'Login to Club Portal';
+          submitBtn.disabled = false;
+          errorDiv.textContent = '❌ Access Denied: Student accounts cannot log into the Club Portal. Every club has its own official credentials. Please switch to the Student Portal tab.';
+          errorDiv.style.display = 'block';
+          return;
+        }
+
         setToken(token);
         setUser(user);
         
-        const role = (user.role || '').toUpperCase();
-        if (role === 'CLUB_MEMBER' || role === 'ADMIN') {
+        if (isClub) {
           window.location.href = '/pages/club/dashboard.html';
         } else {
           window.location.href = '/pages/student/dashboard.html';
         }
       } catch (error) {
         errorDiv.textContent = error.message || 'Login failed. Please check your credentials.';
-        btn.textContent = 'Login';
-        btn.disabled = false;
+        errorDiv.style.display = 'block';
+        submitBtn.textContent = currentPortal === 'CLUB' ? 'Login to Club Portal' : 'Login to Student Portal';
+        submitBtn.disabled = false;
       }
     });
   </script>

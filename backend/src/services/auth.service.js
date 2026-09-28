@@ -29,9 +29,15 @@ export const register = async (data) => {
   };
 };
 
-export const login = async (email, password) => {
-  const user = await prisma.user.findUnique({
-    where: { email },
+export const login = async (identifier, password) => {
+  const cleanId = (identifier || '').trim();
+  const user = await prisma.user.findFirst({
+    where: {
+      OR: [
+        { email: { equals: cleanId, mode: 'insensitive' } },
+        { rollNo: { equals: cleanId, mode: 'insensitive' } }
+      ]
+    },
     include: {
       clubMemberships: {
         include: { club: true }
