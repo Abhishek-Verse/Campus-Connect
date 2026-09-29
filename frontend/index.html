@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CampusHub — College Event Management Platform</title>
   <link rel="manifest" href="/manifest.json">
-  <meta name="theme-color" content="#ffffff">
+  <meta name="theme-color" content="#faf7f0">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="CampusHub">
@@ -14,218 +14,141 @@
   <script type="module" src="/js/utils/pwa.js"></script>
   <style>
     .landing-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 16px 32px;
-      border-bottom: 1px solid var(--color-border);
-      background-color: var(--color-surface);
       position: sticky;
       top: 0;
       z-index: 100;
-    }
-    .landing-nav-links {
       display: flex;
       align-items: center;
-      gap: 20px;
-    }
-    .landing-nav-link {
-      font-size: 14px;
-      font-weight: 500;
-      color: var(--color-text-secondary);
-      transition: color 0.15s;
-    }
-    .landing-nav-link:hover {
-      color: var(--color-primary);
-    }
-    .hero {
-      text-align: center;
-      padding: 72px 24px 64px 24px;
-      background-color: var(--color-surface);
+      gap: 24px;
+      padding: 12px clamp(18px, 5vw, 72px);
+      background: var(--color-surface);
       border-bottom: 1px solid var(--color-border);
     }
-    .hero-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 4px 12px;
-      background: var(--color-primary-light);
-      border: 1px solid var(--color-primary-border);
-      border-radius: var(--radius-pill);
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--color-primary);
-      margin-bottom: 24px;
-    }
-    .hero h1 {
-      font-size: 2.75rem;
-      font-weight: 800;
-      line-height: 1.15;
-      margin-bottom: 16px;
+    .landing-header > a { flex: 0 0 auto; }
+    .landing-brand {
       color: var(--color-text);
-      max-width: 820px;
-      margin-left: auto;
-      margin-right: auto;
-      letter-spacing: -0.03em;
+      font-size: 1.25rem;
+      font-weight: 800;
+      letter-spacing: -.04em;
+    }
+    .landing-brand:hover { color: var(--color-primary); }
+    .landing-nav-links { display: flex; align-items: center; gap: 24px; margin-left: auto; }
+    .landing-nav-link { color: var(--color-text-secondary); font-size: 14px; font-weight: 600; }
+    .landing-nav-link:hover { color: var(--color-primary); }
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(360px, .88fr);
+      align-items: center;
+      gap: clamp(32px, 5vw, 72px);
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: clamp(48px, 7vw, 96px) clamp(20px, 5vw, 72px);
+    }
+    .hero-copy { max-width: 660px; }
+    .hero-kicker {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+      color: var(--color-primary);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+    .hero-kicker::before { content: ""; width: 9px; height: 9px; background: var(--color-primary); }
+    .hero h1 {
+      max-width: 13ch;
+      margin: 0 0 18px;
+      color: var(--color-text);
+      font-size: clamp(2.6rem, 5.1vw, 3.8rem);
+      font-weight: 600;
+      line-height: 1.04;
+      letter-spacing: -.045em;
     }
     .hero p {
-      font-size: 1.125rem;
+      max-width: 56ch;
+      margin: 0 0 28px;
       color: var(--color-text-secondary);
-      max-width: 620px;
-      margin: 0 auto 32px auto;
-      line-height: 1.6;
+      font-size: clamp(1rem, 1.5vw, 1.125rem);
+      line-height: 1.65;
     }
-    .hero-actions {
+    .hero-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; }
+    .hero-flow {
       display: flex;
-      justify-content: center;
-      gap: 12px;
       flex-wrap: wrap;
-    }
-    .hero-stats {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      max-width: 760px;
-      margin: 48px auto 0 auto;
-      padding-top: 32px;
-      border-top: 1px solid var(--color-border);
-      gap: 24px;
-    }
-    .hero-stat-item h3 {
-      font-size: 1.75rem;
-      font-weight: 800;
-      color: var(--color-text);
-      margin: 0 0 4px 0;
-    }
-    .hero-stat-item p {
-      font-size: 12px;
+      gap: 0;
+      margin-top: 36px;
       color: var(--color-text-secondary);
+      font-size: 13px;
       font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      margin: 0;
     }
-    .features-section {
-      padding: 64px 24px;
-      max-width: 1140px;
-      margin: 0 auto;
-    }
-    .section-headline {
-      text-align: center;
-      margin-bottom: 48px;
-    }
-    .section-headline h2 {
-      font-size: 1.75rem;
-      font-weight: 800;
-      margin-bottom: 8px;
-    }
-    .section-headline p {
-      color: var(--color-text-secondary);
-      font-size: 15px;
-    }
-    .features-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 24px;
-    }
-    .feature-card {
-      background-color: var(--color-surface);
+    .hero-flow span { display: inline-flex; align-items: center; gap: 9px; padding: 0 18px; border-left: 1px solid var(--color-border-strong); }
+    .hero-flow span:first-child { padding-left: 0; border-left: 0; }
+    .hero-flow b { color: var(--color-primary); font-size: 11px; letter-spacing: .08em; }
+    .hero-visual {
+      width: 100%;
+      max-width: 610px;
+      justify-self: end;
+      overflow: hidden;
       border: 1px solid var(--color-border);
-      border-radius: var(--radius-card);
-      padding: 24px;
-      display: flex;
-      flex-direction: column;
-      box-shadow: var(--shadow-xs);
-      transition: border-color 0.15s, box-shadow 0.15s;
-    }
-    .feature-card:hover {
-      border-color: var(--color-primary-border);
+      border-radius: 12px;
+      background: var(--color-inverse-surface);
       box-shadow: var(--shadow-sm);
     }
-    .feature-icon-box {
-      width: 42px;
-      height: 42px;
-      border-radius: var(--radius-sm);
-      background: var(--color-primary-light);
-      color: var(--color-primary);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 16px;
-      border: 1px solid var(--color-primary-border);
-    }
-    .feature-card h3 {
-      margin-bottom: 8px;
-      font-size: 1.1rem;
-      font-weight: 700;
-      color: var(--color-text);
-    }
-    .feature-card p {
-      color: var(--color-text-secondary);
-      font-size: 0.875rem;
-      line-height: 1.55;
-    }
-    .portals-banner {
-      background: var(--color-surface-subtle);
-      border-top: 1px solid var(--color-border);
-      border-bottom: 1px solid var(--color-border);
-      padding: 56px 24px;
-    }
-    .portals-inner {
-      max-width: 1040px;
-      margin: 0 auto;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 24px;
-    }
-    .portal-box {
-      background: #ffffff;
+    .hero-visual svg { width: 100%; height: auto; }
+    .features-section { max-width: 1280px; margin: 0 auto; padding: 56px clamp(20px, 5vw, 72px) 72px; }
+    .section-headline { margin-bottom: 28px; }
+    .section-headline h2 { margin: 0 0 8px; font-size: clamp(1.5rem, 2.4vw, 2rem); }
+    .section-headline p { color: var(--color-text-secondary); font-size: 15px; }
+    .features-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+    .feature-card {
+      min-width: 0;
+      padding: 20px;
       border: 1px solid var(--color-border);
       border-radius: var(--radius-card);
-      padding: 32px 28px;
+      background: var(--color-surface);
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
-      gap: 16px;
+      gap: 10px;
     }
-    .portal-box-tag {
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      color: var(--color-primary);
+    .feature-icon-box { width: 40px; height: 40px; border-radius: 8px; background: var(--color-primary-light); color: var(--color-primary); display: grid; place-items: center; }
+    .feature-card h3 { margin: 4px 0 0; font-size: 1rem; font-weight: 600; color: var(--color-text); }
+    .feature-card p { color: var(--color-text-secondary); font-size: .875rem; line-height: 1.55; }
+    .portals-banner { padding: 56px clamp(20px, 5vw, 72px); background: var(--color-surface-subtle); border-top: 1px solid var(--color-border); }
+    .portals-inner { max-width: 1136px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .portal-box { min-width: 0; display: flex; flex-direction: column; justify-content: space-between; gap: 20px; padding: 26px; border: 1px solid var(--color-border); border-radius: var(--radius-card); background: var(--color-surface); }
+    .portal-box-tag { margin-bottom: 10px; color: var(--color-primary); font-size: 11px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
+    .portal-box h3 { margin-bottom: 8px; font-size: 1.25rem; }
+    .portal-box p { max-width: 52ch; color: var(--color-text-secondary); font-size: .875rem; line-height: 1.55; }
+    .footer { padding: 26px 20px; color: var(--color-text-muted); font-size: 13px; text-align: center; }
+    @media (max-width: 1000px) {
+      .hero { grid-template-columns: minmax(0, 1fr) minmax(300px, .82fr); }
+      .features-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     }
-    .portal-box h3 {
-      font-size: 1.25rem;
-      margin-bottom: 6px;
-    }
-    .portal-box p {
-      color: var(--color-text-secondary);
-      font-size: 0.875rem;
-      line-height: 1.5;
-    }
-    .footer {
-      text-align: center;
-      padding: 32px 24px;
-      color: var(--color-text-muted);
-      font-size: 13px;
-      background-color: var(--color-surface);
-    }
-    @media (max-width: 768px) {
-      .landing-header { padding: 12px 16px; }
+    @media (max-width: 760px) {
+      .landing-header { padding: 10px 16px; }
       .landing-nav-links { display: none; }
-      .hero { padding: 48px 16px 40px 16px; }
-      .hero h1 { font-size: 2rem; }
-      .hero p { font-size: 1rem; }
-      .hero-stats { grid-template-columns: 1fr; gap: 16px; margin-top: 32px; }
+      .hero { grid-template-columns: 1fr; gap: 34px; padding: 44px 20px 48px; }
+      .hero h1 { max-width: 12ch; font-size: clamp(2.45rem, 12vw, 3.8rem); }
+      .hero-visual { max-width: none; justify-self: stretch; }
+      .hero-flow { margin-top: 26px; }
+      .hero-flow span { padding: 0 10px; }
+      .features-section { padding: 42px 20px 52px; }
       .portals-inner { grid-template-columns: 1fr; }
+      .portals-banner { padding: 42px 20px; }
+    }
+    @media (max-width: 460px) {
+      .features-grid { grid-template-columns: 1fr; }
+      .hero-flow { justify-content: space-between; font-size: 12px; }
+      .hero-flow span { gap: 6px; padding: 0 7px; }
+      .hero-flow b { font-size: 10px; }
     }
   </style>
 </head>
 <body>
   <header class="landing-header">
-    <a href="/" style="display: flex; align-items: center; gap: 8px; text-decoration: none;">
-      <img src="/assets/logo.png" alt="CampusHub" style="height: 40px; max-width: 170px; object-fit: contain;">
-    </a>
+    <a href="/" class="landing-brand">CampusHub</a>
     <div class="landing-nav-links">
       <a href="/pages/student/events.html" class="landing-nav-link">Explore Events</a>
       <a href="/pages/auth/login.html" class="landing-nav-link">Sign In</a>
@@ -234,32 +157,61 @@
   </header>
 
   <main>
-    <section class="hero">
-      <div class="hero-badge">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-        College Event Management Platform
-      </div>
-      <h1>Centralized Campus Events & Contactless QR Attendance</h1>
-      <p>A unified, institutional platform for college clubs to publish events, track live registration capacity, and execute instant verified check-ins with Universal Student QR passes.</p>
-      
-      <div class="hero-actions">
-        <a href="/pages/student/events.html" class="btn btn-primary btn-lg">Browse Campus Events</a>
-        <a href="/pages/auth/login.html" class="btn btn-secondary btn-lg">Portal Sign In</a>
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <div class="hero-kicker">CampusHub · Campus events, in one place</div>
+        <h1 id="hero-title">Find your next campus event.</h1>
+        <p>Explore what’s happening, reserve your place, and check in with one student QR pass. Clubs manage the event and attendance in the same place.</p>
+        <div class="hero-actions">
+          <a href="/pages/student/events.html" class="btn btn-primary btn-lg">Explore events</a>
+          <a href="/pages/auth/login.html" class="btn btn-secondary btn-lg">Sign in</a>
+        </div>
+        <div class="hero-flow" aria-label="How CampusHub works">
+          <span><b>01</b> Discover</span>
+          <span><b>02</b> Register</span>
+          <span><b>03</b> Check in</span>
+        </div>
       </div>
 
-      <div class="hero-stats">
-        <div class="hero-stat-item">
-          <h3>100%</h3>
-          <p>Contactless Check-In</p>
-        </div>
-        <div class="hero-stat-item">
-          <h3>25 FPS</h3>
-          <p>Real-Time Camera Scanner</p>
-        </div>
-        <div class="hero-stat-item">
-          <h3>Zero</h3>
-          <p>Duplicate Scan Duplication</p>
-        </div>
+      <div class="hero-visual">
+        <svg viewBox="0 0 640 500" role="img" aria-labelledby="campus-art-title campus-art-desc" xmlns="http://www.w3.org/2000/svg">
+          <title id="campus-art-title">Campus event, registration, and QR check-in</title>
+          <desc id="campus-art-desc">A solid illustration of a campus building, an event calendar, and a student QR pass.</desc>
+          <rect width="640" height="500" fill="#292621"/>
+          <path d="M0 373h640v127H0z" fill="#6b6256"/>
+          <path d="M74 336V202l108-74 108 74v134z" fill="#fffdf8"/>
+          <path d="M54 207 182 118l128 89h-36l-92-64-92 64z" fill="#f36f3d"/>
+          <path d="M102 218h160v118H102z" fill="#f4efe4"/>
+          <path d="M123 239h23v34h-23zm43 0h23v34h-23zm43 0h23v34h-23z" fill="#f36f3d"/>
+          <path d="M169 286h27v50h-27z" fill="#292621"/>
+          <path d="M77 338h213" stroke="#f36f3d" stroke-width="8"/>
+          <rect x="330" y="54" width="255" height="156" rx="10" fill="#fffdf8"/>
+          <path d="M330 64a10 10 0 0 1 10-10h235a10 10 0 0 1 10 10v28H330z" fill="#f36f3d"/>
+          <circle cx="353" cy="72" r="4" fill="#fffdf8"/><circle cx="369" cy="72" r="4" fill="#fffdf8"/>
+          <rect x="351" y="112" width="55" height="67" rx="5" fill="#fff0e5"/>
+          <text x="378" y="134" text-anchor="middle" fill="#6b6256" font-family="Manrope, sans-serif" font-size="11" font-weight="700">EVENT</text>
+          <text x="378" y="161" text-anchor="middle" fill="#c84e2d" font-family="Manrope, sans-serif" font-size="25" font-weight="700">01</text>
+          <rect x="421" y="112" width="130" height="11" rx="3" fill="#292621"/>
+          <rect x="421" y="135" width="105" height="8" rx="3" fill="#8e8578"/>
+          <rect x="421" y="153" width="119" height="8" rx="3" fill="#8e8578"/>
+          <rect x="421" y="173" width="68" height="7" rx="3" fill="#689c7d"/>
+          <rect x="365" y="280" width="201" height="166" rx="10" fill="#fffdf8"/>
+          <path d="M365 290a10 10 0 0 1 10-10h181a10 10 0 0 1 10 10v33H365z" fill="#f1c6aa"/>
+          <text x="465" y="302" text-anchor="middle" fill="#292621" font-family="Manrope, sans-serif" font-size="12" font-weight="700">STUDENT PASS</text>
+          <rect x="389" y="340" width="83" height="83" fill="#fffdf8" stroke="#e4d9c7" stroke-width="2"/>
+          <path d="M398 349h26v26h-26zm39 0h26v26h-26zm-39 39h26v26h-26zm33-39h8v8h-8zm-8 17h8v8h-8zm17 0h9v8h-9zm-9 13h8v8h-8zm17 13h8v22h-8zm-17 17h8v5h-8zm-8-30h8v13h-8z" fill="#292621"/>
+          <path d="m492 371 12 12 23-27" fill="none" stroke="#689c7d" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M514 368h25m-25 18h25m-25 18h25" stroke="#6b6256" stroke-width="5" stroke-linecap="round"/>
+          <circle cx="320" cy="396" r="22" fill="#f1c6aa"/>
+          <path d="M287 482v-43a33 33 0 0 1 66 0v43z" fill="#f36f3d"/>
+          <path d="M306 389c0-10 7-18 16-18s16 8 16 18" fill="#292621"/>
+          <path d="M297 440h46" stroke="#f1c6aa" stroke-width="8" stroke-linecap="round"/>
+          <path d="M310 466v16m20-16v16" stroke="#fff0e5" stroke-width="8" stroke-linecap="round"/>
+          <circle cx="552" cy="242" r="18" fill="#f1c6aa"/>
+          <path d="M524 276a28 28 0 0 1 56 0v19h-56z" fill="#fff0e5"/>
+          <path d="M38 430h165" stroke="#f36f3d" stroke-width="6" stroke-linecap="round"/>
+          <path d="M54 452h127" stroke="#6b6256" stroke-width="5" stroke-linecap="round"/>
+        </svg>
       </div>
     </section>
 

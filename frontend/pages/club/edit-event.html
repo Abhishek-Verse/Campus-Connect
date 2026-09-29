@@ -7,13 +7,13 @@
   <link rel="stylesheet" href="/css/global.css">
   <link rel="stylesheet" href="/css/club.css">
   <style>
-    .form-section { margin-bottom: 32px; padding: 24px; background: #fff; border: 1px solid #E6E6E6; border-radius: 8px; }
+    .form-section { margin-bottom: 32px; padding: 24px; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 8px; }
     .form-row { display: flex; gap: 16px; margin-bottom: 16px; flex-wrap: wrap; }
     .form-col { flex: 1; min-width: 250px; }
     .form-group { margin-bottom: 16px; display: flex; flex-direction: column; }
-    .form-group label { margin-bottom: 6px; font-weight: 500; color: #171717; }
-    .form-control { padding: 10px; border: 1px solid #E6E6E6; border-radius: 6px; font-family: inherit; font-size: 14px; }
-    .form-control:focus { outline: none; border-color: #2563EB; box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
+    .form-group label { margin-bottom: 6px; font-weight: 500; color: var(--color-text); }
+    .form-control { padding: 10px; border: 1px solid var(--color-border); border-radius: 6px; font-family: inherit; font-size: 14px; }
+    .form-control:focus { outline: none; border-color: var(--color-primary); box-shadow: 0 0 0 3px var(--color-focus-ring); }
     .actions { display: flex; gap: 16px; justify-content: flex-end; margin-top: 24px; }
   </style>
 </head>
@@ -25,9 +25,9 @@
         <h1>Edit Event</h1>
       </header>
       <div class="page-content">
-        
+
         <form id="editEventForm" style="display: none;">
-          
+
           <div class="form-section">
             <h2>Basic Information</h2>
             <div class="form-group">
@@ -165,7 +165,7 @@
         document.getElementById('description').value = event.description || '';
         document.getElementById('category').value = event.category || 'OTHER';
         document.getElementById('status').value = event.status || 'DRAFT';
-        
+
         const evtDate = event.date || event.eventDate;
         if (evtDate) {
           const d = new Date(evtDate);
@@ -175,14 +175,14 @@
         document.getElementById('endTime').value = event.endTime || '';
         document.getElementById('venue').value = typeof event.venue === 'object' ? (event.venue?.name || '') : (event.venue || '');
         document.getElementById('capacity').value = event.capacity || 50;
-        
+
         const evtDeadline = event.deadline || event.registrationDeadline;
         if (evtDeadline) {
           const d = new Date(evtDeadline);
           d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
           document.getElementById('deadline').value = d.toISOString().slice(0, 16);
         }
-        
+
         document.getElementById('guest').value = event.guest || event.guestName || '';
         document.getElementById('rules').value = Array.isArray(event.rules) ? event.rules.join('\n') : (event.rules || '');
 

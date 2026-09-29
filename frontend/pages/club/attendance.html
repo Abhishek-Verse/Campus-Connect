@@ -8,12 +8,12 @@
   <link rel="stylesheet" href="/css/club.css">
   <style>
     .summary-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; margin-bottom: 24px; }
-    .summary-card { background: #fff; padding: 16px; border-radius: 8px; border: 1px solid #E6E6E6; text-align: center; }
-    .summary-card h4 { margin: 0 0 8px 0; color: #666; font-size: 14px; font-weight: 500; }
-    .summary-card .val { font-size: 24px; font-weight: 600; color: #171717; }
+    .summary-card { background: var(--color-surface); padding: 16px; border-radius: 8px; border: 1px solid var(--color-border); text-align: center; }
+    .summary-card h4 { margin: 0 0 8px 0; color: var(--color-text-secondary); font-size: 14px; font-weight: 500; }
+    .summary-card .val { font-size: 24px; font-weight: 600; color: var(--color-text); }
     .header-actions { display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
-    .status-present { color: #166534; font-weight: 600; }
-    .status-absent { color: #991B1B; font-weight: 600; }
+    .status-present { color: var(--color-success); font-weight: 600; }
+    .status-absent { color: var(--color-error-hover); font-weight: 600; }
   </style>
 </head>
 <body>
@@ -24,7 +24,7 @@
         <h1>Attendance Dashboard</h1>
       </header>
       <div class="page-content">
-        
+
         <div style="margin-bottom: 24px; display: flex; gap: 16px; align-items: center;">
           <select id="eventSelector" class="form-control" style="max-width: 300px; padding: 8px 12px;">
             <option value="">Select an Event...</option>
@@ -106,7 +106,7 @@
     const contentArea = document.getElementById('contentArea');
     const emptyState = document.getElementById('emptyState');
     const attendanceTable = document.getElementById('attendanceTable');
-    
+
     let allData = [];
 
     async function loadEvents() {
@@ -116,7 +116,7 @@
           headers: { 'Authorization': `Bearer ${token}` }
         });
         const data = await res.json();
-        
+
         if (data.data && data.data.length > 0) {
           data.data.forEach(ev => {
             const opt = document.createElement('option');
@@ -179,7 +179,7 @@
 
     function renderTable() {
       const q = searchInput.value.toLowerCase().trim();
-      const filtered = allData.filter(r => 
+      const filtered = allData.filter(r =>
         (r.studentName && r.studentName.toLowerCase().includes(q)) ||
         (r.rollNo && r.rollNo.toLowerCase().includes(q)) ||
         (r.erpId && r.erpId.toLowerCase().includes(q)) ||

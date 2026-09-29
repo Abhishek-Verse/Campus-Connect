@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Register Student — CampusHub</title>
   <link rel="manifest" href="/manifest.json">
-  <meta name="theme-color" content="#ffffff">
+  <meta name="theme-color" content="#faf7f0">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <link rel="apple-touch-icon" href="/assets/icons/apple-touch-icon.png">
@@ -38,20 +38,18 @@
 <body class="auth-page">
   <div class="auth-card-wide">
     <div class="auth-logo">
-      <a href="/" style="display: inline-block;">
-        <img src="/assets/logo.png" alt="CampusHub Logo" style="height: 46px; max-width: 100%; object-fit: contain; margin-bottom: 8px;">
-      </a>
+      <a href="/" class="auth-brand">CampusHub</a>
       <p style="color: var(--color-text-secondary); font-size: 13px; font-weight: 500;">Create your student account & Universal QR pass</p>
     </div>
-    
+
     <div id="auth-error"></div>
-    
+
     <form id="register-form" class="auth-form" novalidate>
       <div class="form-group">
         <label for="name" class="form-label">Full Name <span class="text-error">*</span></label>
         <input type="text" id="name" name="name" class="form-input" required placeholder="e.g. Rahul Sharma">
       </div>
-      
+
       <div class="form-group">
         <label for="email" class="form-label">GSuite / College Email Address <span class="text-error">*</span></label>
         <input type="email" id="email" name="email" class="form-input" required placeholder="student@campushub.edu">
@@ -97,7 +95,7 @@
           </select>
         </div>
       </div>
-      
+
       <div class="form-row">
         <div class="form-group">
           <label for="password" class="form-label">Password <span class="text-error">*</span></label>
@@ -108,10 +106,10 @@
           <input type="password" id="confirmPassword" name="confirmPassword" class="form-input" required minlength="6" placeholder="Confirm password">
         </div>
       </div>
-      
+
       <button type="submit" class="btn btn-primary w-full mt-2" style="padding: 10px;">Create Account & Generate QR</button>
     </form>
-    
+
     <div style="margin-top: 14px; text-align: center;">
       <button type="button" id="fillSampleDataBtn" class="demo-chip-btn" style="margin: 0 auto;">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
@@ -152,7 +150,7 @@
       e.preventDefault();
       errorDiv.textContent = '';
       errorDiv.style.display = 'none';
-      
+
       const name = qs('#name').value.trim();
       const rollNo = qs('#rollNo').value.trim();
       const erpId = qs('#erpId').value.trim();
@@ -161,7 +159,7 @@
       const email = qs('#email').value.trim();
       const password = qs('#password').value;
       const confirmPassword = qs('#confirmPassword').value;
-      
+
       if (!name || !email || !rollNo || !password) {
         errorDiv.textContent = 'Please fill in all required fields.';
         errorDiv.style.display = 'flex';
@@ -179,10 +177,10 @@
         errorDiv.style.display = 'flex';
         return;
       }
-      
+
       btn.textContent = 'Generating QR Pass...';
       btn.disabled = true;
-      
+
       try {
         const payload = {
           name,

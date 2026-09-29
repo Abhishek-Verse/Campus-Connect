@@ -30,7 +30,7 @@
             <span>My QR Pass</span>
           </a>
         </div>
-        
+
         <div class="tabs" style="margin-bottom: 20px;">
           <div class="tab active" data-filter="upcoming">Upcoming</div>
           <div class="tab" data-filter="past">Past</div>
@@ -103,7 +103,7 @@
     function renderTable() {
       const now = new Date();
       let filtered = allEvents;
-      
+
       if (currentFilter === 'upcoming') {
         filtered = allEvents.filter(e => getEventEndDateTime(e) >= now);
       } else if (currentFilter === 'past') {

@@ -15,7 +15,6 @@ const STATIC_SHELL = [
   '/js/utils/helpers.js',
   '/js/auth/auth.js',
   '/js/api/client.js',
-  '/assets/logo.png',
   '/assets/icons/icon-192.png',
   '/assets/icons/icon-512.png',
   '/assets/icons/apple-touch-icon.png'

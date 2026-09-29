@@ -26,11 +26,11 @@
       grid-template-columns: 2fr 1fr;
       gap: 24px;
     }
-    @media (max-width: 900px) {
+    @media (max-width: 1024px) {
       .dashboard-grid { grid-template-columns: 1fr; }
     }
     .section-card {
-      background: #ffffff;
+      background: var(--color-surface);
       border: 1px solid var(--color-border);
       border-radius: var(--radius-card);
       padding: 22px;
@@ -64,7 +64,7 @@
       justify-content: space-between;
       align-items: center;
       gap: 12px;
-      background: #ffffff;
+      background: var(--color-surface);
       transition: border-color 0.15s, background-color 0.15s;
     }
     .event-item:hover {
@@ -75,7 +75,7 @@
       border: 1px solid var(--color-border);
       border-radius: var(--radius-sm);
       padding: 14px 16px;
-      background: #ffffff;
+      background: var(--color-surface);
     }
     .notice-item-header {
       display: flex;
@@ -86,7 +86,7 @@
     }
     .btn-qr-hero {
       background: var(--color-text);
-      color: #ffffff;
+      color: var(--color-text-inverse);
       padding: 10px 18px;
       border-radius: var(--radius-sm);
       text-decoration: none;
@@ -98,8 +98,8 @@
       transition: background-color 0.15s;
     }
     .btn-qr-hero:hover {
-      background: #1e293b;
-      color: #ffffff;
+      background: var(--color-inverse-surface);
+      color: var(--color-text-inverse);
       text-decoration: none;
     }
   </style>
@@ -136,7 +136,7 @@
           <div class="stat-card">
             <div class="stat-card-header">
               <span class="label">Attended Events</span>
-              <div class="stat-card-icon" style="background:#f0fdf4;color:#15803d;">
+              <div class="stat-card-icon" style="background:var(--color-success-light);color:var(--color-success);">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
               </div>
             </div>
@@ -250,7 +250,7 @@
           noticesContainer.innerHTML = notices.map(notice => {
             const noticeDate = notice.publishedAt || notice.createdAt;
             const dateDisplay = noticeDate ? new Date(noticeDate).toLocaleDateString() : 'Recent';
-            const priorityBadge = notice.priority === 'URGENT' 
+            const priorityBadge = notice.priority === 'URGENT'
               ? `<span class="badge badge-error">URGENT</span>`
               : (notice.priority === 'IMPORTANT' ? `<span class="badge badge-warning">IMPORTANT</span>` : '');
 

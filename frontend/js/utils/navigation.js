@@ -68,9 +68,7 @@ export function renderNavigation() {
   const sidebarContent = `
     <div class="sidebar-header">
       <div class="sidebar-brand-row">
-        <a href="/" class="sidebar-brand" style="display: flex; align-items: center;">
-          <img src="/assets/logo.png" alt="CampusHub" style="height: 44px; max-width: 180px; object-fit: contain;">
-        </a>
+        <a href="/" class="sidebar-brand">CampusHub</a>
         <button id="sidebar-close-btn" class="btn-ghost btn-sm visible-mobile" aria-label="Close Navigation" style="padding: 4px; display: none;">
           ${icons.close}
         </button>

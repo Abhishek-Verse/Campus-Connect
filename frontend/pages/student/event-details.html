@@ -17,7 +17,7 @@
       gap: 6px;
       font-size: 13px;
       font-weight: 500;
-      color: #64748b;
+      color: var(--color-text-secondary);
       text-decoration: none;
       margin-bottom: 16px;
     }
@@ -26,7 +26,7 @@
       text-decoration: none;
     }
     .event-hero-card {
-      background: #ffffff;
+      background: var(--color-surface);
       border: 1px solid var(--color-border);
       border-radius: 12px;
       overflow: hidden;
@@ -36,7 +36,7 @@
       width: 100%;
       height: 280px;
       object-fit: cover;
-      background: #f1f5f9;
+      background: var(--color-surface-hover);
       display: block;
     }
     .event-hero-body {
@@ -57,24 +57,24 @@
       border-radius: 4px;
     }
     .badge-category {
-      background: #eff6ff;
-      color: #1e40af;
-      border: 1px solid #bfdbfe;
+      background: var(--color-primary-light);
+      color: var(--color-primary-active);
+      border: 1px solid var(--color-primary-border);
     }
     .badge-status-published {
-      background: #f0fdf4;
-      color: #15803d;
-      border: 1px solid #bbf7d0;
+      background: var(--color-success-light);
+      color: var(--color-success);
+      border: 1px solid var(--color-success-border);
     }
     .badge-status-completed {
-      background: #f8fafc;
-      color: #475569;
-      border: 1px solid #e2e8f0;
+      background: var(--color-surface-subtle);
+      color: var(--color-text-secondary);
+      border: 1px solid var(--color-border);
     }
     .event-headline {
       font-size: 26px;
       font-weight: 800;
-      color: #0f172a;
+      color: var(--color-text);
       margin: 0 0 16px 0;
       line-height: 1.3;
     }
@@ -85,8 +85,8 @@
       margin-bottom: 24px;
     }
     .meta-card {
-      background: #f8fafc;
-      border: 1px solid #e2e8f0;
+      background: var(--color-surface-subtle);
+      border: 1px solid var(--color-border);
       border-radius: 8px;
       padding: 12px 14px;
       display: flex;
@@ -98,7 +98,7 @@
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.05em;
-      color: #64748b;
+      color: var(--color-text-secondary);
       display: flex;
       align-items: center;
       gap: 5px;
@@ -106,10 +106,10 @@
     .meta-card-value {
       font-size: 14px;
       font-weight: 600;
-      color: #0f172a;
+      color: var(--color-text);
     }
     .content-card {
-      background: #ffffff;
+      background: var(--color-surface);
       border: 1px solid var(--color-border);
       border-radius: 12px;
       padding: 24px 28px;
@@ -118,13 +118,13 @@
     .section-heading {
       font-size: 16px;
       font-weight: 700;
-      color: #0f172a;
+      color: var(--color-text);
       margin: 0 0 12px 0;
       padding-bottom: 8px;
-      border-bottom: 1px solid #f1f5f9;
+      border-bottom: 1px solid var(--color-border-subtle);
     }
     .description-text {
-      color: #334155;
+      color: var(--color-text-secondary);
       font-size: 14px;
       line-height: 1.6;
       white-space: pre-wrap;
@@ -132,11 +132,11 @@
     .action-bar {
       position: sticky;
       bottom: 20px;
-      background: #ffffff;
+      background: var(--color-surface);
       padding: 16px 24px;
       border-radius: 10px;
       border: 1px solid var(--color-border);
-      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+      box-shadow: var(--shadow-lg);
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -156,21 +156,21 @@
       transition: all 0.15s ease;
     }
     .btn-action-primary {
-      background: #2563eb;
-      color: #ffffff;
+      background: var(--color-button-primary);
+      color: var(--color-button-primary-text);
     }
     .btn-action-primary:hover:not(:disabled) {
-      background: #1d4ed8;
+      background: var(--color-button-primary-hover);
     }
     .btn-action-success {
-      background: #16a34a;
-      color: #ffffff;
+      background: var(--color-success);
+      color: var(--color-text-inverse);
       cursor: default;
     }
     .btn-action-cancel {
       background: transparent;
-      color: #dc2626;
-      border: 1px solid #fca5a5;
+      color: var(--color-error);
+      border: 1px solid var(--color-error-border);
       padding: 8px 14px;
       font-size: 12px;
       border-radius: 6px;
@@ -178,12 +178,12 @@
       font-weight: 600;
     }
     .btn-action-cancel:hover {
-      background: #fef2f2;
+      background: var(--color-error-light);
     }
     .btn-action-disabled {
-      background: #f1f5f9;
-      color: #94a3b8;
-      border: 1px solid #e2e8f0;
+      background: var(--color-surface-hover);
+      color: var(--color-text-muted);
+      border: 1px solid var(--color-border);
       cursor: not-allowed;
     }
     .toast-popup {
@@ -196,15 +196,15 @@
       font-weight: 600;
       display: none;
       z-index: 1000;
-      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      box-shadow: var(--shadow-md);
     }
     .toast-popup.success {
-      background: #15803d;
-      color: #ffffff;
+      background: var(--color-success);
+      color: var(--color-text-inverse);
     }
     .toast-popup.error {
-      background: #b91c1c;
-      color: #ffffff;
+      background: var(--color-error);
+      color: var(--color-text-inverse);
     }
   </style>
 </head>
@@ -215,7 +215,7 @@
       <header class="topbar" id="topbar"></header>
       <div class="page-content">
         <div class="event-container" id="content">
-          <div style="text-align: center; padding: 48px; color: #64748b;">
+          <div style="text-align: center; padding: 48px; color: var(--color-text-secondary);">
             <div style="font-size: 14px;">Loading event details...</div>
           </div>
         </div>
@@ -248,8 +248,8 @@
     async function loadEvent() {
       if (!eventId) {
         document.getElementById('content').innerHTML = `
-          <div style="padding: 24px; background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; color: #b91c1c;">
-            Invalid or missing event ID. <a href="/pages/student/events.html" style="color: #b91c1c; font-weight: 600;">Return to events list</a>
+          <div style="padding: 24px; background: var(--color-error-light); border: 1px solid var(--color-error-border); border-radius: 8px; color: var(--color-error);">
+            Invalid or missing event ID. <a href="/pages/student/events.html" style="color: var(--color-error); font-weight: 600;">Return to events list</a>
           </div>
         `;
         return;
@@ -329,7 +329,7 @@
                       Date & Time
                     </span>
                     <span class="meta-card-value">${dateStr}</span>
-                    <span style="font-size: 12px; color: #64748b;">${event.startTime || ''} - ${event.endTime || ''}</span>
+                    <span style="font-size: 12px; color: var(--color-text-secondary);">${event.startTime || ''} - ${event.endTime || ''}</span>
                   </div>
 
                   <div class="meta-card">
@@ -368,10 +368,10 @@
 
             <div class="action-bar">
               <div>
-                <div style="font-size: 13px; font-weight: 600; color: #0f172a;">
+                <div style="font-size: 13px; font-weight: 600; color: var(--color-text);">
                   ${isRegistered ? 'Your Spot is Confirmed' : (isClosed ? 'Registration is closed' : 'Registration Open')}
                 </div>
-                <div style="font-size: 12px; color: #64748b;">
+                <div style="font-size: 12px; color: var(--color-text-secondary);">
                   ${!isRegistered && !isClosed && !isFull && !isCompleted ? `Deadline: ${deadline.toLocaleDateString()}` : 'Show your Universal QR code at entry'}
                 </div>
               </div>
@@ -425,7 +425,7 @@
 
       } catch (err) {
         document.getElementById('content').innerHTML = `
-          <div style="padding: 24px; background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; color: #b91c1c;">
+          <div style="padding: 24px; background: var(--color-error-light); border: 1px solid var(--color-error-border); border-radius: 8px; color: var(--color-error);">
             Failed to load event details. Please verify your connection and try again.
             <div style="margin-top: 12px;"><a href="/pages/student/events.html" class="btn btn-secondary btn-sm">Back to Events</a></div>
           </div>

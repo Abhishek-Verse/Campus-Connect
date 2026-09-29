@@ -1,6 +1,4 @@
-/* CampusHub Student Portal Styles — UI/UX Pro Max Edition
-   Compliant with AGENTS.md: Zero gradients, clean surfaces, high craft
-*/
+/* Student portal layouts and components */
 
 /* 1. Event Cards & Discovery Grid */
 .event-grid,
@@ -11,6 +9,7 @@
 }
 
 .event-card {
+  min-width: 0;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-card);
@@ -45,7 +44,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #f1f5f9;
+  background-color: var(--color-surface-hover);
   color: var(--color-text-muted);
 }
 
@@ -112,7 +111,7 @@
 }
 
 .event-meta-item svg {
-  color: #64748b;
+  color: var(--color-text-secondary);
   flex-shrink: 0;
 }
 
@@ -144,7 +143,7 @@
 .capacity-progress {
   width: 100%;
   height: 6px;
-  background: #e2e8f0;
+  background: var(--color-surface-active);
   border-radius: var(--radius-pill);
   overflow: hidden;
 }
@@ -162,7 +161,7 @@
 }
 
 .pass-card {
-  background: #ffffff;
+  background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: 14px;
   overflow: hidden;
@@ -171,8 +170,8 @@
 }
 
 .pass-header {
-  background: #0f172a;
-  color: #ffffff;
+  background: var(--color-inverse-surface);
+  color: var(--color-text-inverse);
   padding: 16px 20px;
   display: flex;
   justify-content: space-between;
@@ -195,8 +194,8 @@
   text-transform: uppercase;
   padding: 3px 8px;
   border-radius: 4px;
-  background: rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 253, 248, 0.12);
+  border: 1px solid rgba(255, 253, 248, 0.2);
 }
 
 .pass-body {
@@ -238,7 +237,7 @@
   align-items: center;
   justify-content: center;
   padding: 14px;
-  background: #ffffff;
+  background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: 12px;
   box-shadow: var(--shadow-sm);
@@ -309,7 +308,7 @@
 }
 
 .event-details-main {
-  background: #ffffff;
+  background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-card);
   padding: 28px;
@@ -325,7 +324,7 @@
 .sticky-action-card {
   position: sticky;
   top: 76px;
-  background: #ffffff;
+  background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-card);
   padding: 24px;
@@ -340,7 +339,7 @@
 }
 
 .attendance-history-item {
-  background: #ffffff;
+  background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-card);
   padding: 16px 20px;
@@ -368,4 +367,11 @@
   display: flex;
   gap: 16px;
   flex-wrap: wrap;
+}
+
+@media (max-width: 420px) {
+  .event-grid,
+  .events-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }

@@ -17,7 +17,7 @@
         <h1>Attendance Scanner</h1>
       </header>
       <div class="page-content">
-        
+
         <div id="eventSelectContainer" style="margin-bottom: 20px;">
           <select id="eventSelector" class="form-control" style="max-width: 420px; padding: 10px; font-size: 14px;">
             <option value="">Select an Event to start scanning...</option>
@@ -32,7 +32,7 @@
             </div>
             <div style="text-align: right;">
               <div style="font-size: 26px; font-weight: 800;" id="attendanceCount">0 / 0</div>
-              <div style="font-size: 12px; color: #9ca3af; text-transform: uppercase; font-weight: 600;">Present</div>
+              <div style="font-size: 12px; color: var(--color-text-muted); text-transform: uppercase; font-weight: 600;">Present</div>
             </div>
           </div>
 
@@ -75,7 +75,7 @@
 
           <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px;">
             <div class="speed-badge"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" stroke="none" style="margin-right: 4px;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>25 FPS High-Speed Scanner</div>
-            <div style="font-size: 12px; color: #6b7280;" id="scannerStatusIndicator">Camera ready</div>
+            <div style="font-size: 12px; color: var(--color-text-secondary);" id="scannerStatusIndicator">Camera ready</div>
           </div>
 
           <div class="controls">
@@ -134,7 +134,7 @@
     const attendanceCount = document.getElementById('attendanceCount');
     const recentScansList = document.getElementById('recentScansList');
     const statusIndicator = document.getElementById('scannerStatusIndicator');
-    
+
     let html5QrCode = null;
     let isScanning = false;
     let scannerLocked = false;
@@ -191,7 +191,7 @@
           headers: { 'Authorization': `Bearer ${token}` }
         });
         const data = await res.json();
-        
+
         if (data.data && data.data.length > 0) {
           eventSelector.innerHTML = '<option value="">Select an Event...</option>';
           data.data.forEach(ev => {
@@ -229,12 +229,12 @@
       currentEventId = eventId;
       const opt = eventSelector.options[eventSelector.selectedIndex];
       if (!opt) return;
-      
+
       document.getElementById('evtTitle').textContent = opt.textContent;
       const dt = opt.dataset.date ? new Date(opt.dataset.date).toLocaleDateString() : '';
       document.getElementById('evtDetails').textContent = `${dt} • ${opt.dataset.venue || 'TBD'}`;
       stats.total = parseInt(opt.dataset.capacity || 0);
-      
+
       scannerSection.style.display = 'block';
       updateStats();
       fetchCurrentStats();
@@ -267,10 +267,10 @@
       recentScansList.innerHTML = recentScans.map(s => `
         <li class="scan-item">
           <div>
-            <strong>${s.name}</strong> <span style="color:#6b7280;">(${s.rollNo || 'N/A'})</span>
-            <div style="color:#9ca3af;font-size:12px;">${s.time}</div>
+            <strong>${s.name}</strong> <span style="color:var(--color-text-secondary);">(${s.rollNo || 'N/A'})</span>
+            <div style="color:var(--color-text-muted);font-size:12px;">${s.time}</div>
           </div>
-          <div style="color: ${s.isSuccess ? '#166534' : '#991B1B'}; font-weight: 700;">
+          <div style="color: ${s.isSuccess ? 'var(--color-success)' : 'var(--color-error)'}; font-weight: 700;">
             ${s.statusStr}
           </div>
         </li>
@@ -343,13 +343,13 @@
         const token = localStorage.getItem('token') || sessionStorage.getItem('token');
         const res = await fetch(`/api/v1/events/${currentEventId}/attendance/scan`, {
           method: 'POST',
-          headers: { 
+          headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`
           },
           body: JSON.stringify({ qrToken: decodedText })
         });
-        
+
         const json = await res.json();
 
         if (res.ok && json.success) {
@@ -359,16 +359,16 @@
           const sErp = student.erpId || '';
           const sDept = student.department || '';
           const sDiv = student.division || '';
-          
+
           setStatus('success', 'ENTRY ALLOWED', `${sName} (Roll: ${sRoll}${sErp ? ' | ERP: ' + sErp : ''})`);
-          showCameraAnimation('approved', { 
-            name: sName, 
-            rollNo: sRoll, 
-            erpId: sErp, 
-            department: sDept, 
-            division: sDiv 
+          showCameraAnimation('approved', {
+            name: sName,
+            rollNo: sRoll,
+            erpId: sErp,
+            department: sDept,
+            division: sDiv
           });
-          
+
           stats.present++;
           updateStats();
           updateRecentScans(sName, sRoll, 'Allowed', true);
@@ -414,12 +414,12 @@
         html5QrCode = new Html5Qrcode("reader");
         cameraStage.classList.add('active-scanning');
         statusIndicator.textContent = 'Camera active (25 FPS)';
-        statusIndicator.style.color = '#059669';
+        statusIndicator.style.color = 'var(--color-success)';
 
         await html5QrCode.start(
           { facingMode: "environment" },
-          { 
-            fps: 25, 
+          {
+            fps: 25,
             qrbox: { width: 250, height: 250 },
             aspectRatio: 1.0
           },
@@ -434,7 +434,7 @@
         setStatus('error', 'Camera Error', 'Could not access camera. Please check permissions or use manual check-in.');
         cameraStage.classList.remove('active-scanning');
         statusIndicator.textContent = 'Camera unavailable';
-        statusIndicator.style.color = '#dc2626';
+        statusIndicator.style.color = 'var(--color-error)';
       }
     });
 
@@ -446,7 +446,7 @@
         btnStop.style.display = 'none';
         isScanning = false;
         statusIndicator.textContent = 'Camera stopped';
-        statusIndicator.style.color = '#6b7280';
+        statusIndicator.style.color = 'var(--color-text-secondary)';
       }
     });
 

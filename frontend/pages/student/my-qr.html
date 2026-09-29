@@ -18,7 +18,7 @@
     }
     .brightness-tip {
       font-size: 12px;
-      color: #64748b;
+      color: var(--color-text-secondary);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -27,12 +27,12 @@
     }
     .pass-instructions {
       font-size: 13px;
-      color: #475569;
+      color: var(--color-text-secondary);
       line-height: 1.5;
       padding: 12px 14px;
-      background: #f8fafc;
+      background: var(--color-surface-subtle);
       border-radius: 8px;
-      border: 1px solid #e2e8f0;
+      border: 1px solid var(--color-border);
       margin-bottom: 16px;
     }
   </style>
@@ -62,7 +62,7 @@
               <div class="student-meta-subtitle" id="studentMeta">Roll No: —</div>
 
               <div class="qr-frame" id="qrcode">
-                <span style="font-size: 13px; color: #94a3b8;">Rendering pass...</span>
+                <span style="font-size: 13px; color: var(--color-text-muted);">Rendering pass...</span>
               </div>
 
               <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 12px;">
@@ -137,7 +137,7 @@
       if (!user) return;
       const name = user.name || 'Student';
       nameEl.textContent = name;
-      
+
       const parts = name.trim().split(/\s+/);
       const initials = parts.length === 1 ? parts[0].slice(0, 2).toUpperCase() : (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
       initialsEl.textContent = initials || 'ST';
@@ -162,8 +162,8 @@
           text: token,
           width: 220,
           height: 220,
-          colorDark: '#0f172a',
-          colorLight: '#ffffff',
+          colorDark: '#292621',
+          colorLight: '#fffdf8',
           correctLevel: QRCode.CorrectLevel ? QRCode.CorrectLevel.H : 2
         });
       } else {

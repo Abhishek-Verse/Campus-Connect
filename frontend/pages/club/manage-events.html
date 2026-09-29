@@ -7,14 +7,14 @@
   <link rel="stylesheet" href="/css/global.css">
   <link rel="stylesheet" href="/css/club.css">
   <style>
-    .tabs { display: flex; gap: 16px; margin-bottom: 24px; border-bottom: 1px solid #E6E6E6; }
-    .tab { padding: 8px 16px; cursor: pointer; border-bottom: 2px solid transparent; color: #666; font-weight: 500; }
-    .tab.active { border-bottom-color: #2563EB; color: #2563EB; }
+    .tabs { display: flex; gap: 16px; margin-bottom: 24px; border-bottom: 1px solid var(--color-border); }
+    .tab { padding: 8px 16px; cursor: pointer; border-bottom: 2px solid transparent; color: var(--color-text-secondary); font-weight: 500; }
+    .tab.active { border-bottom-color: var(--color-primary); color: var(--color-primary); }
     .badge { padding: 4px 8px; border-radius: 999px; font-size: 12px; font-weight: 600; text-transform: uppercase; }
-    .badge-draft { background: #F3F4F6; color: #4B5563; }
-    .badge-published { background: #DBEAFE; color: #1D4ED8; }
-    .badge-completed { background: #DCFCE7; color: #166534; }
-    .badge-cancelled { background: #FEE2E2; color: #991B1B; }
+    .badge-draft { background: var(--color-surface-subtle); color: var(--color-text-secondary); }
+    .badge-published { background: var(--color-primary-light); color: var(--color-primary-hover); }
+    .badge-completed { background: var(--color-success-light); color: var(--color-success); }
+    .badge-cancelled { background: var(--color-error-light); color: var(--color-error-hover); }
   </style>
 </head>
 <body>
@@ -26,7 +26,7 @@
         <a href="/pages/club/create-event.html" class="btn btn-primary">Create New Event</a>
       </header>
       <div class="page-content">
-        
+
         <div class="tabs" id="statusTabs">
           <div class="tab active" data-status="ALL">All</div>
           <div class="tab" data-status="DRAFT">Draft</div>
@@ -104,9 +104,9 @@
         if (isDraft) {
           statusActionBtn = `<button class="btn btn-sm btn-success" onclick="window.changeEventStatus('${event.id}', 'publish')" style="font-size: 11px; padding: 4px 8px;">Publish</button>`;
         } else if (isPublished) {
-          statusActionBtn = `<button class="btn btn-sm btn-secondary" onclick="window.changeEventStatus('${event.id}', 'cancel')" style="font-size: 11px; padding: 4px 8px; color: #dc2626;">Cancel</button>`;
+          statusActionBtn = `<button class="btn btn-sm btn-secondary" onclick="window.changeEventStatus('${event.id}', 'cancel')" style="font-size: 11px; padding: 4px 8px; color: var(--color-error);">Cancel</button>`;
         } else if (isCancelled) {
-          statusActionBtn = `<button class="btn btn-sm btn-secondary" onclick="window.changeEventStatus('${event.id}', 'publish')" style="font-size: 11px; padding: 4px 8px; color: #2563eb;">Republish</button>`;
+          statusActionBtn = `<button class="btn btn-sm btn-secondary" onclick="window.changeEventStatus('${event.id}', 'publish')" style="font-size: 11px; padding: 4px 8px; color: var(--color-primary);">Republish</button>`;
         }
 
         return `
@@ -130,8 +130,8 @@
     }
 
     window.changeEventStatus = async function(eventId, action) {
-      const confirmMsg = action === 'publish' 
-        ? 'Are you sure you want to publish this event to all students?' 
+      const confirmMsg = action === 'publish'
+        ? 'Are you sure you want to publish this event to all students?'
         : 'Are you sure you want to cancel this event?';
       if (!confirm(confirmMsg)) return;
 
