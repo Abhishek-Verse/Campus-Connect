@@ -96,22 +96,60 @@
 
       tbody.innerHTML = filtered.map(event => {
         const statusClass = `badge-${(event.status || 'draft').toLowerCase()}`;
+        const isDraft = event.status === 'DRAFT';
+        const isPublished = event.status === 'PUBLISHED';
+        const isCancelled = event.status === 'CANCELLED';
+
+        let statusActionBtn = '';
+        if (isDraft) {
+          statusActionBtn = `<button class="btn btn-sm btn-success" onclick="window.changeEventStatus('${event.id}', 'publish')" style="font-size: 11px; padding: 4px 8px;">Publish</button>`;
+        } else if (isPublished) {
+          statusActionBtn = `<button class="btn btn-sm btn-secondary" onclick="window.changeEventStatus('${event.id}', 'cancel')" style="font-size: 11px; padding: 4px 8px; color: #dc2626;">Cancel</button>`;
+        } else if (isCancelled) {
+          statusActionBtn = `<button class="btn btn-sm btn-secondary" onclick="window.changeEventStatus('${event.id}', 'publish')" style="font-size: 11px; padding: 4px 8px; color: #2563eb;">Republish</button>`;
+        }
+
         return `
           <tr>
             <td><strong>${event.title}</strong></td>
-            <td>${new Date(event.date).toLocaleDateString()} ${event.startTime}</td>
+            <td>${new Date(event.date).toLocaleDateString()} ${event.startTime || ''}</td>
             <td>${event.venue || 'TBD'}</td>
             <td><span class="badge ${statusClass}">${event.status}</span></td>
-            <td>${event.registrationCount || 0} / ${event.capacity}</td>
+            <td>${event.registrationCount || event.registeredCount || 0} / ${event.capacity}</td>
             <td>
-              <a href="/pages/club/edit-event.html?id=${event.id}" class="btn btn-sm btn-outline">Edit</a>
-              <a href="/pages/club/registrations.html?eventId=${event.id}" class="btn btn-sm btn-outline">Registrations</a>
-              <a href="/pages/club/scanner.html?eventId=${event.id}" class="btn btn-sm btn-primary">Scan</a>
+              <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
+                ${statusActionBtn}
+                <a href="/pages/club/edit-event.html?id=${event.id}" class="btn btn-sm btn-secondary" style="font-size: 11px; padding: 4px 8px;">Edit</a>
+                <a href="/pages/club/registrations.html?eventId=${event.id}" class="btn btn-sm btn-secondary" style="font-size: 11px; padding: 4px 8px;">Registrations</a>
+                <a href="/pages/club/scanner.html?eventId=${event.id}" class="btn btn-sm btn-primary" style="font-size: 11px; padding: 4px 8px;">Scan</a>
+              </div>
             </td>
           </tr>
         `;
       }).join('');
     }
+
+    window.changeEventStatus = async function(eventId, action) {
+      const confirmMsg = action === 'publish' 
+        ? 'Are you sure you want to publish this event to all students?' 
+        : 'Are you sure you want to cancel this event?';
+      if (!confirm(confirmMsg)) return;
+
+      try {
+        const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+        const res = await fetch(`/api/v1/events/${eventId}/${action}`, {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          throw new Error(err.message || `Failed to ${action} event`);
+        }
+        await fetchEvents();
+      } catch (err) {
+        alert(err.message || 'Operation failed');
+      }
+    };
 
     document.getElementById('statusTabs').addEventListener('click', (e) => {
       if (e.target.classList.contains('tab')) {

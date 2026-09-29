@@ -7,28 +7,205 @@
   <link rel="stylesheet" href="/css/global.css">
   <link rel="stylesheet" href="/css/student.css">
   <style>
-    .event-header { margin-bottom: 24px; }
-    .event-poster { width: 100%; height: 300px; object-fit: cover; border-radius: 8px; background: #E6E6E6; margin-bottom: 24px; }
-    .badges { display: flex; gap: 8px; margin-bottom: 12px; }
-    .badge { padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 500; }
-    .badge-category { background: #E5E7EB; color: #374151; }
-    .badge-status { background: #DBEAFE; color: #1D4ED8; }
-    .event-title { font-size: 28px; margin: 0 0 16px 0; color: #171717; }
-    .meta-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px; padding: 16px; background: #F9FAFB; border-radius: 8px; border: 1px solid #E6E6E6; }
-    .meta-item { font-size: 14px; }
-    .meta-label { color: #666666; margin-bottom: 4px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
-    .meta-value { color: #171717; font-weight: 500; }
-    .section-title { font-size: 18px; margin: 24px 0 12px 0; padding-bottom: 8px; border-bottom: 1px solid #E6E6E6; }
-    .description { color: #4B5563; line-height: 1.6; }
-    .rules-list { padding-left: 20px; color: #4B5563; }
-    .action-panel { position: sticky; bottom: 20px; background: #fff; padding: 16px; border-radius: 8px; border: 1px solid #E6E6E6; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin-top: 40px; display: flex; justify-content: space-between; align-items: center; }
-    .btn { padding: 10px 24px; border-radius: 6px; font-size: 16px; font-weight: 500; cursor: pointer; border: none; }
-    .btn-primary { background: #2563EB; color: white; }
-    .btn-success { background: #16A34A; color: white; cursor: default; }
-    .btn-disabled { background: #E5E7EB; color: #9CA3AF; cursor: not-allowed; }
-    .toast { position: fixed; top: 20px; right: 20px; padding: 12px 24px; border-radius: 6px; color: white; font-weight: 500; display: none; z-index: 1000; }
-    .toast.success { background: #16A34A; }
-    .toast.error { background: #DC2626; }
+    .event-container {
+      max-width: 860px;
+      margin: 0 auto;
+    }
+    .back-nav-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      color: #64748b;
+      text-decoration: none;
+      margin-bottom: 16px;
+    }
+    .back-nav-link:hover {
+      color: var(--color-primary);
+      text-decoration: none;
+    }
+    .event-hero-card {
+      background: #ffffff;
+      border: 1px solid var(--color-border);
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+    .event-poster-hero {
+      width: 100%;
+      height: 280px;
+      object-fit: cover;
+      background: #f1f5f9;
+      display: block;
+    }
+    .event-hero-body {
+      padding: 24px 28px;
+    }
+    .badges-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+    .badge-pill {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 4px;
+    }
+    .badge-category {
+      background: #eff6ff;
+      color: #1e40af;
+      border: 1px solid #bfdbfe;
+    }
+    .badge-status-published {
+      background: #f0fdf4;
+      color: #15803d;
+      border: 1px solid #bbf7d0;
+    }
+    .badge-status-completed {
+      background: #f8fafc;
+      color: #475569;
+      border: 1px solid #e2e8f0;
+    }
+    .event-headline {
+      font-size: 26px;
+      font-weight: 800;
+      color: #0f172a;
+      margin: 0 0 16px 0;
+      line-height: 1.3;
+    }
+    .meta-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .meta-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .meta-card-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #64748b;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .meta-card-value {
+      font-size: 14px;
+      font-weight: 600;
+      color: #0f172a;
+    }
+    .content-card {
+      background: #ffffff;
+      border: 1px solid var(--color-border);
+      border-radius: 12px;
+      padding: 24px 28px;
+      margin-bottom: 24px;
+    }
+    .section-heading {
+      font-size: 16px;
+      font-weight: 700;
+      color: #0f172a;
+      margin: 0 0 12px 0;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #f1f5f9;
+    }
+    .description-text {
+      color: #334155;
+      font-size: 14px;
+      line-height: 1.6;
+      white-space: pre-wrap;
+    }
+    .action-bar {
+      position: sticky;
+      bottom: 20px;
+      background: #ffffff;
+      padding: 16px 24px;
+      border-radius: 10px;
+      border: 1px solid var(--color-border);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      z-index: 30;
+    }
+    .btn-action {
+      padding: 10px 24px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.15s ease;
+    }
+    .btn-action-primary {
+      background: #2563eb;
+      color: #ffffff;
+    }
+    .btn-action-primary:hover:not(:disabled) {
+      background: #1d4ed8;
+    }
+    .btn-action-success {
+      background: #16a34a;
+      color: #ffffff;
+      cursor: default;
+    }
+    .btn-action-cancel {
+      background: transparent;
+      color: #dc2626;
+      border: 1px solid #fca5a5;
+      padding: 8px 14px;
+      font-size: 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .btn-action-cancel:hover {
+      background: #fef2f2;
+    }
+    .btn-action-disabled {
+      background: #f1f5f9;
+      color: #94a3b8;
+      border: 1px solid #e2e8f0;
+      cursor: not-allowed;
+    }
+    .toast-popup {
+      position: fixed;
+      top: 24px;
+      right: 24px;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      display: none;
+      z-index: 1000;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+    .toast-popup.success {
+      background: #15803d;
+      color: #ffffff;
+    }
+    .toast-popup.error {
+      background: #b91c1c;
+      color: #ffffff;
+    }
   </style>
 </head>
 <body>
@@ -36,14 +213,18 @@
     <aside class="sidebar" id="sidebar"></aside>
     <main class="main-content">
       <header class="topbar" id="topbar"></header>
-      <div class="page-content" id="content">
-        <div style="text-align:center; padding:40px; color:#666;">Loading event details...</div>
+      <div class="page-content">
+        <div class="event-container" id="content">
+          <div style="text-align: center; padding: 48px; color: #64748b;">
+            <div style="font-size: 14px;">Loading event details...</div>
+          </div>
+        </div>
       </div>
     </main>
   </div>
   <nav class="bottom-nav" id="bottomNav"></nav>
 
-  <div id="toast" class="toast"></div>
+  <div id="toastPopup" class="toast-popup"></div>
 
   <script type="module">
     import { requireAuth } from '/js/auth/auth.js';
@@ -55,31 +236,33 @@
 
     const urlParams = new URLSearchParams(window.location.search);
     const eventId = urlParams.get('id');
-    
+    const toast = document.getElementById('toastPopup');
+
     function showToast(msg, type = 'success') {
-      const toast = document.getElementById('toast');
       toast.textContent = msg;
-      toast.className = `toast ${type}`;
+      toast.className = `toast-popup ${type}`;
       toast.style.display = 'block';
-      setTimeout(() => toast.style.display = 'none', 3000);
+      setTimeout(() => { toast.style.display = 'none'; }, 3200);
     }
 
     async function loadEvent() {
       if (!eventId) {
-        document.getElementById('content').innerHTML = '<div style="color:#DC2626; padding:20px;">Invalid event ID.</div>';
+        document.getElementById('content').innerHTML = `
+          <div style="padding: 24px; background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; color: #b91c1c;">
+            Invalid or missing event ID. <a href="/pages/student/events.html" style="color: #b91c1c; font-weight: 600;">Return to events list</a>
+          </div>
+        `;
         return;
       }
-      
+
       try {
-        // Run both requests in parallel if possible, but here we can just await sequentially for simplicity
-        const eventRes = await apiClient.get(`/events/${eventId}`);
+        const [eventRes, myEventsRes] = await Promise.all([
+          apiClient.get(`/events/${eventId}`),
+          apiClient.get('/students/me/events').catch(() => ({ data: [] }))
+        ]);
+
         const event = eventRes.data;
-        
-        let isRegistered = false;
-        try {
-          const myEventsRes = await apiClient.get('/students/me/events');
-          isRegistered = myEventsRes.data?.some(e => e.eventId === eventId) || false;
-        } catch(e) {}
+        let isRegistered = myEventsRes.data?.some(e => e.eventId === eventId) || false;
 
         const now = new Date();
         const eventDate = new Date(event.date || event.eventDate);
@@ -88,79 +271,165 @@
         eventEndDateTime.setHours(parseInt(endHour), parseInt(endMin), 0, 0);
 
         const deadline = event.registrationDeadline ? new Date(event.registrationDeadline) : eventEndDateTime;
-        
         const isClosed = event.status === 'CANCELLED' || now > deadline;
         const isCompleted = event.status === 'COMPLETED';
-        const seatsLeft = event.capacity ? (event.capacity - (event.registeredCount || 0)) : 999;
-        const isFull = seatsLeft <= 0;
+        let registeredCount = event.registeredCount || 0;
+        let seatsLeft = event.capacity ? (event.capacity - registeredCount) : null;
+        let isFull = seatsLeft !== null && seatsLeft <= 0;
 
-        let btnHtml = '';
-        if (isCompleted) {
-          btnHtml = `<button class="btn btn-disabled" disabled>Event Completed</button>`;
-        } else if (isRegistered) {
-          btnHtml = `<button class="btn btn-success">✓ Registered</button>`;
-        } else if (isClosed) {
-          btnHtml = `<button class="btn btn-disabled" disabled>Registration Closed</button>`;
-        } else if (isFull) {
-          btnHtml = `<button class="btn btn-disabled" disabled>Registration Full</button>`;
-        } else {
-          btnHtml = `<button id="registerBtn" class="btn btn-primary">Register Now</button>`;
+        function renderUI() {
+          const dateStr = eventDate.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+          const seatsText = seatsLeft !== null ? `${Math.max(0, seatsLeft)} seats remaining` : 'Unlimited Seats';
+
+          let actionControls = '';
+          if (isCompleted) {
+            actionControls = `<button class="btn-action btn-action-disabled" disabled>Event Completed</button>`;
+          } else if (isRegistered) {
+            actionControls = `
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <button class="btn-action btn-action-success" disabled>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  <span>Registered</span>
+                </button>
+                <button id="btnCancelReg" class="btn-action-cancel">Cancel Registration</button>
+              </div>
+            `;
+          } else if (isClosed) {
+            actionControls = `<button class="btn-action btn-action-disabled" disabled>Registration Closed</button>`;
+          } else if (isFull) {
+            actionControls = `<button class="btn-action btn-action-disabled" disabled>Registration Full</button>`;
+          } else {
+            actionControls = `
+              <button id="btnRegister" class="btn-action btn-action-primary">
+                <span>Register Now</span>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+              </button>
+            `;
+          }
+
+          document.getElementById('content').innerHTML = `
+            <a href="/pages/student/events.html" class="back-nav-link">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+              <span>Back to all events</span>
+            </a>
+
+            <div class="event-hero-card">
+              ${event.posterUrl ? `<img src="${event.posterUrl}" class="event-poster-hero" alt="Event Poster">` : ''}
+              <div class="event-hero-body">
+                <div class="badges-row">
+                  <span class="badge-pill badge-category">${event.category || 'EVENT'}</span>
+                  <span class="badge-pill ${isCompleted ? 'badge-status-completed' : 'badge-status-published'}">${isCompleted ? 'COMPLETED' : (event.status || 'PUBLISHED')}</span>
+                </div>
+                <h1 class="event-headline">${event.title}</h1>
+
+                <div class="meta-cards-grid">
+                  <div class="meta-card">
+                    <span class="meta-card-label">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                      Date & Time
+                    </span>
+                    <span class="meta-card-value">${dateStr}</span>
+                    <span style="font-size: 12px; color: #64748b;">${event.startTime || ''} - ${event.endTime || ''}</span>
+                  </div>
+
+                  <div class="meta-card">
+                    <span class="meta-card-label">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                      Venue Location
+                    </span>
+                    <span class="meta-card-value">${event.venue || 'Campus Venue'}</span>
+                  </div>
+
+                  <div class="meta-card">
+                    <span class="meta-card-label">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>
+                      Capacity
+                    </span>
+                    <span class="meta-card-value" id="seatsValDisplay">${seatsText}</span>
+                  </div>
+
+                  <div class="meta-card">
+                    <span class="meta-card-label">Organized By</span>
+                    <span class="meta-card-value">${event.club?.name || event.clubName || 'College Club'}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="content-card">
+              <h2 class="section-heading">About This Event</h2>
+              <div class="description-text">${event.description || 'No description provided for this event.'}</div>
+
+              ${event.rules && (Array.isArray(event.rules) ? event.rules.length > 0 : String(event.rules).trim()) ? `
+                <h2 class="section-heading" style="margin-top: 24px;">Guidelines & Rules</h2>
+                <div class="description-text">${Array.isArray(event.rules) ? event.rules.map((r, i) => `${i + 1}. ${r}`).join('\n') : event.rules}</div>
+              ` : ''}
+            </div>
+
+            <div class="action-bar">
+              <div>
+                <div style="font-size: 13px; font-weight: 600; color: #0f172a;">
+                  ${isRegistered ? 'Your Spot is Confirmed' : (isClosed ? 'Registration is closed' : 'Registration Open')}
+                </div>
+                <div style="font-size: 12px; color: #64748b;">
+                  ${!isRegistered && !isClosed && !isFull && !isCompleted ? `Deadline: ${deadline.toLocaleDateString()}` : 'Show your Universal QR code at entry'}
+                </div>
+              </div>
+              <div id="actionControlsContainer">${actionControls}</div>
+            </div>
+          `;
+
+          // Event Listeners for Instant Optimistic Registration
+          const btnReg = document.getElementById('btnRegister');
+          if (btnReg) {
+            btnReg.addEventListener('click', async () => {
+              btnReg.disabled = true;
+              btnReg.innerHTML = '<span>Registering...</span>';
+              try {
+                await apiClient.post(`/events/${eventId}/register`, {});
+                isRegistered = true;
+                if (seatsLeft !== null) seatsLeft--;
+                showToast('Registration confirmed! Entry pass added to your Universal QR.');
+                renderUI();
+              } catch (err) {
+                const msg = err.message || err.details?.message || 'Unable to register for event.';
+                showToast(msg, 'error');
+                btnReg.disabled = false;
+                btnReg.innerHTML = '<span>Register Now</span>';
+              }
+            });
+          }
+
+          const btnCancel = document.getElementById('btnCancelReg');
+          if (btnCancel) {
+            btnCancel.addEventListener('click', async () => {
+              if (!confirm('Are you sure you want to cancel your registration?')) return;
+              btnCancel.disabled = true;
+              btnCancel.textContent = 'Cancelling...';
+              try {
+                await apiClient.delete(`/events/${eventId}/register`);
+                isRegistered = false;
+                if (seatsLeft !== null) seatsLeft++;
+                showToast('Registration cancelled.');
+                renderUI();
+              } catch (err) {
+                showToast(err.message || 'Unable to cancel registration.', 'error');
+                btnCancel.disabled = false;
+                btnCancel.textContent = 'Cancel Registration';
+              }
+            });
+          }
         }
 
+        renderUI();
+
+      } catch (err) {
         document.getElementById('content').innerHTML = `
-          <div class="event-header">
-            ${event.posterUrl ? `<img src="${event.posterUrl}" class="event-poster" alt="Event Poster">` : ''}
-            <div class="badges">
-              <span class="badge badge-category">${event.category || 'Event'}</span>
-              <span class="badge badge-status">${event.status || 'Published'}</span>
-            </div>
-            <h1 class="event-title">${event.title}</h1>
-          </div>
-
-          <div class="meta-grid">
-            <div class="meta-item"><div class="meta-label">Date</div><div class="meta-value">${eventDate.toLocaleDateString()}</div></div>
-            <div class="meta-item"><div class="meta-label">Time</div><div class="meta-value">${event.startTime} - ${event.endTime}</div></div>
-            <div class="meta-item"><div class="meta-label">Venue</div><div class="meta-value">${event.venue}</div></div>
-            <div class="meta-item"><div class="meta-label">Seats</div><div class="meta-value">${event.capacity ? `${seatsLeft} remaining` : 'Unlimited'}</div></div>
-            <div class="meta-item"><div class="meta-label">Club</div><div class="meta-value">${event.clubName || 'General'}</div></div>
-            ${event.guestSpeaker ? `<div class="meta-item"><div class="meta-label">Guest</div><div class="meta-value">${event.guestSpeaker}</div></div>` : ''}
-          </div>
-
-          <h2 class="section-title">Description</h2>
-          <div class="description">${event.description || 'No description provided.'}</div>
-
-          ${event.rules ? `
-            <h2 class="section-title">Rules</h2>
-            <div class="description">${event.rules}</div>
-          ` : ''}
-
-          <div class="action-panel">
-            <div>
-              ${!isRegistered && !isClosed && !isFull && !isCompleted ? `<div style="font-size: 14px; color: #666;">Deadline: ${deadline.toLocaleDateString()}</div>` : ''}
-            </div>
-            <div>${btnHtml}</div>
+          <div style="padding: 24px; background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; color: #b91c1c;">
+            Failed to load event details. Please verify your connection and try again.
+            <div style="margin-top: 12px;"><a href="/pages/student/events.html" class="btn btn-secondary btn-sm">Back to Events</a></div>
           </div>
         `;
-
-        const regBtn = document.getElementById('registerBtn');
-        if (regBtn) {
-          regBtn.addEventListener('click', async () => {
-            regBtn.disabled = true;
-            regBtn.textContent = 'Registering...';
-            try {
-              await apiClient.post(`/events/${eventId}/register`, {});
-              showToast('Successfully registered! See you at the event.');
-              setTimeout(() => location.reload(), 1200);
-            } catch (err) {
-              const msg = err.message || err.details?.message || err.details?.error || 'Registration failed';
-              showToast(msg, 'error');
-              regBtn.disabled = false;
-              regBtn.textContent = 'Register Now';
-            }
-          });
-        }
-      } catch (err) {
-        document.getElementById('content').innerHTML = '<div style="color:#DC2626; padding:20px;">Failed to load event details.</div>';
       }
     }
 

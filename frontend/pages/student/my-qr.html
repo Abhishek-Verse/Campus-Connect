@@ -3,18 +3,130 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My QR — CampusHub</title>
+  <title>My QR — Student Pass — CampusHub</title>
   <link rel="stylesheet" href="/css/global.css">
   <link rel="stylesheet" href="/css/student.css">
   <style>
-    .qr-container { max-width: 420px; margin: 40px auto; background: #fff; border: 1px solid #E6E6E6; border-radius: 12px; padding: 40px 24px; text-align: center; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
-    .student-name { font-size: 24px; font-weight: 700; color: #171717; margin: 0 0 4px 0; }
-    .roll-number { font-size: 16px; color: #666666; margin: 0 0 24px 0; font-weight: 500; }
-    #qrcode { display: flex; justify-content: center; align-items: center; margin: 0 auto 20px auto; min-height: 240px; }
-    #qrcode canvas, #qrcode img { margin: 0 auto; display: block; border: 8px solid #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
-    .qr-badge { display: inline-block; font-family: monospace; font-size: 14px; background: #eff6ff; color: #2563eb; padding: 6px 14px; border-radius: 999px; font-weight: 600; margin-bottom: 20px; letter-spacing: 1px; }
-    .instruction { color: #4B5563; font-size: 14px; line-height: 1.5; margin: 0; }
-    .error-msg { color: #DC2626; padding: 20px; font-weight: 500; }
+    .qr-page-container {
+      max-width: 440px;
+      margin: 10px auto 40px auto;
+    }
+    .pass-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+      text-align: center;
+    }
+    .pass-header {
+      background: #0f172a;
+      color: #ffffff;
+      padding: 16px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .pass-brand {
+      font-size: 15px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+    .pass-type-badge {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    .pass-body {
+      padding: 28px 24px;
+    }
+    .student-avatar {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: #eff6ff;
+      color: #2563eb;
+      font-weight: 700;
+      font-size: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 12px auto;
+      border: 2px solid #bfdbfe;
+    }
+    .student-fullname {
+      font-size: 20px;
+      font-weight: 800;
+      color: #0f172a;
+      margin: 0 0 4px 0;
+    }
+    .student-meta-subtitle {
+      font-size: 13px;
+      color: #64748b;
+      margin: 0 0 20px 0;
+      font-weight: 500;
+    }
+    .qr-frame {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 14px;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+      margin-bottom: 18px;
+      min-height: 248px;
+      min-width: 248px;
+    }
+    .qr-frame canvas, .qr-frame img {
+      display: block;
+      border-radius: 6px;
+    }
+    .token-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+      font-size: 14px;
+      font-weight: 700;
+      background: #f1f5f9;
+      color: #1e293b;
+      padding: 6px 16px;
+      border-radius: 6px;
+      border: 1px solid #cbd5e1;
+      letter-spacing: 0.06em;
+      margin-bottom: 20px;
+    }
+    .pass-instructions {
+      font-size: 13px;
+      color: #475569;
+      line-height: 1.5;
+      padding: 12px 14px;
+      background: #f8fafc;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+      margin-bottom: 16px;
+    }
+    .brightness-tip {
+      font-size: 12px;
+      color: #64748b;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      margin-top: 14px;
+    }
+    .pass-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 18px;
+    }
   </style>
   <script src="/js/lib/qrcode.min.js"></script>
 </head>
@@ -24,17 +136,46 @@
     <main class="main-content">
       <header class="topbar" id="topbar"></header>
       <div class="page-content">
-        <div class="qr-container">
-          <h1 class="student-name" id="studentName">Student Name</h1>
-          <p class="roll-number" id="rollNo">Loading details...</p>
-          
-          <div id="qrcode">
-            <span style="color:#8A8A8A;">Generating QR Code...</span>
+        <div class="qr-page-container">
+          <div class="pass-card">
+            <div class="pass-header">
+              <span class="pass-brand">CampusHub</span>
+              <span class="pass-type-badge">Universal Student Pass</span>
+            </div>
+
+            <div class="pass-body">
+              <div class="student-avatar" id="avatarInitials">ST</div>
+              <h1 class="student-fullname" id="studentName">Student Name</h1>
+              <div class="student-meta-subtitle" id="studentMeta">Roll No: —</div>
+
+              <div class="qr-frame" id="qrcode">
+                <span style="font-size: 13px; color: #94a3b8;">Rendering pass...</span>
+              </div>
+
+              <div>
+                <div class="token-chip" id="qrTokenBadge">CH-XXXXXXXX</div>
+              </div>
+
+              <div class="pass-instructions">
+                <strong>Show this QR at registered events.</strong> Present this pass at venue entrance scanners for fast contactless check-in.
+              </div>
+
+              <div class="pass-actions">
+                <button id="btnDownloadPass" class="btn btn-secondary btn-sm" style="flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 6px;">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                  <span>Download Pass</span>
+                </button>
+                <a href="/pages/student/events.html" class="btn btn-primary btn-sm" style="flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 6px; text-decoration: none;">
+                  <span>Browse Events</span>
+                </a>
+              </div>
+
+              <div class="brightness-tip">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                <span>Increase screen brightness for instant scanner detection</span>
+              </div>
+            </div>
           </div>
-          
-          <div id="qrTokenBadge" class="qr-badge" style="display: none;">CH-XXXXXXXX</div>
-          
-          <p class="instruction">Show this QR at registered events.<br>This Universal QR works for all CampusHub events.</p>
         </div>
       </div>
     </main>
@@ -50,57 +191,87 @@
     renderNavigation('STUDENT');
 
     const nameEl = document.getElementById('studentName');
-    const rollEl = document.getElementById('rollNo');
+    const metaEl = document.getElementById('studentMeta');
+    const initialsEl = document.getElementById('avatarInitials');
     const qrContainer = document.getElementById('qrcode');
     const badgeEl = document.getElementById('qrTokenBadge');
+    const btnDownload = document.getElementById('btnDownloadPass');
 
-    if (currentUser?.name) nameEl.textContent = currentUser.name;
-    if (currentUser?.rollNo) rollEl.textContent = `Roll No: ${currentUser.rollNo}`;
+    // Instant Hydration from local auth cache (Zero Loading Time)
+    function hydratePass(user) {
+      if (!user) return;
+      const name = user.name || 'Student';
+      nameEl.textContent = name;
+      
+      const initials = name.split(' ').map(p => p[0]).join('').slice(0, 2).toUpperCase() || 'ST';
+      initialsEl.textContent = initials;
 
-    async function loadQR() {
+      const rollText = user.rollNo ? `Roll No: ${user.rollNo}` : '';
+      const emailText = user.email ? user.email : '';
+      metaEl.textContent = [rollText, emailText].filter(Boolean).join(' • ');
+
+      if (user.qrToken) {
+        renderQRCode(user.qrToken);
+      }
+    }
+
+    function renderQRCode(token) {
+      badgeEl.textContent = token;
+      qrContainer.innerHTML = '';
+
+      if (typeof QRCode !== 'undefined') {
+        new QRCode(qrContainer, {
+          text: token,
+          width: 220,
+          height: 220,
+          colorDark: '#0f172a',
+          colorLight: '#ffffff',
+          correctLevel: QRCode.CorrectLevel ? QRCode.CorrectLevel.H : 2
+        });
+      } else {
+        qrContainer.innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(token)}" alt="QR Code" style="width:220px;height:220px;">`;
+      }
+    }
+
+    // Hydrate immediately
+    hydratePass(currentUser);
+
+    // Download Pass as Image
+    if (btnDownload) {
+      btnDownload.addEventListener('click', () => {
+        const canvas = qrContainer.querySelector('canvas');
+        if (canvas) {
+          const a = document.createElement('a');
+          a.download = `CampusHub-Pass-${currentUser?.rollNo || 'Student'}.png`;
+          a.href = canvas.toDataURL('image/png');
+          a.click();
+        } else {
+          window.print();
+        }
+      });
+    }
+
+    // Background refresh in case token changed or missing
+    async function refreshPass() {
       try {
-        // Fetch full profile and QR token from API
         const [meRes, qrRes] = await Promise.all([
           apiClient.get('/students/me').catch(() => null),
           apiClient.get('/students/me/qr').catch(() => null)
         ]);
 
-        const profile = meRes?.data || currentUser;
-        if (profile?.name) nameEl.textContent = profile.name;
-        if (profile?.rollNo) rollEl.textContent = `Roll No: ${profile.rollNo}`;
+        const freshProfile = meRes?.data || currentUser;
+        const freshToken = qrRes?.data?.qrToken || freshProfile?.qrToken;
 
-        const token = qrRes?.data?.qrToken || profile?.qrToken;
-        
-        if (!token) {
-          throw new Error('No QR token received from server');
+        if (freshProfile) {
+          freshProfile.qrToken = freshToken || freshProfile.qrToken;
+          hydratePass(freshProfile);
         }
-
-        badgeEl.textContent = token;
-        badgeEl.style.display = 'inline-block';
-        qrContainer.innerHTML = '';
-
-        // Generate QR code using local qrcode.min.js
-        if (typeof QRCode !== 'undefined') {
-          new QRCode(qrContainer, {
-            text: token,
-            width: 220,
-            height: 220,
-            colorDark: "#171717",
-            colorLight: "#ffffff",
-            correctLevel: QRCode.CorrectLevel ? QRCode.CorrectLevel.H : 2
-          });
-        } else {
-          // Fallback image using standard QR API if library not loaded
-          qrContainer.innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(token)}" alt="QR Code" style="width:220px;height:220px;">`;
-        }
-
       } catch (err) {
-        console.error('Failed to generate QR:', err);
-        qrContainer.innerHTML = `<div class="error-msg">Failed to generate QR code.<br><small style="color:#666;">${err.message || ''}</small></div>`;
+        console.error('Pass sync check:', err);
       }
     }
 
-    loadQR();
+    refreshPass();
   </script>
 </body>
 </html>

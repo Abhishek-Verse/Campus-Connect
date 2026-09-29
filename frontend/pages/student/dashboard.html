@@ -7,21 +7,117 @@
   <link rel="stylesheet" href="/css/global.css">
   <link rel="stylesheet" href="/css/student.css">
   <style>
-    .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; margin-bottom: 24px; }
-    .stat-card { background: #fff; border: 1px solid #E6E6E6; border-radius: 8px; padding: 16px; text-align: center; }
-    .stat-card .value { font-size: 24px; font-weight: bold; color: #2563EB; }
-    .stat-card .label { font-size: 14px; color: #666666; margin-top: 4px; }
-    .dashboard-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 24px; }
-    @media (max-width: 768px) { .dashboard-grid { grid-template-columns: 1fr; } }
-    .section-card { background: #fff; border: 1px solid #E6E6E6; border-radius: 8px; padding: 20px; margin-bottom: 24px; }
-    .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-    .event-list, .notice-list { display: flex; flex-direction: column; gap: 12px; }
-    .event-item, .notice-item { border: 1px solid #E6E6E6; border-radius: 6px; padding: 12px; }
-    .btn { display: inline-block; background: #2563EB; color: #fff; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-size: 14px; cursor: pointer; border: none; }
-    .btn-outline { background: transparent; color: #2563EB; border: 1px solid #2563EB; }
-    .empty-state { padding: 20px; text-align: center; color: #8A8A8A; font-style: italic; }
-    .loading-state { padding: 20px; text-align: center; color: #666666; }
-    .error-state { padding: 20px; text-align: center; color: #DC2626; }
+    .dashboard-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+    .stat-card {
+      background: #ffffff;
+      border: 1px solid var(--color-border);
+      border-radius: 10px;
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .stat-card .value {
+      font-size: 28px;
+      font-weight: 800;
+      color: #0f172a;
+      line-height: 1;
+    }
+    .stat-card .label {
+      font-size: 13px;
+      color: #64748b;
+      font-weight: 500;
+    }
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 24px;
+    }
+    @media (max-width: 900px) {
+      .dashboard-grid { grid-template-columns: 1fr; }
+    }
+    .section-card {
+      background: #ffffff;
+      border: 1px solid var(--color-border);
+      border-radius: 12px;
+      padding: 22px;
+      margin-bottom: 24px;
+    }
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #f1f5f9;
+    }
+    .section-header h2 {
+      font-size: 16px;
+      font-weight: 700;
+      color: #0f172a;
+      margin: 0;
+    }
+    .event-list, .notice-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .event-item {
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 14px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      transition: background 0.15s;
+    }
+    .event-item:hover {
+      background: #f8fafc;
+    }
+    .notice-item {
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 14px 16px;
+      background: #ffffff;
+    }
+    .btn-qr-hero {
+      background: #0f172a;
+      color: #ffffff;
+      padding: 10px 18px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: background 0.15s;
+    }
+    .btn-qr-hero:hover {
+      background: #1e293b;
+      color: #ffffff;
+      text-decoration: none;
+    }
+    .empty-state {
+      padding: 32px 16px;
+      text-align: center;
+      color: #94a3b8;
+      font-size: 13px;
+    }
   </style>
 </head>
 <body>
@@ -30,33 +126,49 @@
     <main class="main-content">
       <header class="topbar" id="topbar"></header>
       <div class="page-content">
-        <div class="section-header">
-          <h1 id="greeting">Welcome back!</h1>
-          <a href="/pages/student/my-qr.html" class="btn">Show My QR</a>
+        <div class="dashboard-header">
+          <div>
+            <h1 id="greeting" style="font-size: 1.5rem; font-weight: 800; color: #0f172a; margin: 0 0 4px 0;">Welcome back!</h1>
+            <p style="font-size: 13px; color: #64748b; margin: 0;">Here is your event activity and upcoming schedule</p>
+          </div>
+          <a href="/pages/student/my-qr.html" class="btn-qr-hero">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect><path d="M14 14h2v2h-2z"></path><path d="M18 14h3v3h-3z"></path><path d="M14 18h3v3h-3z"></path><path d="M19 19h2v2h-2z"></path></svg>
+            <span>Show My QR Pass</span>
+          </a>
         </div>
 
         <div class="stats-row" id="statsRow">
-          <div class="stat-card"><div class="value" id="statRegistered">-</div><div class="label">Registered Events</div></div>
-          <div class="stat-card"><div class="value" id="statAttended">-</div><div class="label">Attended</div></div>
-          <div class="stat-card"><div class="value" id="statUpcoming">-</div><div class="label">Upcoming</div></div>
+          <div class="stat-card">
+            <div class="value" id="statRegistered">0</div>
+            <div class="label">Registered Events</div>
+          </div>
+          <div class="stat-card">
+            <div class="value" id="statAttended">0</div>
+            <div class="label">Attended</div>
+          </div>
+          <div class="stat-card">
+            <div class="value" id="statUpcoming">0</div>
+            <div class="label">Upcoming Events</div>
+          </div>
         </div>
 
         <div class="dashboard-grid">
           <div class="section-card">
             <div class="section-header">
-              <h2>Upcoming Events</h2>
-              <a href="/pages/student/events.html" class="btn btn-outline" style="padding: 4px 12px;">View All</a>
+              <h2>Upcoming Campus Events</h2>
+              <a href="/pages/student/events.html" class="btn btn-secondary btn-sm" style="font-size: 12px; padding: 4px 10px;">View All</a>
             </div>
             <div id="upcomingEventsContainer" class="event-list">
-              <div class="loading-state">Loading events...</div>
+              <div class="empty-state">Loading upcoming events...</div>
             </div>
           </div>
+
           <div class="section-card">
             <div class="section-header">
               <h2>Recent Notices</h2>
             </div>
             <div id="recentNoticesContainer" class="notice-list">
-              <div class="loading-state">Loading notices...</div>
+              <div class="empty-state">Loading notices...</div>
             </div>
           </div>
         </div>
@@ -73,56 +185,73 @@
     const user = requireAuth();
     renderNavigation('STUDENT');
 
-    document.getElementById('greeting').textContent = `Welcome back, ${user?.name || 'Student'}!`;
+    if (user?.name) {
+      document.getElementById('greeting').textContent = `Welcome back, ${user.name}!`;
+    }
 
     async function loadDashboard() {
       try {
-        // Load stats
-        const statsRes = await apiClient.get('/students/me/dashboard-stats').catch(() => null);
-        if (statsRes?.data) {
-          document.getElementById('statRegistered').textContent = statsRes.data.registered || 0;
-          document.getElementById('statAttended').textContent = statsRes.data.attended || 0;
-          document.getElementById('statUpcoming').textContent = statsRes.data.upcoming || 0;
-        } else {
-          document.getElementById('statRegistered').textContent = '0';
-          document.getElementById('statAttended').textContent = '0';
-          document.getElementById('statUpcoming').textContent = '0';
-        }
+        const [myEventsRes, eventsRes, noticesRes] = await Promise.all([
+          apiClient.get('/students/me/events').catch(() => ({ data: [] })),
+          apiClient.get('/events?limit=4&status=PUBLISHED').catch(() => ({ data: [] })),
+          apiClient.get('/notices?limit=3').catch(() => ({ data: [] }))
+        ]);
 
-        // Load upcoming events
-        const eventsRes = await apiClient.get('/events?limit=3&status=PUBLISHED').catch(() => null);
+        const myEvents = myEventsRes.data || [];
+        const registeredCount = myEvents.length;
+        const attendedCount = myEvents.filter(e => e.attended || e.attendanceStatus === 'PRESENT').length;
+        const upcomingCount = (eventsRes.data || []).length;
+
+        document.getElementById('statRegistered').textContent = registeredCount;
+        document.getElementById('statAttended').textContent = attendedCount;
+        document.getElementById('statUpcoming').textContent = upcomingCount;
+
+        // Render upcoming events
         const eventsContainer = document.getElementById('upcomingEventsContainer');
-        if (eventsRes?.data?.length) {
-          eventsContainer.innerHTML = eventsRes.data.map(event => `
-            <div class="event-item">
-              <h3 style="margin: 0 0 4px 0; font-size: 16px;">${event.title}</h3>
-              <p style="margin: 0 0 8px 0; font-size: 14px; color: #666666;">
-                📅 ${new Date(event.date).toLocaleDateString()} | 📍 ${event.venue}
-              </p>
-              <a href="/pages/student/event-details.html?id=${event.id}" class="btn" style="padding: 4px 12px;">Register</a>
-            </div>
-          `).join('');
+        const events = eventsRes.data || [];
+        if (events.length > 0) {
+          eventsContainer.innerHTML = events.slice(0, 3).map(event => {
+            const eventDate = new Date(event.date || event.eventDate);
+            const dateStr = eventDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            return `
+              <div class="event-item">
+                <div style="flex: 1;">
+                  <h3 style="margin: 0 0 4px 0; font-size: 14px; font-weight: 700; color: #0f172a;">${event.title}</h3>
+                  <div style="font-size: 12px; color: #64748b; display: flex; align-items: center; gap: 10px;">
+                    <span>${dateStr} • ${event.startTime || ''}</span>
+                    <span>•</span>
+                    <span>${event.venue || 'Campus Venue'}</span>
+                  </div>
+                </div>
+                <a href="/pages/student/event-details.html?id=${event.id}" class="btn btn-secondary btn-sm" style="font-size: 12px; padding: 6px 12px; white-space: nowrap;">Details</a>
+              </div>
+            `;
+          }).join('');
         } else {
-          eventsContainer.innerHTML = '<div class="empty-state">No upcoming events found.</div>';
+          eventsContainer.innerHTML = '<div class="empty-state">No upcoming campus events.</div>';
         }
 
-        // Load notices
-        const noticesRes = await apiClient.get('/notices?limit=3').catch(() => null);
+        // Render notices
         const noticesContainer = document.getElementById('recentNoticesContainer');
-        if (noticesRes?.data?.length) {
-          noticesContainer.innerHTML = noticesRes.data.map(notice => `
-            <div class="notice-item">
-              <h4 style="margin: 0 0 4px 0; font-size: 14px;">${notice.title}</h4>
-              <p style="margin: 0; font-size: 12px; color: #8A8A8A;">${new Date(notice.createdAt).toLocaleDateString()}</p>
-            </div>
-          `).join('');
+        const notices = noticesRes.data || [];
+        if (notices.length > 0) {
+          noticesContainer.innerHTML = notices.map(notice => {
+            const noticeDate = notice.publishedAt || notice.createdAt;
+            const dateDisplay = noticeDate ? new Date(noticeDate).toLocaleDateString() : 'Recent';
+            return `
+              <div class="notice-item">
+                <h4 style="margin: 0 0 4px 0; font-size: 13px; font-weight: 700; color: #0f172a;">${notice.title}</h4>
+                <p style="margin: 0 0 6px 0; font-size: 12px; color: #475569; line-height: 1.4;">${notice.content || ''}</p>
+                <div style="font-size: 11px; color: #94a3b8;">${dateDisplay}</div>
+              </div>
+            `;
+          }).join('');
         } else {
-          noticesContainer.innerHTML = '<div class="empty-state">No recent notices.</div>';
+          noticesContainer.innerHTML = '<div class="empty-state">No active campus notices.</div>';
         }
 
       } catch (err) {
-        document.getElementById('upcomingEventsContainer').innerHTML = '<div class="error-state">Failed to load data.</div>';
-        document.getElementById('recentNoticesContainer').innerHTML = '<div class="error-state">Failed to load data.</div>';
+        console.error('Dashboard load error:', err);
       }
     }
 

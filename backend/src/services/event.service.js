@@ -128,39 +128,67 @@ export const createEvent = async (clubId, data) => {
 };
 
 export const updateEvent = async (eventId, userId, data) => {
-  const updateData = { ...data };
-  if (updateData.eventDate) updateData.eventDate = new Date(updateData.eventDate);
-  if (updateData.date) {
-    updateData.eventDate = new Date(updateData.date);
-    delete updateData.date;
+  const updateData = {};
+
+  if (data.title !== undefined && data.title !== null) updateData.title = String(data.title).trim();
+  if (data.description !== undefined && data.description !== null) updateData.description = String(data.description).trim();
+  if (data.category !== undefined && data.category !== null) updateData.category = String(data.category).trim() || 'OTHER';
+  if (data.status !== undefined && data.status !== null) updateData.status = String(data.status).trim();
+
+  const rawDate = data.eventDate || data.date;
+  if (rawDate) {
+    const d = new Date(rawDate);
+    if (!isNaN(d.getTime())) updateData.eventDate = d;
   }
-  if (updateData.registrationDeadline) {
-    updateData.registrationDeadline = new Date(updateData.registrationDeadline);
+
+  if (data.startTime !== undefined && data.startTime !== null) updateData.startTime = String(data.startTime).trim();
+  if (data.endTime !== undefined && data.endTime !== null) updateData.endTime = String(data.endTime).trim();
+
+  if (data.capacity !== undefined && data.capacity !== null && data.capacity !== '') {
+    const cap = parseInt(data.capacity);
+    if (!isNaN(cap)) updateData.capacity = cap;
   }
-  if (updateData.deadline) {
-    updateData.registrationDeadline = new Date(updateData.deadline);
-    delete updateData.deadline;
+
+  if (data.posterUrl) {
+    updateData.posterUrl = data.posterUrl;
   }
-  if (updateData.capacity) {
-    updateData.capacity = parseInt(updateData.capacity);
+
+  if (data.guestName !== undefined || data.guest !== undefined) {
+    const g = String(data.guestName || data.guest || '').trim();
+    updateData.guestName = g ? g : null;
   }
-  if (typeof updateData.rules === 'string') {
-    updateData.rules = updateData.rules.split('\n').filter(Boolean);
+
+  const rawDeadline = data.registrationDeadline || data.deadline;
+  if (rawDeadline) {
+    const d = new Date(rawDeadline);
+    if (!isNaN(d.getTime())) updateData.registrationDeadline = d;
+  } else if (rawDeadline === '' || rawDeadline === null) {
+    updateData.registrationDeadline = null;
   }
-  if (updateData.guest && !updateData.guestName) {
-    updateData.guestName = updateData.guest;
-    delete updateData.guest;
-  }
-  if (!updateData.venueId && updateData.venue) {
-    let venue = await prisma.venue.findFirst({
-      where: { name: { equals: updateData.venue.trim(), mode: 'insensitive' } }
-    });
-    if (!venue) {
-      venue = await prisma.venue.create({ data: { name: updateData.venue.trim() } });
+
+  if (data.rules !== undefined && data.rules !== null) {
+    if (Array.isArray(data.rules)) {
+      updateData.rules = data.rules;
+    } else if (typeof data.rules === 'string') {
+      updateData.rules = data.rules.split('\n').map(r => r.trim()).filter(Boolean);
     }
-    updateData.venueId = venue.id;
-    delete updateData.venue;
   }
+
+  if (data.venueId) {
+    updateData.venueId = data.venueId;
+  } else if (data.venue !== undefined && data.venue !== null) {
+    const vName = String(data.venue).trim();
+    if (vName) {
+      let venue = await prisma.venue.findFirst({
+        where: { name: { equals: vName, mode: 'insensitive' } }
+      });
+      if (!venue) {
+        venue = await prisma.venue.create({ data: { name: vName } });
+      }
+      updateData.venueId = venue.id;
+    }
+  }
+
   return prisma.event.update({ where: { id: eventId }, data: updateData });
 };
 

@@ -98,14 +98,21 @@
       }
     }
 
+    function getEventEndDateTime(item) {
+      const d = new Date(item.eventDate || item.date);
+      const [h = '23', m = '59'] = (item.endTime || '23:59').split(':');
+      d.setHours(parseInt(h), parseInt(m), 59, 999);
+      return d;
+    }
+
     function renderTable() {
       const now = new Date();
       let filtered = allEvents;
       
       if (currentFilter === 'upcoming') {
-        filtered = allEvents.filter(e => new Date(e.eventDate || e.date) >= now);
+        filtered = allEvents.filter(e => getEventEndDateTime(e) >= now);
       } else if (currentFilter === 'past') {
-        filtered = allEvents.filter(e => new Date(e.eventDate || e.date) < now);
+        filtered = allEvents.filter(e => getEventEndDateTime(e) < now);
       }
 
       if (filtered.length === 0) {

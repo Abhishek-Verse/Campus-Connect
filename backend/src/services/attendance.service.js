@@ -34,6 +34,9 @@ export const scanAttendance = async (eventId, qrToken, scannedById) => {
     return {
       name: student.name,
       rollNo: student.rollNo,
+      erpId: student.erpId || null,
+      department: student.department || null,
+      division: student.division || null,
       status: attendance.status,
       checkInTime: attendance.checkInTime
     };
@@ -44,10 +47,24 @@ export const getEventAttendance = async (eventId, userId) => {
   const registrations = await prisma.registration.findMany({
     where: { eventId },
     include: {
-      student: { select: { id: true, name: true, rollNo: true, email: true } },
+      student: { 
+        select: { 
+          id: true, 
+          name: true, 
+          rollNo: true, 
+          email: true,
+          erpId: true,
+          department: true,
+          division: true,
+          gender: true,
+          college: true,
+          admissionYear: true,
+          passingYear: true
+        } 
+      },
       attendance: { where: { eventId } }
     },
-    orderBy: { registeredAt: 'asc' }
+    orderBy: { student: { rollNo: 'asc' } }
   });
 
   return registrations.map(reg => {
@@ -57,6 +74,11 @@ export const getEventAttendance = async (eventId, userId) => {
       studentId: reg.student.id,
       studentName: reg.student.name,
       rollNo: reg.student.rollNo,
+      erpId: reg.student.erpId || '-',
+      department: reg.student.department || '-',
+      division: reg.student.division || '-',
+      gender: reg.student.gender || '-',
+      college: reg.student.college || '-',
       email: reg.student.email,
       registrationStatus: reg.status,
       attendanceStatus: att ? 'PRESENT' : 'ABSENT',

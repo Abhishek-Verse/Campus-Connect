@@ -67,15 +67,17 @@
               <table class="table" style="width: 100%; text-align: left;">
                 <thead>
                   <tr>
-                    <th>Name</th>
                     <th>Roll No</th>
-                    <th>Email</th>
+                    <th>ERP ID</th>
+                    <th>Name</th>
+                    <th>Department</th>
+                    <th>Div</th>
                     <th>Status</th>
                     <th>Check-in Time</th>
                   </tr>
                 </thead>
                 <tbody id="attendanceTable">
-                  <tr><td colspan="5" class="text-center">Loading...</td></tr>
+                  <tr><td colspan="7" class="text-center">Loading...</td></tr>
                 </tbody>
               </table>
             </div>
@@ -145,7 +147,7 @@
       emptyState.style.display = 'none';
       contentArea.style.display = 'block';
       document.getElementById('linkScanner').href = `/pages/club/scanner.html?eventId=${eventId}`;
-      attendanceTable.innerHTML = '<tr><td colspan="5" class="text-center">Loading attendance...</td></tr>';
+      attendanceTable.innerHTML = '<tr><td colspan="7" class="text-center">Loading attendance...</td></tr>';
 
       try {
         const token = localStorage.getItem('token') || sessionStorage.getItem('token');
@@ -171,19 +173,22 @@
         renderTable();
       } catch (err) {
         console.error(err);
-        attendanceTable.innerHTML = '<tr><td colspan="5" class="text-center text-error">Failed to load attendance data.</td></tr>';
+        attendanceTable.innerHTML = '<tr><td colspan="7" class="text-center text-error">Failed to load attendance data.</td></tr>';
       }
     }
 
     function renderTable() {
-      const q = searchInput.value.toLowerCase();
+      const q = searchInput.value.toLowerCase().trim();
       const filtered = allData.filter(r => 
         (r.studentName && r.studentName.toLowerCase().includes(q)) ||
-        (r.rollNo && r.rollNo.toLowerCase().includes(q))
+        (r.rollNo && r.rollNo.toLowerCase().includes(q)) ||
+        (r.erpId && r.erpId.toLowerCase().includes(q)) ||
+        (r.department && r.department.toLowerCase().includes(q)) ||
+        (r.division && r.division.toLowerCase().includes(q))
       );
 
       if (filtered.length === 0) {
-        attendanceTable.innerHTML = '<tr><td colspan="5" class="text-center text-muted">No records found.</td></tr>';
+        attendanceTable.innerHTML = '<tr><td colspan="7" class="text-center text-muted">No records found.</td></tr>';
         return;
       }
 
@@ -191,9 +196,11 @@
         const isPresent = r.attendanceStatus === 'PRESENT';
         return `
           <tr>
+            <td><strong>${r.rollNo || '-'}</strong></td>
+            <td>${r.erpId || '-'}</td>
             <td>${r.studentName || '-'}</td>
-            <td>${r.rollNo || '-'}</td>
-            <td>${r.email || '-'}</td>
+            <td>${r.department || '-'}</td>
+            <td>${r.division || '-'}</td>
             <td class="${isPresent ? 'status-present' : 'status-absent'}">${isPresent ? 'Present' : 'Absent'}</td>
             <td>${isPresent && r.checkInTime ? new Date(r.checkInTime).toLocaleString() : '-'}</td>
           </tr>

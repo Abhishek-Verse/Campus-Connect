@@ -22,6 +22,13 @@ export const register = async (data) => {
       email: user.email,
       name: user.name,
       rollNo: user.rollNo,
+      erpId: user.erpId,
+      admissionYear: user.admissionYear,
+      passingYear: user.passingYear,
+      gender: user.gender,
+      department: user.department,
+      college: user.college,
+      division: user.division,
       role: user.role,
       qrToken: user.qrToken,
       isClubMember: user.role === 'CLUB_MEMBER' || user.role === 'ADMIN'
@@ -30,13 +37,10 @@ export const register = async (data) => {
 };
 
 export const login = async (identifier, password) => {
-  const cleanId = (identifier || '').trim();
+  const cleanEmail = (identifier || '').trim();
   const user = await prisma.user.findFirst({
     where: {
-      OR: [
-        { email: { equals: cleanId, mode: 'insensitive' } },
-        { rollNo: { equals: cleanId, mode: 'insensitive' } }
-      ]
+      email: { equals: cleanEmail, mode: 'insensitive' }
     },
     include: {
       clubMemberships: {
@@ -50,8 +54,8 @@ export const login = async (identifier, password) => {
   }
 
   const token = generateToken(user.id);
-  const isClubMember = (user.clubMemberships && user.clubMemberships.length > 0) || user.role === 'CLUB_MEMBER' || user.role === 'ADMIN';
-  const effectiveRole = isClubMember ? (user.role === 'ADMIN' ? 'ADMIN' : 'CLUB_MEMBER') : user.role;
+  const isClubMember = user.role === 'CLUB_MEMBER' || user.role === 'ADMIN';
+  const effectiveRole = user.role;
 
   return {
     token,
@@ -60,8 +64,14 @@ export const login = async (identifier, password) => {
       email: user.email,
       name: user.name,
       rollNo: user.rollNo,
+      erpId: user.erpId,
+      admissionYear: user.admissionYear,
+      passingYear: user.passingYear,
+      gender: user.gender,
+      department: user.department,
+      college: user.college,
+      division: user.division,
       role: effectiveRole,
-      rawRole: user.role,
       isClubMember,
       qrToken: user.qrToken,
       clubMemberships: user.clubMemberships
@@ -77,6 +87,13 @@ export const getMe = async (userId) => {
       name: true,
       email: true,
       rollNo: true,
+      erpId: true,
+      admissionYear: true,
+      passingYear: true,
+      gender: true,
+      department: true,
+      college: true,
+      division: true,
       role: true,
       qrToken: true,
       clubMemberships: { include: { club: true } }

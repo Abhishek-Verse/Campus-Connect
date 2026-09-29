@@ -3,22 +3,129 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Profile — CampusHub</title>
+  <title>Student Profile — CampusHub</title>
   <link rel="stylesheet" href="/css/global.css">
   <link rel="stylesheet" href="/css/student.css">
   <style>
-    .profile-card { max-width: 600px; margin: 0 auto; background: #fff; border: 1px solid #E6E6E6; border-radius: 8px; padding: 32px; }
-    .form-group { margin-bottom: 20px; }
-    .form-label { display: block; margin-bottom: 8px; font-size: 14px; font-weight: 500; color: #171717; }
-    .form-input { width: 100%; padding: 10px 12px; border: 1px solid #E6E6E6; border-radius: 6px; font-size: 14px; box-sizing: border-box; font-family: inherit; }
-    .form-input:disabled, .form-input[readonly] { background: #F9FAFB; color: #666; cursor: not-allowed; }
-    .btn { background: #2563EB; color: #fff; padding: 10px 20px; border: none; border-radius: 6px; font-size: 14px; font-weight: 500; cursor: pointer; width: 100%; }
-    .btn:disabled { background: #9CA3AF; cursor: not-allowed; }
-    .toast { position: fixed; top: 20px; right: 20px; padding: 12px 24px; border-radius: 6px; color: white; font-weight: 500; display: none; z-index: 1000; }
-    .toast.success { background: #16A34A; }
-    .toast.error { background: #DC2626; }
-    .qr-token-box { margin-top: 32px; padding-top: 24px; border-top: 1px solid #E6E6E6; }
-    .qr-token { font-family: monospace; font-size: 12px; color: #8A8A8A; word-break: break-all; background: #F9FAFB; padding: 8px; border-radius: 4px; border: 1px solid #E6E6E6; margin-top: 8px; }
+    .profile-card { 
+      max-width: 760px; 
+      margin: 0 auto; 
+      background: #ffffff; 
+      border: 1px solid #e2e8f0; 
+      border-radius: 8px; 
+      padding: 32px; 
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    .profile-header {
+      border-bottom: 1px solid #e2e8f0;
+      padding-bottom: 20px;
+      margin-bottom: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .profile-header h1 {
+      margin: 0;
+      font-size: 22px;
+      color: #0f172a;
+      font-weight: 700;
+    }
+    .profile-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    @media (max-width: 640px) {
+      .profile-grid { grid-template-columns: 1fr; }
+      .profile-card { padding: 20px; }
+    }
+    .form-group { margin-bottom: 18px; }
+    .form-label { 
+      display: block; 
+      margin-bottom: 6px; 
+      font-size: 13px; 
+      font-weight: 600; 
+      color: #334155; 
+    }
+    .form-input, .form-select { 
+      width: 100%; 
+      padding: 10px 12px; 
+      border: 1px solid #cbd5e1; 
+      border-radius: 6px; 
+      font-size: 14px; 
+      box-sizing: border-box; 
+      font-family: inherit; 
+      color: #0f172a;
+      background: #ffffff;
+      transition: border-color 0.15s ease;
+    }
+    .form-input:focus, .form-select:focus {
+      outline: none;
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+    }
+    .form-input:disabled, .form-input[readonly] { 
+      background: #f8fafc; 
+      color: #64748b; 
+      cursor: not-allowed; 
+      border-color: #e2e8f0;
+    }
+    .btn-save { 
+      background: #2563eb; 
+      color: #ffffff; 
+      padding: 12px 24px; 
+      border: none; 
+      border-radius: 6px; 
+      font-size: 14px; 
+      font-weight: 600; 
+      cursor: pointer; 
+      width: 100%; 
+      transition: background 0.15s ease;
+      margin-top: 10px;
+    }
+    .btn-save:hover { background: #1d4ed8; }
+    .btn-save:disabled { background: #94a3b8; cursor: not-allowed; }
+    .toast { 
+      position: fixed; 
+      top: 24px; 
+      right: 24px; 
+      padding: 12px 20px; 
+      border-radius: 6px; 
+      color: white; 
+      font-weight: 600; 
+      font-size: 13px;
+      display: none; 
+      z-index: 1000; 
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+    .toast.success { background: #16a34a; }
+    .toast.error { background: #dc2626; }
+    .qr-badge-section { 
+      margin-top: 28px; 
+      padding-top: 20px; 
+      border-top: 1px solid #e2e8f0; 
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      background: #f8fafc;
+      padding: 16px;
+      border-radius: 6px;
+    }
+    .qr-token-pill { 
+      font-family: monospace; 
+      font-size: 13px; 
+      font-weight: 700;
+      color: #0f172a; 
+      background: #ffffff; 
+      padding: 6px 12px; 
+      border-radius: 4px; 
+      border: 1px solid #cbd5e1; 
+      letter-spacing: 0.05em;
+    }
   </style>
 </head>
 <body>
@@ -27,33 +134,139 @@
     <main class="main-content">
       <header class="topbar" id="topbar"></header>
       <div class="page-content">
-        <h1 style="text-align: center; margin-bottom: 32px;">My Profile</h1>
         
         <div class="profile-card">
+          <div class="profile-header">
+            <div>
+              <h1>Student Identity & Profile</h1>
+              <p style="margin: 4px 0 0 0; font-size: 13px; color: #64748b;">
+                Used for attendance verification and official club event records.
+              </p>
+            </div>
+            <div id="statusBadgeContainer">
+              <span class="portal-badge-student">VERIFIED STUDENT</span>
+            </div>
+          </div>
+
           <form id="profileForm">
-            <div class="form-group">
-              <label class="form-label" for="name">Full Name</label>
-              <input type="text" id="name" class="form-input" required>
+            <div class="profile-grid">
+              
+              <!-- 1. Full Name -->
+              <div class="form-group">
+                <label class="form-label" for="name">Full Name <span class="text-error">*</span></label>
+                <input type="text" id="name" class="form-input" required placeholder="e.g. Rahul Sharma">
+              </div>
+
+              <!-- 2. GSuite Email -->
+              <div class="form-group">
+                <label class="form-label" for="email">GSuite / College Email</label>
+                <input type="email" id="email" class="form-input" readonly title="Email cannot be changed directly">
+              </div>
+
+              <!-- 3. Roll Number -->
+              <div class="form-group">
+                <label class="form-label" for="rollNo">Roll Number <span class="text-error">*</span></label>
+                <input type="text" id="rollNo" class="form-input" required placeholder="e.g. 101 or 23">
+              </div>
+
+              <!-- 4. ERP ID -->
+              <div class="form-group">
+                <label class="form-label" for="erpId">ERP ID</label>
+                <input type="text" id="erpId" class="form-input" placeholder="e.g. ERP-2023-4581">
+              </div>
+
+              <!-- 5. Department (Dropdown) -->
+              <div class="form-group">
+                <label class="form-label" for="department">Department <span class="text-error">*</span></label>
+                <select id="department" class="form-select" required>
+                  <option value="">Select Department...</option>
+                  <option value="Computer Engineering">Computer Engineering</option>
+                  <option value="Information Technology">Information Technology</option>
+                  <option value="Artificial Intelligence & Data Science">AI & Data Science</option>
+                  <option value="Electronics & Telecommunication">Electronics & Telecom (EXTC)</option>
+                  <option value="Mechanical Engineering">Mechanical Engineering</option>
+                  <option value="Civil Engineering">Civil Engineering</option>
+                  <option value="Chemical Engineering">Chemical Engineering</option>
+                  <option value="Electrical Engineering">Electrical Engineering</option>
+                  <option value="MCA / Computer Applications">MCA / Computer Applications</option>
+                  <option value="Management Studies">Management Studies</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+
+              <!-- 6. Division (ABCD) -->
+              <div class="form-group">
+                <label class="form-label" for="division">Division</label>
+                <select id="division" class="form-select">
+                  <option value="">Select Division...</option>
+                  <option value="A">Division A</option>
+                  <option value="B">Division B</option>
+                  <option value="C">Division C</option>
+                  <option value="D">Division D</option>
+                </select>
+              </div>
+
+              <!-- 7. Gender (Male / Female) -->
+              <div class="form-group">
+                <label class="form-label" for="gender">Gender</label>
+                <select id="gender" class="form-select">
+                  <option value="">Select Gender...</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+
+              <!-- 8. College Name -->
+              <div class="form-group">
+                <label class="form-label" for="college">College Name</label>
+                <input type="text" id="college" class="form-input" placeholder="e.g. CampusHub Institute of Technology">
+              </div>
+
+              <!-- 9. Admission Year -->
+              <div class="form-group">
+                <label class="form-label" for="admissionYear">Admission Year</label>
+                <select id="admissionYear" class="form-select">
+                  <option value="">Select Admission Year...</option>
+                  <option value="2026">2026</option>
+                  <option value="2025">2025</option>
+                  <option value="2024">2024</option>
+                  <option value="2023">2023</option>
+                  <option value="2022">2022</option>
+                  <option value="2021">2021</option>
+                  <option value="2020">2020</option>
+                </select>
+              </div>
+
+              <!-- 10. Passing Year -->
+              <div class="form-group">
+                <label class="form-label" for="passingYear">Passing Year</label>
+                <select id="passingYear" class="form-select">
+                  <option value="">Select Passing Year...</option>
+                  <option value="2030">2030</option>
+                  <option value="2029">2029</option>
+                  <option value="2028">2028</option>
+                  <option value="2027">2027</option>
+                  <option value="2026">2026</option>
+                  <option value="2025">2025</option>
+                  <option value="2024">2024</option>
+                </select>
+              </div>
+
             </div>
-            
-            <div class="form-group">
-              <label class="form-label" for="rollNo">Roll Number</label>
-              <input type="text" id="rollNo" class="form-input" readonly>
-            </div>
-            
-            <div class="form-group">
-              <label class="form-label" for="email">Email Address</label>
-              <input type="email" id="email" class="form-input" readonly>
-            </div>
-            
-            <button type="submit" class="btn" id="saveBtn">Save Changes</button>
+
+            <button type="submit" class="btn-save" id="saveBtn">Save Profile Changes</button>
           </form>
 
-          <div class="qr-token-box">
-            <label class="form-label">Active QR Token</label>
-            <div class="qr-token" id="qrTokenDisplay">Loading...</div>
+          <div class="qr-badge-section">
+            <div>
+              <div style="font-size: 13px; font-weight: 700; color: #0f172a;">Universal QR Identifier</div>
+              <div style="font-size: 12px; color: #64748b;">Permanent token linked to your attendance pass</div>
+            </div>
+            <div class="qr-token-pill" id="qrTokenDisplay">Loading...</div>
           </div>
         </div>
+
       </div>
     </main>
   </div>
@@ -72,6 +285,13 @@
     const nameInput = document.getElementById('name');
     const rollNoInput = document.getElementById('rollNo');
     const emailInput = document.getElementById('email');
+    const erpIdInput = document.getElementById('erpId');
+    const departmentInput = document.getElementById('department');
+    const divisionInput = document.getElementById('division');
+    const genderInput = document.getElementById('gender');
+    const collegeInput = document.getElementById('college');
+    const admissionYearInput = document.getElementById('admissionYear');
+    const passingYearInput = document.getElementById('passingYear');
     const qrTokenDisplay = document.getElementById('qrTokenDisplay');
     const form = document.getElementById('profileForm');
     const saveBtn = document.getElementById('saveBtn');
@@ -81,22 +301,32 @@
       toast.textContent = msg;
       toast.className = `toast ${type}`;
       toast.style.display = 'block';
-      setTimeout(() => toast.style.display = 'none', 3000);
+      setTimeout(() => toast.style.display = 'none', 3200);
     }
 
     async function loadProfileData() {
       try {
         const res = await apiClient.get('/students/me');
-        const profile = res.data;
+        const profile = res.data || {};
+        
         nameInput.value = profile.name || user.name || '';
         rollNoInput.value = profile.rollNo || user.rollNo || '';
         emailInput.value = profile.email || user.email || '';
+        erpIdInput.value = profile.erpId || '';
+        departmentInput.value = profile.department || '';
+        divisionInput.value = profile.division || '';
+        genderInput.value = profile.gender || '';
+        collegeInput.value = profile.college || '';
+        admissionYearInput.value = profile.admissionYear || '';
+        passingYearInput.value = profile.passingYear || '';
         
         const qrRes = await apiClient.get('/students/me/qr').catch(() => null);
         if (qrRes?.data?.qrToken) {
           qrTokenDisplay.textContent = qrRes.data.qrToken;
+        } else if (profile.qrToken) {
+          qrTokenDisplay.textContent = profile.qrToken;
         } else {
-          qrTokenDisplay.textContent = 'No active QR token';
+          qrTokenDisplay.textContent = 'Active Pass Connected';
         }
       } catch (err) {
         showToast('Failed to load profile data', 'error');
@@ -106,25 +336,35 @@
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       saveBtn.disabled = true;
-      saveBtn.textContent = 'Saving...';
+      saveBtn.textContent = 'Saving Changes...';
       
       try {
-        await apiClient.patch('/students/me', {
-          name: nameInput.value
-        });
+        const payload = {
+          name: nameInput.value.trim(),
+          rollNo: rollNoInput.value.trim(),
+          erpId: erpIdInput.value.trim(),
+          department: departmentInput.value,
+          division: divisionInput.value,
+          gender: genderInput.value,
+          college: collegeInput.value.trim(),
+          admissionYear: admissionYearInput.value,
+          passingYear: passingYearInput.value
+        };
+
+        const res = await apiClient.patch('/students/me', payload);
         showToast('Profile updated successfully!');
         
-        // Update local user object if needed
+        // Keep active session user object updated
         const u = JSON.parse(localStorage.getItem('user') || '{}');
-        u.name = nameInput.value;
+        Object.assign(u, res.data || payload);
         localStorage.setItem('user', JSON.stringify(u));
         
       } catch (err) {
-        const msg = err.response?.data?.message || 'Failed to update profile';
+        const msg = err.message || err.details?.message || 'Failed to update profile';
         showToast(msg, 'error');
       } finally {
         saveBtn.disabled = false;
-        saveBtn.textContent = 'Save Changes';
+        saveBtn.textContent = 'Save Profile Changes';
       }
     });
 

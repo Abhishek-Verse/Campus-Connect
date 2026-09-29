@@ -6,8 +6,10 @@ import { validate } from '../middleware/validation.middleware.js';
 import { scanSchema } from '../validators/attendance.validators.js';
 
 const router = Router();
-router.use(authenticate, requireRole('CLUB_MEMBER', 'ADMIN'));
-router.post('/events/:eventId/attendance/scan', validate(scanSchema), scan);
-router.get('/events/:eventId/attendance', list);
-router.get('/events/:eventId/attendance/export', exportAtt);
+const requireClub = [authenticate, requireRole('CLUB_MEMBER', 'ADMIN')];
+
+router.post('/events/:eventId/attendance/scan', requireClub, validate(scanSchema), scan);
+router.get('/events/:eventId/attendance', requireClub, list);
+router.get('/events/:eventId/attendance/export', requireClub, exportAtt);
+
 export default router;

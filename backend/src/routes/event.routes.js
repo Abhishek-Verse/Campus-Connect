@@ -7,15 +7,16 @@ import { handlePosterUpload } from '../middleware/upload.middleware.js';
 import { createEventSchema, updateEventSchema } from '../validators/event.validators.js';
 
 const router = Router();
+const requireClub = [authenticate, requireRole('CLUB_MEMBER', 'ADMIN')];
+
 router.get('/', optionalAuth, list);
 router.get('/:eventId', optionalAuth, get);
 
-router.use(authenticate, requireRole('CLUB_MEMBER', 'ADMIN'));
-router.post('/', handlePosterUpload, validate(createEventSchema), create);
-router.patch('/:eventId', handlePosterUpload, validate(updateEventSchema), update);
-router.put('/:eventId', handlePosterUpload, validate(updateEventSchema), update);
-router.delete('/:eventId', remove);
-router.post('/:eventId/publish', publish);
-router.post('/:eventId/cancel', cancel);
+router.post('/', requireClub, handlePosterUpload, validate(createEventSchema), create);
+router.patch('/:eventId', requireClub, handlePosterUpload, validate(updateEventSchema), update);
+router.put('/:eventId', requireClub, handlePosterUpload, validate(updateEventSchema), update);
+router.delete('/:eventId', requireClub, remove);
+router.post('/:eventId/publish', requireClub, publish);
+router.post('/:eventId/cancel', requireClub, cancel);
 
 export default router;

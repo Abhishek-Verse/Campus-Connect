@@ -74,7 +74,7 @@
           </div>
 
           <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px;">
-            <div class="speed-badge">⚡ Turbo Scanner Active (25 FPS)</div>
+            <div class="speed-badge"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" stroke="none" style="margin-right: 4px;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>25 FPS High-Speed Scanner</div>
             <div style="font-size: 12px; color: #6b7280;" id="scannerStatusIndicator">Camera ready</div>
           </div>
 
@@ -295,15 +295,20 @@
 
       if (type === 'approved') {
         badgeIconSuccess.style.display = 'block';
-        feedbackTitle.textContent = '✓ ENTRY ALLOWED';
+        feedbackTitle.textContent = 'ENTRY ALLOWED';
         feedbackName.textContent = data.name || 'Student';
-        feedbackMeta.textContent = `Roll No: ${data.rollNo || '-'}`;
+        let metaParts = [];
+        if (data.rollNo) metaParts.push(`Roll: ${data.rollNo}`);
+        if (data.erpId) metaParts.push(`ERP: ${data.erpId}`);
+        if (data.department) metaParts.push(data.department);
+        if (data.division) metaParts.push(`Div: ${data.division}`);
+        feedbackMeta.textContent = metaParts.join(' • ') || 'Student Verified';
         feedbackReason.style.display = 'none';
         feedbackTimePill.textContent = `Attendance Marked • ${timeStr}`;
         playSound('success');
       } else if (type === 'declined') {
         badgeIconError.style.display = 'block';
-        feedbackTitle.textContent = '✕ ENTRY DENIED';
+        feedbackTitle.textContent = 'ENTRY DENIED';
         feedbackName.textContent = data.title || 'Check Registration';
         feedbackMeta.textContent = '';
         feedbackReason.textContent = data.reason || 'Student is not registered for this event.';
@@ -312,7 +317,7 @@
         playSound('error');
       } else if (type === 'warning') {
         badgeIconWarning.style.display = 'block';
-        feedbackTitle.textContent = '⚠️ ALREADY ATTENDED';
+        feedbackTitle.textContent = 'ALREADY ATTENDED';
         feedbackName.textContent = data.name || 'Duplicate Scan';
         feedbackMeta.textContent = `Roll No: ${data.rollNo || '-'}`;
         feedbackReason.textContent = data.reason || 'Student has already checked in.';
@@ -351,9 +356,18 @@
           const student = json.data || {};
           const sName = student.name || 'Student';
           const sRoll = student.rollNo || '';
+          const sErp = student.erpId || '';
+          const sDept = student.department || '';
+          const sDiv = student.division || '';
           
-          setStatus('success', '✓ ENTRY ALLOWED', `${sName} (Roll: ${sRoll})`);
-          showCameraAnimation('approved', { name: sName, rollNo: sRoll });
+          setStatus('success', 'ENTRY ALLOWED', `${sName} (Roll: ${sRoll}${sErp ? ' | ERP: ' + sErp : ''})`);
+          showCameraAnimation('approved', { 
+            name: sName, 
+            rollNo: sRoll, 
+            erpId: sErp, 
+            department: sDept, 
+            division: sDiv 
+          });
           
           stats.present++;
           updateStats();
@@ -370,23 +384,23 @@
             updateRecentScans('Already Checked In', '', 'Duplicate', false);
           } else if (errCode === 'NOT_REGISTERED') {
             reason = 'Student is not registered for this event.';
-            setStatus('error', '✕ ENTRY DENIED', reason);
+            setStatus('error', 'ENTRY DENIED', reason);
             showCameraAnimation('declined', { title: 'Not Registered', reason });
             updateRecentScans('Not Registered', '', 'Denied', false);
           } else if (errCode === 'INVALID_QR') {
             reason = 'Unrecognized student QR code.';
-            setStatus('error', '✕ ENTRY DENIED', reason);
+            setStatus('error', 'ENTRY DENIED', reason);
             showCameraAnimation('declined', { title: 'Invalid QR Token', reason });
             updateRecentScans('Invalid QR', '', 'Denied', false);
           } else {
             reason = json.error || 'Registration check failed.';
-            setStatus('error', '✕ ENTRY DENIED', reason);
+            setStatus('error', 'ENTRY DENIED', reason);
             showCameraAnimation('declined', { title: 'Entry Denied', reason });
             updateRecentScans('Denied', '', 'Denied', false);
           }
         }
       } catch (error) {
-        setStatus('error', '✕ Network Error', 'Unable to connect to server.');
+        setStatus('error', 'Network Error', 'Unable to connect to server.');
         showCameraAnimation('declined', { title: 'Network Error', reason: 'Unable to connect to server' });
       }
     }

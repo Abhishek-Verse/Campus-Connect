@@ -55,6 +55,13 @@ export const getMyRegistrations = async (studentId) => {
 
   return registrations.map(r => {
     const isAttended = r.attendance && r.attendance.length > 0;
+    const now = new Date();
+    const eventDate = new Date(r.event.eventDate);
+    const [endH = '23', endM = '59'] = (r.event.endTime || '23:59').split(':');
+    eventDate.setHours(parseInt(endH), parseInt(endM), 59, 999);
+    const isPast = eventDate < now;
+    const attendanceStatus = isAttended ? 'PRESENT' : (isPast ? 'ABSENT' : 'PENDING');
+
     return {
       id: r.id,
       eventId: r.eventId,
@@ -68,7 +75,7 @@ export const getMyRegistrations = async (studentId) => {
       clubName: r.event.club?.name || '',
       registrationStatus: r.status,
       status: r.status,
-      attendanceStatus: isAttended ? 'PRESENT' : 'ABSENT',
+      attendanceStatus,
       attended: isAttended,
       checkInTime: isAttended ? r.attendance[0].checkInTime : null,
       registeredAt: r.registeredAt
@@ -80,7 +87,21 @@ export const getEventRegistrations = async (eventId, userId) => {
   const registrations = await prisma.registration.findMany({
     where: { eventId },
     include: {
-      student: { select: { id: true, name: true, rollNo: true, email: true } }
+      student: { 
+        select: { 
+          id: true, 
+          name: true, 
+          rollNo: true, 
+          email: true,
+          erpId: true,
+          department: true,
+          division: true,
+          college: true,
+          gender: true,
+          admissionYear: true,
+          passingYear: true
+        } 
+      }
     },
     orderBy: { registeredAt: 'asc' }
   });
@@ -93,6 +114,13 @@ export const getEventRegistrations = async (eventId, userId) => {
     name: r.student.name,
     rollNo: r.student.rollNo,
     email: r.student.email,
+    erpId: r.student.erpId || '-',
+    department: r.student.department || '-',
+    division: r.student.division || '-',
+    college: r.student.college || '-',
+    gender: r.student.gender || '-',
+    admissionYear: r.student.admissionYear || '-',
+    passingYear: r.student.passingYear || '-',
     status: r.status,
     createdAt: r.registeredAt,
     registeredAt: r.registeredAt,

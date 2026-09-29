@@ -8,15 +8,22 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  name      String   @db.VarChar(100)
-  email     String   @unique @db.VarChar(255)
-  password  String   @db.VarChar(255)
-  rollNo    String   @unique @map("roll_no") @db.VarChar(50)
-  qrToken   String   @unique @map("qr_token") @db.VarChar(100)
-  role      String   @default("STUDENT") @db.VarChar(30)
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  id            String   @id @default(uuid())
+  name          String   @db.VarChar(100)
+  email         String   @unique @db.VarChar(255)
+  password      String   @db.VarChar(255)
+  rollNo        String   @unique @map("roll_no") @db.VarChar(50)
+  erpId         String?  @map("erp_id") @db.VarChar(50)
+  admissionYear String?  @map("admission_year") @db.VarChar(10)
+  passingYear   String?  @map("passing_year") @db.VarChar(10)
+  gender        String?  @db.VarChar(20)
+  department    String?  @db.VarChar(100)
+  college       String?  @db.VarChar(200)
+  division      String?  @db.VarChar(10)
+  qrToken       String   @unique @map("qr_token") @db.VarChar(100)
+  role          String   @default("STUDENT") @db.VarChar(30)
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
 
   clubMemberships ClubMember[]
   registrations   Registration[]

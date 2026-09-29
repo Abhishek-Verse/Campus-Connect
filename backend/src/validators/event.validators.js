@@ -30,25 +30,20 @@ export const createEventSchema = z.object({
 
 export const updateEventSchema = z.object({
   title: z.string().min(2).max(200).optional(),
-  description: z.string().optional(),
-  category: z.string().optional(),
-  eventDate: z.string().optional(),
-  date: z.string().optional(),
-  startTime: z.string().optional(),
-  endTime: z.string().optional(),
+  description: z.string().optional().nullable(),
+  category: z.string().optional().nullable(),
+  eventDate: z.string().optional().nullable(),
+  date: z.string().optional().nullable(),
+  startTime: z.string().optional().nullable(),
+  endTime: z.string().optional().nullable(),
   capacity: z.coerce.number().int().positive().optional(),
-  posterUrl: z.string().optional().nullable().transform(v => v ? v : null),
+  posterUrl: z.string().optional().nullable(),
   guestName: z.string().optional().nullable(),
   guest: z.string().optional().nullable(),
   registrationDeadline: z.string().optional().nullable(),
   deadline: z.string().optional().nullable(),
-  rules: z.union([z.array(z.string()), z.string()]).optional(),
+  rules: z.union([z.array(z.string()), z.string()]).optional().nullable(),
   venueId: z.string().optional().nullable(),
   venue: z.string().optional().nullable(),
-  status: z.string().optional()
-}).transform(data => ({
-  ...data,
-  ...(data.date && !data.eventDate ? { eventDate: data.date } : {}),
-  ...(data.deadline && !data.registrationDeadline ? { registrationDeadline: data.deadline } : {}),
-  ...(data.guest && !data.guestName ? { guestName: data.guest } : {})
-}));
+  status: z.string().optional().nullable()
+});

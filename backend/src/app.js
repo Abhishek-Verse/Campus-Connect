@@ -61,9 +61,9 @@ app.get('/api/v1/health', (req, res) => {
 // API routes
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/students', studentRoutes);
-app.use('/api/v1/events', eventRoutes);
 app.use('/api/v1', registrationRoutes);
 app.use('/api/v1', attendanceRoutes);
+app.use('/api/v1/events', eventRoutes);
 app.use('/api/v1/notices', noticeRoutes);
 
 app.use(errorHandler);

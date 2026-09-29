@@ -12,11 +12,47 @@ export const getMeProfile = async (req, res, next) => {
 
 export const updateMeProfile = async (req, res, next) => {
   try {
-    const { name } = req.body;
+    const { 
+      name, 
+      rollNo,
+      erpId, 
+      admissionYear, 
+      passingYear, 
+      gender, 
+      department, 
+      college, 
+      division 
+    } = req.body;
+
+    const data = {};
+    if (name !== undefined) data.name = name.trim();
+    if (rollNo !== undefined && rollNo.trim()) data.rollNo = rollNo.trim();
+    if (erpId !== undefined) data.erpId = erpId ? erpId.trim() : null;
+    if (admissionYear !== undefined) data.admissionYear = admissionYear ? admissionYear.trim() : null;
+    if (passingYear !== undefined) data.passingYear = passingYear ? passingYear.trim() : null;
+    if (gender !== undefined) data.gender = gender ? gender.trim() : null;
+    if (department !== undefined) data.department = department ? department.trim() : null;
+    if (college !== undefined) data.college = college ? college.trim() : null;
+    if (division !== undefined) data.division = division ? division.trim().toUpperCase() : null;
+
     const user = await prisma.user.update({
       where: { id: req.user.id },
-      data: { ...(name ? { name: name.trim() } : {}) },
-      select: { id: true, name: true, email: true, rollNo: true, role: true, qrToken: true }
+      data,
+      select: { 
+        id: true, 
+        name: true, 
+        email: true, 
+        rollNo: true, 
+        erpId: true,
+        admissionYear: true,
+        passingYear: true,
+        gender: true,
+        department: true,
+        college: true,
+        division: true,
+        role: true, 
+        qrToken: true 
+      }
     });
     sendSuccess(res, user);
   } catch (err) { next(err); }
@@ -55,7 +91,10 @@ export const getMyAttendance = async (req, res, next) => {
     const now = new Date();
     const data = registrations.map(reg => {
       const isPresent = reg.attendance && reg.attendance.length > 0;
-      const isPast = new Date(reg.event.eventDate) < now;
+      const eventDate = new Date(reg.event.eventDate);
+      const [endH = '23', endM = '59'] = (reg.event.endTime || '23:59').split(':');
+      eventDate.setHours(parseInt(endH), parseInt(endM), 59, 999);
+      const isPast = eventDate < now;
       const status = isPresent ? 'PRESENT' : (isPast ? 'ABSENT' : 'PENDING');
 
       return {
