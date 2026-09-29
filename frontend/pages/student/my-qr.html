@@ -11,97 +11,19 @@
       max-width: 440px;
       margin: 10px auto 40px auto;
     }
-    .pass-card {
-      background: #ffffff;
-      border: 1px solid #e2e8f0;
-      border-radius: 14px;
-      overflow: hidden;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-      text-align: center;
-    }
-    .pass-header {
-      background: #0f172a;
-      color: #ffffff;
-      padding: 16px 20px;
+    .pass-actions {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
+      gap: 10px;
+      margin-top: 18px;
     }
-    .pass-brand {
-      font-size: 15px;
-      font-weight: 800;
-      letter-spacing: -0.02em;
-    }
-    .pass-type-badge {
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      padding: 3px 8px;
-      border-radius: 4px;
-      background: rgba(255, 255, 255, 0.15);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-    }
-    .pass-body {
-      padding: 28px 24px;
-    }
-    .student-avatar {
-      width: 56px;
-      height: 56px;
-      border-radius: 50%;
-      background: #eff6ff;
-      color: #2563eb;
-      font-weight: 700;
-      font-size: 20px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 12px auto;
-      border: 2px solid #bfdbfe;
-    }
-    .student-fullname {
-      font-size: 20px;
-      font-weight: 800;
-      color: #0f172a;
-      margin: 0 0 4px 0;
-    }
-    .student-meta-subtitle {
-      font-size: 13px;
+    .brightness-tip {
+      font-size: 12px;
       color: #64748b;
-      margin: 0 0 20px 0;
-      font-weight: 500;
-    }
-    .qr-frame {
-      display: inline-flex;
+      display: flex;
       align-items: center;
       justify-content: center;
-      padding: 14px;
-      background: #ffffff;
-      border: 1px solid #e2e8f0;
-      border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-      margin-bottom: 18px;
-      min-height: 248px;
-      min-width: 248px;
-    }
-    .qr-frame canvas, .qr-frame img {
-      display: block;
-      border-radius: 6px;
-    }
-    .token-chip {
-      display: inline-flex;
-      align-items: center;
       gap: 6px;
-      font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
-      font-size: 14px;
-      font-weight: 700;
-      background: #f1f5f9;
-      color: #1e293b;
-      padding: 6px 16px;
-      border-radius: 6px;
-      border: 1px solid #cbd5e1;
-      letter-spacing: 0.06em;
-      margin-bottom: 20px;
+      margin-top: 14px;
     }
     .pass-instructions {
       font-size: 13px;
@@ -113,20 +35,6 @@
       border: 1px solid #e2e8f0;
       margin-bottom: 16px;
     }
-    .brightness-tip {
-      font-size: 12px;
-      color: #64748b;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      margin-top: 14px;
-    }
-    .pass-actions {
-      display: flex;
-      gap: 10px;
-      margin-top: 18px;
-    }
   </style>
   <script src="/js/lib/qrcode.min.js"></script>
 </head>
@@ -134,30 +42,44 @@
   <div class="app-layout">
     <aside class="sidebar" id="sidebar"></aside>
     <main class="main-content">
-      <header class="topbar" id="topbar"></header>
+      <header class="topbar" id="topbar">
+        <h1>Universal Student Pass</h1>
+      </header>
       <div class="page-content">
         <div class="qr-page-container">
           <div class="pass-card">
             <div class="pass-header">
-              <span class="pass-brand">CampusHub</span>
-              <span class="pass-type-badge">Universal Student Pass</span>
+              <span class="pass-brand">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect></svg>
+                CampusHub ID
+              </span>
+              <span class="pass-type-badge">Permanent Pass</span>
             </div>
 
             <div class="pass-body">
               <div class="student-avatar" id="avatarInitials">ST</div>
-              <h1 class="student-fullname" id="studentName">Student Name</h1>
+              <h2 class="student-fullname" id="studentName">Student Name</h2>
               <div class="student-meta-subtitle" id="studentMeta">Roll No: —</div>
 
               <div class="qr-frame" id="qrcode">
                 <span style="font-size: 13px; color: #94a3b8;">Rendering pass...</span>
               </div>
 
-              <div>
-                <div class="token-chip" id="qrTokenBadge">CH-XXXXXXXX</div>
+              <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 12px;">
+                <div class="token-chip" id="qrTokenBadge" style="margin-bottom: 0;">CH-XXXXXXXX</div>
+                <button type="button" id="btnCopyToken" class="btn btn-secondary btn-sm" title="Copy QR Token" style="padding: 6px 10px;">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                  <span>Copy</span>
+                </button>
+              </div>
+
+              <div class="pass-live-indicator">
+                <div class="pass-live-dot"></div>
+                <span id="passLiveClock">Pass Verified & Active</span>
               </div>
 
               <div class="pass-instructions">
-                <strong>Show this QR at registered events.</strong> Present this pass at venue entrance scanners for fast contactless check-in.
+                <strong>Show this QR at registered events.</strong> Present this single permanent QR pass at venue entrance scanners for fast contactless check-in.
               </div>
 
               <div class="pass-actions">
@@ -166,13 +88,13 @@
                   <span>Download Pass</span>
                 </button>
                 <a href="/pages/student/events.html" class="btn btn-primary btn-sm" style="flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 6px; text-decoration: none;">
-                  <span>Browse Events</span>
+                  <span>Explore Events</span>
                 </a>
               </div>
 
               <div class="brightness-tip">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
-                <span>Increase screen brightness for instant scanner detection</span>
+                <span>Tip: Turn up phone screen brightness for fast camera detection</span>
               </div>
             </div>
           </div>
@@ -183,12 +105,13 @@
   <nav class="bottom-nav" id="bottomNav"></nav>
 
   <script type="module">
-    import { requireAuth, getUser } from '/js/auth/auth.js';
+    import { requireAuth } from '/js/auth/auth.js';
     import { renderNavigation } from '/js/utils/navigation.js';
+    import { copyToClipboard } from '/js/utils/helpers.js';
     import apiClient from '/js/api/client.js';
 
     const currentUser = requireAuth();
-    renderNavigation('STUDENT');
+    renderNavigation();
 
     const nameEl = document.getElementById('studentName');
     const metaEl = document.getElementById('studentMeta');
@@ -196,26 +119,41 @@
     const qrContainer = document.getElementById('qrcode');
     const badgeEl = document.getElementById('qrTokenBadge');
     const btnDownload = document.getElementById('btnDownloadPass');
+    const btnCopyToken = document.getElementById('btnCopyToken');
+    const passLiveClock = document.getElementById('passLiveClock');
 
-    // Instant Hydration from local auth cache (Zero Loading Time)
+    let currentQrToken = '';
+
+    // Update live clock
+    function updateClock() {
+      const now = new Date();
+      passLiveClock.textContent = `Pass Active • ${now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}`;
+    }
+    updateClock();
+    setInterval(updateClock, 1000);
+
+    // Instant Hydration from local auth cache
     function hydratePass(user) {
       if (!user) return;
       const name = user.name || 'Student';
       nameEl.textContent = name;
       
-      const initials = name.split(' ').map(p => p[0]).join('').slice(0, 2).toUpperCase() || 'ST';
-      initialsEl.textContent = initials;
+      const parts = name.trim().split(/\s+/);
+      const initials = parts.length === 1 ? parts[0].slice(0, 2).toUpperCase() : (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+      initialsEl.textContent = initials || 'ST';
 
       const rollText = user.rollNo ? `Roll No: ${user.rollNo}` : '';
-      const emailText = user.email ? user.email : '';
-      metaEl.textContent = [rollText, emailText].filter(Boolean).join(' • ');
+      const deptText = user.department ? user.department : (user.email || '');
+      metaEl.textContent = [rollText, deptText].filter(Boolean).join(' • ');
 
       if (user.qrToken) {
+        currentQrToken = user.qrToken;
         renderQRCode(user.qrToken);
       }
     }
 
     function renderQRCode(token) {
+      currentQrToken = token;
       badgeEl.textContent = token;
       qrContainer.innerHTML = '';
 
@@ -235,6 +173,13 @@
 
     // Hydrate immediately
     hydratePass(currentUser);
+
+    // Copy Token Handler
+    btnCopyToken.addEventListener('click', () => {
+      if (currentQrToken) {
+        copyToClipboard(currentQrToken, `QR Token ${currentQrToken} copied!`);
+      }
+    });
 
     // Download Pass as Image
     if (btnDownload) {

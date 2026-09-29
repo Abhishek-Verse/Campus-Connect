@@ -1,3 +1,5 @@
+/* CampusHub Authentication Styles — UI/UX Pro Max Edition */
+
 .auth-page {
   display: flex;
   align-items: center;
@@ -13,8 +15,8 @@
   background-color: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-card);
-  padding: var(--space-8) var(--space-6);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  padding: 32px 28px;
+  box-shadow: var(--shadow-md);
 }
 
 .auth-logo {
@@ -34,29 +36,29 @@
   font-size: 0.875rem;
 }
 
-/* Dual Portal Tabs (Student vs Club) */
+/* Segmented Dual Portal Control */
 .portal-tabs {
   display: flex;
-  border-bottom: 2px solid var(--color-border);
-  margin-bottom: var(--space-6);
-  gap: var(--space-2);
+  background: var(--color-surface-subtle);
+  padding: 4px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+  margin-bottom: var(--space-4);
+  gap: 4px;
 }
 
 .portal-tab {
   flex: 1;
   text-align: center;
-  padding: 10px 8px;
-  font-size: 0.875rem;
+  padding: 8px 12px;
+  font-size: 0.8125rem;
   font-weight: 600;
   cursor: pointer;
-  border-bottom: 2px solid transparent;
-  margin-bottom: -2px;
+  border-radius: var(--radius-xs);
   color: var(--color-text-secondary);
-  transition: all 0.2s ease;
+  transition: all 0.15s ease;
   background: transparent;
-  border-top: none;
-  border-left: none;
-  border-right: none;
+  border: none;
 }
 
 .portal-tab:hover {
@@ -64,19 +66,92 @@
 }
 
 .portal-tab.active {
+  background: #ffffff;
   color: var(--color-primary);
-  border-bottom-color: var(--color-primary);
+  box-shadow: var(--shadow-xs);
+  font-weight: 700;
 }
 
 .portal-desc {
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 6px;
-  padding: 10px 12px;
-  font-size: 0.8rem;
-  color: #475569;
+  background: var(--color-surface-subtle);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  font-size: 0.8125rem;
+  color: var(--color-text-secondary);
   margin-bottom: var(--space-4);
-  line-height: 1.4;
+  line-height: 1.45;
+}
+
+/* Password Toggle Wrapper */
+.password-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-toggle-btn {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-muted);
+  padding: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-xs);
+}
+.password-toggle-btn:hover {
+  color: var(--color-text);
+}
+
+/* Quick Demo Fill Credentials Helper */
+.demo-accounts-bar {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px dashed var(--color-border);
+}
+
+.demo-accounts-bar-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-muted);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.demo-chips {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.demo-chip-btn {
+  background: var(--color-surface-subtle);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xs);
+  padding: 5px 9px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.demo-chip-btn:hover {
+  background: var(--color-surface-hover);
+  border-color: var(--color-primary-border);
+  color: var(--color-primary);
 }
 
 .auth-form {
@@ -98,14 +173,17 @@
 
 #auth-error {
   margin-bottom: var(--space-4);
-  padding: var(--space-3);
+  padding: 10px 14px;
   background-color: var(--color-error-light);
-  border: 1px solid var(--color-error);
+  border: 1px solid var(--color-error-border);
   color: var(--color-error);
-  border-radius: var(--radius-input);
-  font-size: 0.875rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.8125rem;
+  font-weight: 500;
   display: none;
 }
 #auth-error:not(:empty) {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }

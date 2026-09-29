@@ -1,0 +1,56 @@
+{
+  "name": "CampusHub — College Event Platform",
+  "short_name": "CampusHub",
+  "description": "College Event Management & Universal QR Attendance Platform",
+  "start_url": "/pages/student/dashboard.html",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "lang": "en",
+  "icons": [
+    {
+      "src": "/assets/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/assets/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/assets/icons/icon.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "categories": ["education", "events", "productivity"],
+  "shortcuts": [
+    {
+      "name": "My QR Pass",
+      "short_name": "QR Pass",
+      "description": "Display your Universal Student Pass",
+      "url": "/pages/student/my-qr.html",
+      "icons": [{ "src": "/assets/icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Club Scanner",
+      "short_name": "Scanner",
+      "description": "Open Club Attendance Camera Scanner",
+      "url": "/pages/club/scanner.html",
+      "icons": [{ "src": "/assets/icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Explore Events",
+      "short_name": "Events",
+      "description": "Browse upcoming campus events",
+      "url": "/pages/student/events.html",
+      "icons": [{ "src": "/assets/icons/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}

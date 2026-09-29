@@ -34,6 +34,20 @@
    - Captures Full Name, GSuite Email, ERP ID, Roll Number, Department (dropdown), Division (A/B/C/D), Gender, College Name, Admission Year, and Passing Year.
    - Excel exports cleanly format all student academic fields alongside check-in timestamps for university auditing and viva submissions.
 
+5. **Progressive Web App (PWA) & Mobile-First**:
+   - Installable on mobile phones and tablets as a standalone web app with service worker caching for responsive scanning on the field.
+
+---
+
+## AWS Cloud Architecture
+
+CampusHub runs directly on native AWS infrastructure per `docs/03-ARCHITECTURE.md` without container overhead:
+
+- **AWS EC2:** Hosts the Node.js / Express modular monolith and serves the static frontend.
+- **Amazon RDS (PostgreSQL):** Managed relational database instance.
+- **Amazon S3:** Cloud storage for event posters and club media assets.
+- **AWS IAM & CloudWatch:** Secure role policies and operational telemetry.
+
 ---
 
 ## Getting Started

@@ -3,46 +3,80 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login - CampusHub</title>
+  <title>Login — CampusHub</title>
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="apple-touch-icon" href="/assets/icons/apple-touch-icon.png">
   <link rel="stylesheet" href="/css/global.css">
   <link rel="stylesheet" href="/css/auth.css">
+  <script type="module" src="/js/utils/pwa.js"></script>
 </head>
 <body class="auth-page">
   <div class="auth-card">
     <div class="auth-logo">
       <a href="/" style="display: inline-block;">
-        <img src="/assets/logo.png" alt="CampusHub Logo" style="height: 48px; max-width: 100%; object-fit: contain; margin-bottom: 8px;">
+        <img src="/assets/logo.png" alt="CampusHub Logo" style="height: 46px; max-width: 100%; object-fit: contain; margin-bottom: 8px;">
       </a>
-      <p id="portalSubtitle" style="color: #64748b; font-size: 13px; font-weight: 500;">Sign in to your account</p>
+      <p id="portalSubtitle" style="color: var(--color-text-secondary); font-size: 13px; font-weight: 500;">Sign in to your account</p>
     </div>
 
-    <!-- Dual Portal Navigation Tabs (No emojis) -->
-    <div class="portal-tabs">
-      <button type="button" class="portal-tab active" id="tabStudent">Student Portal</button>
-      <button type="button" class="portal-tab" id="tabClub">Club Portal</button>
+    <!-- Segmented Dual Portal Tabs -->
+    <div class="portal-tabs" role="tablist">
+      <button type="button" class="portal-tab active" id="tabStudent" role="tab" aria-selected="true">Student Portal</button>
+      <button type="button" class="portal-tab" id="tabClub" role="tab" aria-selected="false">Club Portal</button>
     </div>
 
     <div class="portal-desc" id="portalDesc">
-      <strong>Student Access:</strong> Discover events, view your attendance history, and present your unique Universal QR code.
+      <strong>Student Access:</strong> Discover events, view attendance records, and display your Universal QR pass.
     </div>
     
     <div id="auth-error"></div>
     
-    <form id="login-form" class="auth-form">
+    <form id="login-form" class="auth-form" novalidate>
       <div class="form-group">
         <label for="email" class="form-label" id="labelEmail">Email Address</label>
         <input type="email" id="email" name="email" class="form-input" placeholder="student@campushub.edu" required autofocus autocomplete="email">
       </div>
       
       <div class="form-group">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-          <label for="password" class="form-label" style="margin-bottom: 0;">Password</label>
+        <label for="password" class="form-label">Password</label>
+        <div class="password-input-wrap">
+          <input type="password" id="password" name="password" class="form-input" placeholder="••••••••" required autocomplete="current-password">
+          <button type="button" id="togglePasswordBtn" class="password-toggle-btn" aria-label="Toggle password visibility">
+            <svg id="eyeIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+              <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+          </button>
         </div>
-        <input type="password" id="password" name="password" class="form-input" placeholder="••••••••" required autocomplete="current-password" style="margin-top: 6px;">
       </div>
       
       <button type="submit" class="btn btn-primary w-full mt-2" id="submitBtn">Sign In as Student</button>
     </form>
+
+    <!-- 1-Click Fast Credentials for Multi-Device Testing -->
+    <div class="demo-accounts-bar">
+      <div class="demo-accounts-bar-title">
+        <span>Quick Test Credentials</span>
+        <span style="font-size: 10px; color: var(--color-primary); cursor: pointer;" id="autoFillHint">1-Click Fill</span>
+      </div>
+      <div class="demo-chips">
+        <button type="button" class="demo-chip-btn" id="demoStudentBtn">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="7" r="4"/><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/></svg>
+          Demo Student
+        </button>
+        <button type="button" class="demo-chip-btn" id="demoCodingClubBtn">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+          Coding Club
+        </button>
+        <button type="button" class="demo-chip-btn" id="demoCulturalClubBtn">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/></svg>
+          Cultural Club
+        </button>
+      </div>
+    </div>
 
     <div class="auth-footer" id="authFooter">
       Don't have a student account? <a href="/pages/auth/register.html">Register here</a>
@@ -62,10 +96,43 @@
     const portalDesc = qs('#portalDesc');
     const labelEmail = qs('#labelEmail');
     const inputEmail = qs('#email');
+    const inputPassword = qs('#password');
     const submitBtn = qs('#submitBtn');
     const authFooter = qs('#authFooter');
     const form = qs('#login-form');
     const errorDiv = qs('#auth-error');
+    const togglePasswordBtn = qs('#togglePasswordBtn');
+
+    // Password visibility toggle
+    togglePasswordBtn.addEventListener('click', () => {
+      const isPass = inputPassword.type === 'password';
+      inputPassword.type = isPass ? 'text' : 'password';
+      togglePasswordBtn.innerHTML = isPass
+        ? `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>`
+        : `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`;
+    });
+
+    // Quick demo fills
+    qs('#demoStudentBtn').addEventListener('click', () => {
+      switchPortal('STUDENT');
+      inputEmail.value = 'student@campushub.edu';
+      inputPassword.value = 'password123';
+      inputEmail.focus();
+    });
+
+    qs('#demoCodingClubBtn').addEventListener('click', () => {
+      switchPortal('CLUB');
+      inputEmail.value = 'codingclub@campushub.edu';
+      inputPassword.value = 'password123';
+      inputEmail.focus();
+    });
+
+    qs('#demoCulturalClubBtn').addEventListener('click', () => {
+      switchPortal('CLUB');
+      inputEmail.value = 'culturalclub@campushub.edu';
+      inputPassword.value = 'password123';
+      inputEmail.focus();
+    });
 
     function switchPortal(portal) {
       currentPortal = portal;
@@ -74,24 +141,27 @@
 
       if (portal === 'STUDENT') {
         tabStudent.classList.add('active');
+        tabStudent.setAttribute('aria-selected', 'true');
         tabClub.classList.remove('active');
-        portalSubtitle.textContent = 'Student Portal Login';
-        portalDesc.innerHTML = '<strong>Student Access:</strong> Discover events, view your attendance history, and present your unique Universal QR code.';
+        tabClub.setAttribute('aria-selected', 'false');
+        portalSubtitle.textContent = 'Student Portal Sign In';
+        portalDesc.innerHTML = '<strong>Student Access:</strong> Discover events, view attendance records, and display your Universal QR pass.';
         labelEmail.textContent = 'Email Address';
         inputEmail.placeholder = 'student@campushub.edu';
         submitBtn.textContent = 'Sign In as Student';
         authFooter.style.display = 'block';
       } else {
         tabClub.classList.add('active');
+        tabClub.setAttribute('aria-selected', 'true');
         tabStudent.classList.remove('active');
-        portalSubtitle.textContent = 'Club Organizer Portal Login';
-        portalDesc.innerHTML = '<strong>Club Access:</strong> Every club has dedicated credentials to manage events, attendance scanner, and notices.';
+        tabStudent.setAttribute('aria-selected', 'false');
+        portalSubtitle.textContent = 'Club Organizer Portal Sign In';
+        portalDesc.innerHTML = '<strong>Club Access:</strong> Authorized club organizers can manage events, launch attendance scanner, and export reports.';
         labelEmail.textContent = 'Official Club Email';
-        inputEmail.placeholder = 'club@campushub.edu';
+        inputEmail.placeholder = 'codingclub@campushub.edu';
         submitBtn.textContent = 'Sign In to Club Portal';
         authFooter.style.display = 'none';
       }
-      inputEmail.focus();
     }
 
     tabStudent.addEventListener('click', () => switchPortal('STUDENT'));
@@ -103,11 +173,10 @@
       switchPortal('CLUB');
     }
     if (urlParams.get('registered') === 'true') {
-      errorDiv.className = 'credentials-hint';
       errorDiv.style.background = '#f0fdf4';
       errorDiv.style.borderColor = '#86efac';
       errorDiv.style.color = '#15803d';
-      errorDiv.style.display = 'block';
+      errorDiv.style.display = 'flex';
       errorDiv.textContent = 'Account created successfully! Please sign in with your email address.';
     }
 
@@ -119,8 +188,14 @@
       errorDiv.style.display = 'none';
       
       const email = inputEmail.value.trim();
-      const password = qs('#password').value;
+      const password = inputPassword.value;
       
+      if (!email || !password) {
+        errorDiv.textContent = 'Please provide both email and password.';
+        errorDiv.style.display = 'flex';
+        return;
+      }
+
       submitBtn.textContent = 'Authenticating...';
       submitBtn.disabled = true;
       
@@ -142,8 +217,8 @@
           if (isClub) {
             submitBtn.textContent = 'Sign In as Student';
             submitBtn.disabled = false;
-            errorDiv.innerHTML = 'Notice: This is an official club account. Please switch to the <strong>Club Portal</strong> tab to sign in.';
-            errorDiv.style.display = 'block';
+            errorDiv.innerHTML = 'This is an official club account. Please switch to the <strong>Club Portal</strong> tab to sign in.';
+            errorDiv.style.display = 'flex';
             return;
           }
           setToken(token);
@@ -157,8 +232,8 @@
           if (!isClub) {
             submitBtn.textContent = 'Sign In to Club Portal';
             submitBtn.disabled = false;
-            errorDiv.innerHTML = 'Access Denied: Student accounts cannot log into the Club Portal. Please switch to the <strong>Student Portal</strong> tab to sign in.';
-            errorDiv.style.display = 'block';
+            errorDiv.innerHTML = 'Access Denied: Student accounts cannot access the Club Management portal. Please switch to the <strong>Student Portal</strong> tab.';
+            errorDiv.style.display = 'flex';
             return;
           }
           setToken(token);
@@ -170,10 +245,10 @@
       } catch (error) {
         let msg = error.message || 'Login failed. Please check your credentials.';
         if (msg.toLowerCase().includes('invalid credentials')) {
-          msg = 'Invalid email or password. If you do not have an account yet, <a href="/pages/auth/register.html" style="font-weight: 600; text-decoration: underline;">register here</a>.';
+          msg = 'Invalid email or password. If you do not have an account yet, <a href="/pages/auth/register.html" style="font-weight: 600; text-decoration: underline; margin-left: 4px;">register here</a>.';
         }
         errorDiv.innerHTML = msg;
-        errorDiv.style.display = 'block';
+        errorDiv.style.display = 'flex';
         submitBtn.textContent = currentPortal === 'CLUB' ? 'Sign In to Club Portal' : 'Sign In as Student';
         submitBtn.disabled = false;
       }

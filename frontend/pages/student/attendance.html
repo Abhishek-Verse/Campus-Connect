@@ -3,39 +3,60 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Attendance — CampusHub</title>
+  <title>Attendance History — CampusHub</title>
   <link rel="stylesheet" href="/css/global.css">
   <link rel="stylesheet" href="/css/student.css">
-  <style>
-    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
-    .stat-card { background: #fff; border: 1px solid #E6E6E6; border-radius: 8px; padding: 20px; text-align: center; }
-    .stat-val { font-size: 28px; font-weight: bold; color: #171717; }
-    .stat-lbl { font-size: 14px; color: #666; margin-top: 8px; }
-    @media (max-width: 768px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } }
-    
-    table { width: 100%; border-collapse: collapse; background: #fff; }
-    .table-container { border: 1px solid #E6E6E6; border-radius: 8px; overflow: hidden; }
-    th, td { padding: 12px 16px; text-align: left; border-bottom: 1px solid #E6E6E6; }
-    th { background: #F9FAFB; color: #666; font-weight: 500; font-size: 14px; }
-    tr:last-child td { border-bottom: none; }
-    .status-present { color: #16A34A; font-weight: 500; }
-    .status-absent { color: #DC2626; font-weight: 500; }
-    .empty-state { text-align: center; padding: 40px; color: #666; }
-  </style>
 </head>
 <body>
   <div class="app-layout">
     <aside class="sidebar" id="sidebar"></aside>
     <main class="main-content">
-      <header class="topbar" id="topbar"></header>
-      <div class="page-content">
+      <header class="topbar" id="topbar">
         <h1>Attendance History</h1>
+      </header>
+      <div class="page-content">
+        <div style="margin-bottom: 24px;">
+          <h2 style="font-size: 1.25rem; font-weight: 800; color: var(--color-text); margin: 0 0 4px 0;">Attendance Records</h2>
+          <p style="font-size: 13px; color: var(--color-text-secondary); margin: 0;">Verified check-ins verified by campus club organizers via QR scan</p>
+        </div>
 
         <div class="stats-grid">
-          <div class="stat-card"><div class="stat-val" id="statTotal">-</div><div class="stat-lbl">Total Events</div></div>
-          <div class="stat-card"><div class="stat-val" id="statPresent" style="color: #16A34A;">-</div><div class="stat-lbl">Present</div></div>
-          <div class="stat-card"><div class="stat-val" id="statAbsent" style="color: #DC2626;">-</div><div class="stat-lbl">Absent</div></div>
-          <div class="stat-card"><div class="stat-val" id="statRate" style="color: #2563EB;">-</div><div class="stat-lbl">Attendance Rate</div></div>
+          <div class="stat-card">
+            <div class="stat-card-header">
+              <span class="label">Total Registered</span>
+              <div class="stat-card-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              </div>
+            </div>
+            <div class="value" id="statTotal">-</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-header">
+              <span class="label">Present</span>
+              <div class="stat-card-icon" style="background:#f0fdf4;color:#15803d;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+              </div>
+            </div>
+            <div class="value" id="statPresent" style="color: var(--color-success);">-</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-header">
+              <span class="label">Absent</span>
+              <div class="stat-card-icon" style="background:#fef2f2;color:#b91c1c;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+              </div>
+            </div>
+            <div class="value" id="statAbsent" style="color: var(--color-error);">-</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-header">
+              <span class="label">Attendance Rate</span>
+              <div class="stat-card-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+              </div>
+            </div>
+            <div class="value" id="statRate">-</div>
+          </div>
         </div>
 
         <div class="table-container">
@@ -50,7 +71,7 @@
               </tr>
             </thead>
             <tbody id="tableBody">
-              <tr><td colspan="5" class="empty-state">Loading attendance...</td></tr>
+              <tr><td colspan="5" class="text-center text-muted" style="padding: 24px;">Loading attendance records...</td></tr>
             </tbody>
           </table>
         </div>
@@ -62,12 +83,16 @@
   <script type="module">
     import { requireAuth } from '/js/auth/auth.js';
     import { renderNavigation } from '/js/utils/navigation.js';
+    import { renderSkeletonRows } from '/js/utils/helpers.js';
     import apiClient from '/js/api/client.js';
 
     requireAuth();
-    renderNavigation('STUDENT');
+    renderNavigation();
 
     async function loadAttendance() {
+      const tbody = document.getElementById('tableBody');
+      renderSkeletonRows(tbody, 4, 5);
+
       try {
         const res = await apiClient.get('/students/me/attendance');
         const data = res.data || [];
@@ -84,29 +109,36 @@
         document.getElementById('statAbsent').textContent = absent;
         document.getElementById('statRate').textContent = rate + '%';
 
-        const tbody = document.getElementById('tableBody');
         if (total === 0) {
-          tbody.innerHTML = '<tr><td colspan="5" class="empty-state">No attendance records yet</td></tr>';
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="5" style="padding: 40px 16px; text-align: center;">
+                <p style="color: var(--color-text-secondary); margin-bottom: 12px; font-size: 13px;">No attendance verified yet. Present your QR at event entry to get checked in.</p>
+                <a href="/pages/student/my-qr.html" class="btn btn-secondary btn-sm">View Universal QR Pass</a>
+              </td>
+            </tr>
+          `;
         } else {
           tbody.innerHTML = data.map(record => {
-            const dateStr = new Date(record.date).toLocaleDateString();
-            const timeStr = record.checkInTime ? new Date(record.checkInTime).toLocaleTimeString() : '-';
-            const statusClass = record.status === 'PRESENT' ? 'status-present' : 'status-absent';
-            const statusText = record.status === 'PRESENT' ? 'Present' : 'Absent';
+            const dateStr = record.date ? new Date(record.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '-';
+            const timeStr = record.checkInTime ? new Date(record.checkInTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '-';
+            const statusBadge = record.status === 'PRESENT'
+              ? '<span class="badge badge-success">✓ PRESENT</span>'
+              : '<span class="badge badge-error">✕ ABSENT</span>';
             
             return `
               <tr>
-                <td style="font-weight: 500;">${record.eventTitle || 'Unknown Event'}</td>
-                <td>${dateStr}</td>
-                <td>${record.clubName || '-'}</td>
-                <td class="${statusClass}">${statusText}</td>
-                <td>${timeStr}</td>
+                <td style="font-weight: 600; color: var(--color-text);">${record.eventTitle || 'Unknown Event'}</td>
+                <td style="color: var(--color-text-secondary);">${dateStr}</td>
+                <td style="color: var(--color-text-secondary);">${record.clubName || 'College Club'}</td>
+                <td>${statusBadge}</td>
+                <td style="color: var(--color-text-secondary); font-family: monospace; font-size: 13px;">${timeStr}</td>
               </tr>
             `;
           }).join('');
         }
       } catch (err) {
-        document.getElementById('tableBody').innerHTML = '<tr><td colspan="5" class="empty-state" style="color:#DC2626;">Failed to load attendance records.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="5" class="text-center text-error" style="padding: 24px;">Failed to load attendance history.</td></tr>';
       }
     }
 

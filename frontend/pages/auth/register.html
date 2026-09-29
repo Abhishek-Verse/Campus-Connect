@@ -4,17 +4,23 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Register Student — CampusHub</title>
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="apple-touch-icon" href="/assets/icons/apple-touch-icon.png">
   <link rel="stylesheet" href="/css/global.css">
   <link rel="stylesheet" href="/css/auth.css">
+  <script type="module" src="/js/utils/pwa.js"></script>
   <style>
     .auth-card-wide {
       width: 100%;
-      max-width: 540px;
+      max-width: 520px;
       background-color: var(--color-surface);
       border: 1px solid var(--color-border);
       border-radius: var(--radius-card);
       padding: 32px 28px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      box-shadow: var(--shadow-md);
     }
     .form-row {
       display: grid;
@@ -33,14 +39,14 @@
   <div class="auth-card-wide">
     <div class="auth-logo">
       <a href="/" style="display: inline-block;">
-        <img src="/assets/logo.png" alt="CampusHub Logo" style="height: 52px; max-width: 100%; object-fit: contain; margin-bottom: 8px;">
+        <img src="/assets/logo.png" alt="CampusHub Logo" style="height: 46px; max-width: 100%; object-fit: contain; margin-bottom: 8px;">
       </a>
-      <p style="color: #64748b; font-size: 13px; font-weight: 500;">Create your student account & Universal QR pass</p>
+      <p style="color: var(--color-text-secondary); font-size: 13px; font-weight: 500;">Create your student account & Universal QR pass</p>
     </div>
     
     <div id="auth-error"></div>
     
-    <form id="register-form" class="auth-form">
+    <form id="register-form" class="auth-form" novalidate>
       <div class="form-group">
         <label for="name" class="form-label">Full Name <span class="text-error">*</span></label>
         <input type="text" id="name" name="name" class="form-input" required placeholder="e.g. Rahul Sharma">
@@ -58,14 +64,14 @@
         </div>
         <div class="form-group">
           <label for="erpId" class="form-label">ERP ID</label>
-          <input type="text" id="erpId" name="erpId" class="form-input" placeholder="e.g. ERP-2023-4581">
+          <input type="text" id="erpId" name="erpId" class="form-input" placeholder="e.g. ERP-2026-4581">
         </div>
       </div>
 
       <div class="form-row">
         <div class="form-group">
           <label for="department" class="form-label">Department <span class="text-error">*</span></label>
-          <select id="department" name="department" class="form-select" required style="width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; background: #fff;">
+          <select id="department" name="department" class="form-select" required>
             <option value="">Select Department...</option>
             <option value="Computer Engineering">Computer Engineering</option>
             <option value="Information Technology">Information Technology</option>
@@ -82,7 +88,7 @@
         </div>
         <div class="form-group">
           <label for="division" class="form-label">Division</label>
-          <select id="division" name="division" class="form-select" style="width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; background: #fff;">
+          <select id="division" name="division" class="form-select">
             <option value="">Select Division...</option>
             <option value="A">Division A</option>
             <option value="B">Division B</option>
@@ -103,11 +109,18 @@
         </div>
       </div>
       
-      <button type="submit" class="btn btn-primary w-full mt-2" style="padding: 12px; font-weight: 600;">Create Account & Generate QR</button>
+      <button type="submit" class="btn btn-primary w-full mt-2" style="padding: 10px;">Create Account & Generate QR</button>
     </form>
     
-    <div class="auth-footer" style="margin-top: 20px; text-align: center; font-size: 13px; color: #64748b;">
-      Already have an account? <a href="/pages/auth/login.html" style="color: #2563eb; font-weight: 600; text-decoration: none;">Login here</a>
+    <div style="margin-top: 14px; text-align: center;">
+      <button type="button" id="fillSampleDataBtn" class="demo-chip-btn" style="margin: 0 auto;">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+        Fill Sample Student Data
+      </button>
+    </div>
+
+    <div class="auth-footer">
+      Already registered? <a href="/pages/auth/login.html">Sign in here</a>
     </div>
   </div>
 
@@ -120,11 +133,25 @@
     const errorDiv = qs('#auth-error');
     const btn = form.querySelector('button[type="submit"]');
 
+    // Fill sample student details for testing
+    qs('#fillSampleDataBtn').addEventListener('click', () => {
+      const rand = Math.floor(Math.random() * 900) + 100;
+      qs('#name').value = `Aryan Sharma`;
+      qs('#email').value = `aryan${rand}@campushub.edu`;
+      qs('#rollNo').value = `${rand}`;
+      qs('#erpId').value = `ERP-2026-${rand}`;
+      qs('#department').value = 'Computer Engineering';
+      qs('#division').value = 'A';
+      qs('#password').value = 'password123';
+      qs('#confirmPassword').value = 'password123';
+    });
+
     preventDoubleSubmit(form);
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       errorDiv.textContent = '';
+      errorDiv.style.display = 'none';
       
       const name = qs('#name').value.trim();
       const rollNo = qs('#rollNo').value.trim();
@@ -135,13 +162,25 @@
       const password = qs('#password').value;
       const confirmPassword = qs('#confirmPassword').value;
       
+      if (!name || !email || !rollNo || !password) {
+        errorDiv.textContent = 'Please fill in all required fields.';
+        errorDiv.style.display = 'flex';
+        return;
+      }
+
+      if (password.length < 6) {
+        errorDiv.textContent = 'Password must be at least 6 characters long.';
+        errorDiv.style.display = 'flex';
+        return;
+      }
+
       if (password !== confirmPassword) {
         errorDiv.textContent = 'Passwords do not match.';
-        btn.disabled = false;
+        errorDiv.style.display = 'flex';
         return;
       }
       
-      btn.textContent = 'Creating Account & QR...';
+      btn.textContent = 'Generating QR Pass...';
       btn.disabled = true;
       
       try {
@@ -169,6 +208,7 @@
         }
       } catch (error) {
         errorDiv.textContent = error.message || 'Registration failed. Please try again.';
+        errorDiv.style.display = 'flex';
         btn.textContent = 'Create Account & Generate QR';
         btn.disabled = false;
       }

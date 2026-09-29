@@ -3,149 +3,336 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CampusHub - College Event Management Platform</title>
+  <title>CampusHub — College Event Management Platform</title>
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="CampusHub">
+  <link rel="apple-touch-icon" href="/assets/icons/apple-touch-icon.png">
   <link rel="stylesheet" href="/css/global.css">
+  <script type="module" src="/js/utils/pwa.js"></script>
   <style>
     .landing-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: var(--space-4) var(--space-6);
+      padding: 16px 32px;
       border-bottom: 1px solid var(--color-border);
       background-color: var(--color-surface);
+      position: sticky;
+      top: 0;
+      z-index: 100;
     }
-    .landing-logo {
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: var(--color-text);
-      text-decoration: none;
+    .landing-nav-links {
+      display: flex;
+      align-items: center;
+      gap: 20px;
     }
-    .landing-logo:hover {
-      text-decoration: none;
+    .landing-nav-link {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--color-text-secondary);
+      transition: color 0.15s;
+    }
+    .landing-nav-link:hover {
+      color: var(--color-primary);
     }
     .hero {
       text-align: center;
-      padding: var(--space-16) var(--space-4);
-      background-color: var(--color-surface-subtle);
+      padding: 72px 24px 64px 24px;
+      background-color: var(--color-surface);
       border-bottom: 1px solid var(--color-border);
     }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 12px;
+      background: var(--color-primary-light);
+      border: 1px solid var(--color-primary-border);
+      border-radius: var(--radius-pill);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--color-primary);
+      margin-bottom: 24px;
+    }
     .hero h1 {
-      font-size: 3rem;
-      margin-bottom: var(--space-4);
+      font-size: 2.75rem;
+      font-weight: 800;
+      line-height: 1.15;
+      margin-bottom: 16px;
       color: var(--color-text);
-      max-width: 800px;
+      max-width: 820px;
       margin-left: auto;
       margin-right: auto;
+      letter-spacing: -0.03em;
     }
     .hero p {
-      font-size: 1.25rem;
+      font-size: 1.125rem;
       color: var(--color-text-secondary);
-      max-width: 600px;
-      margin: 0 auto var(--space-6) auto;
+      max-width: 620px;
+      margin: 0 auto 32px auto;
+      line-height: 1.6;
     }
-    .features {
-      padding: var(--space-16) var(--space-4);
-      max-width: 1200px;
+    .hero-actions {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .hero-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      max-width: 760px;
+      margin: 48px auto 0 auto;
+      padding-top: 32px;
+      border-top: 1px solid var(--color-border);
+      gap: 24px;
+    }
+    .hero-stat-item h3 {
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: var(--color-text);
+      margin: 0 0 4px 0;
+    }
+    .hero-stat-item p {
+      font-size: 12px;
+      color: var(--color-text-secondary);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin: 0;
+    }
+    .features-section {
+      padding: 64px 24px;
+      max-width: 1140px;
       margin: 0 auto;
+    }
+    .section-headline {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+    .section-headline h2 {
+      font-size: 1.75rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+    .section-headline p {
+      color: var(--color-text-secondary);
+      font-size: 15px;
     }
     .features-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: var(--space-6);
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 24px;
     }
     .feature-card {
       background-color: var(--color-surface);
       border: 1px solid var(--color-border);
       border-radius: var(--radius-card);
-      padding: var(--space-6);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow-xs);
+      transition: border-color 0.15s, box-shadow 0.15s;
     }
-    .feature-icon {
-      width: 44px;
-      height: 44px;
-      border-radius: 8px;
-      background: #eff6ff;
-      color: #2563eb;
+    .feature-card:hover {
+      border-color: var(--color-primary-border);
+      box-shadow: var(--shadow-sm);
+    }
+    .feature-icon-box {
+      width: 42px;
+      height: 42px;
+      border-radius: var(--radius-sm);
+      background: var(--color-primary-light);
+      color: var(--color-primary);
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-bottom: var(--space-4);
+      margin-bottom: 16px;
+      border: 1px solid var(--color-primary-border);
     }
     .feature-card h3 {
-      margin-bottom: var(--space-2);
-      font-size: 1.15rem;
-      font-weight: 600;
-      color: #0f172a;
+      margin-bottom: 8px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--color-text);
+    }
+    .feature-card p {
+      color: var(--color-text-secondary);
+      font-size: 0.875rem;
+      line-height: 1.55;
+    }
+    .portals-banner {
+      background: var(--color-surface-subtle);
+      border-top: 1px solid var(--color-border);
+      border-bottom: 1px solid var(--color-border);
+      padding: 56px 24px;
+    }
+    .portals-inner {
+      max-width: 1040px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+    .portal-box {
+      background: #ffffff;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-card);
+      padding: 32px 28px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .portal-box-tag {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--color-primary);
+    }
+    .portal-box h3 {
+      font-size: 1.25rem;
+      margin-bottom: 6px;
+    }
+    .portal-box p {
+      color: var(--color-text-secondary);
+      font-size: 0.875rem;
+      line-height: 1.5;
     }
     .footer {
       text-align: center;
-      padding: var(--space-8);
-      border-top: 1px solid var(--color-border);
-      color: var(--color-text-secondary);
+      padding: 32px 24px;
+      color: var(--color-text-muted);
+      font-size: 13px;
       background-color: var(--color-surface);
     }
     @media (max-width: 768px) {
+      .landing-header { padding: 12px 16px; }
+      .landing-nav-links { display: none; }
+      .hero { padding: 48px 16px 40px 16px; }
       .hero h1 { font-size: 2rem; }
       .hero p { font-size: 1rem; }
+      .hero-stats { grid-template-columns: 1fr; gap: 16px; margin-top: 32px; }
+      .portals-inner { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
   <header class="landing-header">
-    <a href="/" class="landing-logo" style="display: flex; align-items: center;">
-      <img src="/assets/logo.png" alt="CampusHub" style="height: 38px; object-fit: contain;">
+    <a href="/" style="display: flex; align-items: center; gap: 8px; text-decoration: none;">
+      <img src="/assets/logo.png" alt="CampusHub" style="height: 40px; max-width: 170px; object-fit: contain;">
     </a>
-    <div class="flex gap-4">
-      <a href="/pages/auth/login.html" class="btn btn-secondary">Login</a>
-      <a href="/pages/auth/register.html" class="btn btn-primary">Register</a>
+    <div class="landing-nav-links">
+      <a href="/pages/student/events.html" class="landing-nav-link">Explore Events</a>
+      <a href="/pages/auth/login.html" class="landing-nav-link">Sign In</a>
+      <a href="/pages/auth/register.html" class="btn btn-primary btn-sm">Create Account</a>
     </div>
   </header>
 
   <main>
     <section class="hero">
-      <h1>College Event Management Platform</h1>
-      <p>Streamline event discovery, registration, and attendance tracking with a single, unified system for students and clubs.</p>
-      <div class="flex justify-center gap-4 mt-6">
-        <a href="/pages/auth/register.html" class="btn btn-primary">Get Started</a>
-        <a href="/pages/auth/login.html" class="btn btn-secondary">Login</a>
+      <div class="hero-badge">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        College Event Management Platform
+      </div>
+      <h1>Centralized Campus Events & Contactless QR Attendance</h1>
+      <p>A unified, institutional platform for college clubs to publish events, track live registration capacity, and execute instant verified check-ins with Universal Student QR passes.</p>
+      
+      <div class="hero-actions">
+        <a href="/pages/student/events.html" class="btn btn-primary btn-lg">Browse Campus Events</a>
+        <a href="/pages/auth/login.html" class="btn btn-secondary btn-lg">Portal Sign In</a>
+      </div>
+
+      <div class="hero-stats">
+        <div class="hero-stat-item">
+          <h3>100%</h3>
+          <p>Contactless Check-In</p>
+        </div>
+        <div class="hero-stat-item">
+          <h3>25 FPS</h3>
+          <p>Real-Time Camera Scanner</p>
+        </div>
+        <div class="hero-stat-item">
+          <h3>Zero</h3>
+          <p>Duplicate Scan Duplication</p>
+        </div>
       </div>
     </section>
 
-    <section class="features">
+    <section class="features-section">
+      <div class="section-headline">
+        <h2>Built for College Operations</h2>
+        <p>Engineered for maximum reliability, speed, and strict verification across campus activities.</p>
+      </div>
+
       <div class="features-grid">
         <div class="feature-card">
-          <div class="feature-icon">
+          <div class="feature-icon-box">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
           </div>
-          <h3>Event Discovery</h3>
-          <p class="text-muted">Browse and register for campus events in one centralized location with real-time seat availability.</p>
+          <h3>Event Discovery & Capacity</h3>
+          <p>Explore upcoming workshops, cultural festivals, and technical symposiums with real-time seat tracking and instant student registration.</p>
         </div>
+
         <div class="feature-card">
-          <div class="feature-icon">
+          <div class="feature-icon-box">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><path d="M14 14h2v2h-2z"/><path d="M18 14h3v3h-3z"/><path d="M14 18h3v3h-3z"/><path d="M19 19h2v2h-2z"/></svg>
           </div>
-          <h3>Universal QR</h3>
-          <p class="text-muted">A single permanent student pass for all registered events. Quick and contactless entry.</p>
+          <h3>Universal Student QR</h3>
+          <p>A single permanent, cryptographically-opaque QR identity pass for each student. Works across every registered event without generating separate tickets.</p>
         </div>
+
         <div class="feature-card">
-          <div class="feature-icon">
+          <div class="feature-icon-box">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
           </div>
-          <h3>Smart Attendance</h3>
-          <p class="text-muted">High-performance 25 FPS camera scanner verifying registrations and blocking duplicate entries.</p>
+          <h3>High-Speed Camera Scanner</h3>
+          <p>Club organizers scan attendee passes directly through mobile or desktop web cameras with instant audible chime and visual Entry Allowed/Denied HUDs.</p>
         </div>
+
         <div class="feature-card">
-          <div class="feature-icon">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          <div class="feature-icon-box">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
           </div>
-          <h3>Club Operations</h3>
-          <p class="text-muted">Dedicated portal for clubs to publish events, post notices, view attendees, and export Excel reports.</p>
+          <h3>Attendance Export & Notices</h3>
+          <p>Download clean, auditable attendance rosters formatted directly in Excel (.xlsx) and broadcast instant announcements to registered students.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="portals-banner">
+      <div class="portals-inner">
+        <div class="portal-box">
+          <div>
+            <div class="portal-box-tag">Student Access</div>
+            <h3>Student Portal</h3>
+            <p>View your personalized digital ID pass, browse all campus club activities, track attendance history, and receive official notices.</p>
+          </div>
+          <div>
+            <a href="/pages/auth/login.html" class="btn btn-secondary">Student Sign In &rarr;</a>
+          </div>
+        </div>
+
+        <div class="portal-box">
+          <div>
+            <div class="portal-box-tag">Club Operations</div>
+            <h3>Club Portal</h3>
+            <p>Publish events, set capacities, manage registrations, run the live attendance camera scanner, and generate audit reports.</p>
+          </div>
+          <div>
+            <a href="/pages/auth/login.html" class="btn btn-primary">Club Member Sign In &rarr;</a>
+          </div>
         </div>
       </div>
     </section>
   </main>
 
   <footer class="footer">
-    <p>&copy; 2026 CampusHub. All rights reserved.</p>
+    <p>&copy; 2026 CampusHub • Institutional College Event & Attendance Platform</p>
   </footer>
 </body>
 </html>
