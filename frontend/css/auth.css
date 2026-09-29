@@ -109,17 +109,3 @@
 #auth-error:not(:empty) {
   display: block;
 }
-
-.credentials-hint {
-  margin-top: 16px;
-  padding: 10px 12px;
-  background: #f9fafb;
-  border: 1px dashed #d1d5db;
-  border-radius: 6px;
-  font-size: 0.75rem;
-  color: #6b7280;
-  line-height: 1.5;
-}
-.credentials-hint strong {
-  color: #374151;
-}

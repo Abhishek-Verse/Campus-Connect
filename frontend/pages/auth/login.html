@@ -43,12 +43,6 @@
       
       <button type="submit" class="btn btn-primary w-full mt-2" id="submitBtn">Sign In as Student</button>
     </form>
-    
-    <div class="credentials-hint" id="credentialsHint">
-      <strong>Demo Student Accounts:</strong><br>
-      • <code>rahul@test.com</code> (pw: <code>password123</code>)<br>
-      • <code>priya@test.com</code> (pw: <code>password123</code>)
-    </div>
 
     <div class="auth-footer" id="authFooter">
       Don't have a student account? <a href="/pages/auth/register.html">Register here</a>
@@ -62,24 +56,6 @@
 
     let currentPortal = 'STUDENT'; // 'STUDENT' or 'CLUB'
 
-    // If already authenticated, show an active session banner allowing quick switch or continue
-    if (isAuthenticated()) {
-      const user = JSON.parse(localStorage.getItem('user') || '{}');
-      const role = (user.role || '').toUpperCase();
-      const isClub = role === 'CLUB_MEMBER' || role === 'ADMIN';
-      const targetDash = isClub ? '/pages/club/dashboard.html' : '/pages/student/dashboard.html';
-      const portalName = isClub ? 'Club Portal' : 'Student Portal';
-      
-      const banner = document.createElement('div');
-      banner.style.cssText = 'background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 10px 12px; margin-bottom: 16px; font-size: 13px; color: #334155; display: flex; justify-content: space-between; align-items: center;';
-      banner.innerHTML = `
-        <div>Signed in: <strong>${user.email || user.name || 'Active User'}</strong> (${portalName})</div>
-        <a href="${targetDash}" class="btn btn-sm btn-secondary" style="font-size: 12px; padding: 4px 8px; text-decoration: none;">Open &rarr;</a>
-      `;
-      const formEl = qs('#login-form');
-      formEl.parentNode.insertBefore(banner, formEl);
-    }
-
     const tabStudent = qs('#tabStudent');
     const tabClub = qs('#tabClub');
     const portalSubtitle = qs('#portalSubtitle');
@@ -87,7 +63,6 @@
     const labelEmail = qs('#labelEmail');
     const inputEmail = qs('#email');
     const submitBtn = qs('#submitBtn');
-    const credentialsHint = qs('#credentialsHint');
     const authFooter = qs('#authFooter');
     const form = qs('#login-form');
     const errorDiv = qs('#auth-error');
@@ -105,7 +80,6 @@
         labelEmail.textContent = 'Email Address';
         inputEmail.placeholder = 'student@campushub.edu';
         submitBtn.textContent = 'Sign In as Student';
-        credentialsHint.innerHTML = '<strong>Demo Student Accounts:</strong><br>• <code>rahul@test.com</code> (pw: <code>password123</code>)<br>• <code>priya@test.com</code> (pw: <code>password123</code>)';
         authFooter.style.display = 'block';
       } else {
         tabClub.classList.add('active');
@@ -113,9 +87,8 @@
         portalSubtitle.textContent = 'Club Organizer Portal Login';
         portalDesc.innerHTML = '<strong>Club Access:</strong> Every club has dedicated credentials to manage events, attendance scanner, and notices.';
         labelEmail.textContent = 'Official Club Email';
-        inputEmail.placeholder = 'codingclub@campushub.edu';
+        inputEmail.placeholder = 'club@campushub.edu';
         submitBtn.textContent = 'Sign In to Club Portal';
-        credentialsHint.innerHTML = '<strong>Official Club Accounts:</strong><br>• Coding Club: <code>codingclub@campushub.edu</code> (pw: <code>password123</code>)<br>• Cultural Club: <code>culturalclub@campushub.edu</code> (pw: <code>password123</code>)';
         authFooter.style.display = 'none';
       }
       inputEmail.focus();

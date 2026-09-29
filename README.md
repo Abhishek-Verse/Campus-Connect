@@ -116,18 +116,18 @@ http://localhost:3000
 
 ---
 
-## Demo Accounts
+## Initial Accounts & Access
 
-### Club Organizer Account
-- **Portal:** Click **Club Portal** on the login page
-- **Email:** `codingclub@campushub.edu`
-- **Password:** `password123`
+### Club Organizer Access
+- **Portal:** Select **Club Portal** on the login page
+- **Default Official Club Accounts:**
+  - Coding Club: `codingclub@campushub.edu` (pw: `password123`)
+  - Cultural Club: `culturalclub@campushub.edu` (pw: `password123`)
+  - Sports Club: `sportsclub@campushub.edu` (pw: `password123`)
 
-### Pre-Seeded Student Accounts
-- **Portal:** Click **Student Portal** on the login page
-- **Student 1:** `rahul@test.com` (pw: `password123`)
-- **Student 2:** `priya@test.com` (pw: `password123`)
-- *Or register a new student account instantly using the Register form.*
+### Student Access
+- **Portal:** Select **Student Portal** on the login page
+- Students can self-register their account with their college academic identity (Roll No, ERP ID, Department, Division) at [`/pages/auth/register.html`](http://localhost:3000/pages/auth/register.html) to instantly obtain their permanent Universal QR Pass.
 
 ---
 

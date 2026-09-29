@@ -116,24 +116,6 @@
     import { setToken, setUser, isAuthenticated, getUserRole } from '/js/auth/auth.js';
     import { qs, preventDoubleSubmit } from '/js/utils/helpers.js';
 
-    // If already authenticated, show an active session banner allowing quick return or registering another account
-    if (isAuthenticated()) {
-      const activeUser = JSON.parse(localStorage.getItem('user') || '{}');
-      const role = (activeUser.role || '').toUpperCase();
-      const isClub = role === 'CLUB_MEMBER' || role === 'ADMIN';
-      const targetDash = isClub ? '/pages/club/dashboard.html' : '/pages/student/dashboard.html';
-      const portalName = isClub ? 'Club Portal' : 'Student Portal';
-      
-      const banner = document.createElement('div');
-      banner.style.cssText = 'background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 10px 12px; margin-bottom: 16px; font-size: 13px; color: #334155; display: flex; justify-content: space-between; align-items: center;';
-      banner.innerHTML = `
-        <div>Signed in: <strong>${activeUser.email || activeUser.name || 'Active User'}</strong> (${portalName})</div>
-        <a href="${targetDash}" class="btn btn-sm btn-secondary" style="font-size: 12px; padding: 4px 8px; text-decoration: none;">Open &rarr;</a>
-      `;
-      const formEl = qs('#register-form');
-      formEl.parentNode.insertBefore(banner, formEl);
-    }
-
     const form = qs('#register-form');
     const errorDiv = qs('#auth-error');
     const btn = form.querySelector('button[type="submit"]');

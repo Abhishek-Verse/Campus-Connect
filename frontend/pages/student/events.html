@@ -286,14 +286,19 @@
         cachedEvents = data;
 
         if (data.length === 0) {
+          const emptyTitle = title || category ? 'No Matching Events' : 'No Upcoming Events Yet';
+          const emptyDesc = title || category
+            ? 'No events match your selected search criteria. Try a different keyword or category.'
+            : 'There are currently no published campus events. Check back soon as clubs post new workshops and fests!';
+
           eventsGrid.innerHTML = `
             <div class="empty-state-box">
               <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color: #94a3b8; margin-bottom: 12px;">
                 <circle cx="12" cy="12" r="10"></circle>
                 <line x1="8" y1="12" x2="16" y2="12"></line>
               </svg>
-              <div style="font-weight: 600; color: #1e293b; margin-bottom: 4px;">No Events Found</div>
-              <div style="font-size: 13px;">No events match your selected filters. Try searching for a different keyword or category.</div>
+              <div style="font-weight: 600; color: #1e293b; margin-bottom: 4px;">${emptyTitle}</div>
+              <div style="font-size: 13px;">${emptyDesc}</div>
             </div>
           `;
         } else {
