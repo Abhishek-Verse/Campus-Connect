@@ -4,6 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Attendance Scanner — CampusHub</title>
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#f5f1e7">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="CampusHub">
+  <link rel="apple-touch-icon" href="/assets/icons/apple-touch-icon.png">
   <link rel="stylesheet" href="/css/global.css">
   <link rel="stylesheet" href="/css/club.css">
   <link rel="stylesheet" href="/css/scanner.css">
@@ -73,25 +79,17 @@
             </div>
           </div>
 
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px;">
-            <div class="speed-badge"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" stroke="none" style="margin-right: 4px;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>25 FPS High-Speed Scanner</div>
-            <div style="font-size: 12px; color: var(--color-text-secondary);" id="scannerStatusIndicator">Camera ready</div>
-          </div>
+          <div id="cameraErrorMsg" style="display: none; margin-top: 14px; padding: 12px 16px; background: var(--color-rose-light); border: 1.5px solid var(--color-rose); border-radius: 10px; font-size: 0.875rem; color: var(--color-rose); font-weight: 600;"></div>
 
-          <div class="controls">
-            <button id="btnStart" class="btn btn-primary" style="padding: 10px 24px; font-weight: 600;">Start Camera</button>
-            <button id="btnStop" class="btn btn-secondary" style="display: none; padding: 10px 24px; font-weight: 600;">Stop Camera</button>
+          <div class="controls" style="margin-top: 14px;">
+            <button id="btnStart" class="btn btn-primary" style="display: none; padding: 10px 24px; font-weight: 600;">Start Camera</button>
+            <button id="btnStop" class="btn btn-secondary" style="display: inline-block; padding: 10px 24px; font-weight: 600;">Stop Camera</button>
           </div>
 
           <!-- Fallback Manual QR Input for Environments without Webcam -->
-          <div style="margin-top: 16px; display: flex; gap: 8px;">
+          <div style="margin-top: 14px; display: flex; gap: 8px;">
             <input type="text" id="manualQrInput" placeholder="Manual QR Token (e.g. CH-XXXXXXXX)" class="form-control" style="padding: 8px 12px; text-transform: uppercase;">
             <button id="btnManualScan" class="btn btn-secondary" style="white-space: nowrap;">Check In</button>
-          </div>
-
-          <div id="statusArea" class="status-area status-neutral">
-            Ready to scan
-            <div class="status-detail" id="statusDetail">Point camera at a student's QR code</div>
           </div>
 
           <div class="recent-scans">
@@ -127,13 +125,11 @@
     const feedbackMeta = document.getElementById('feedbackMeta');
     const feedbackReason = document.getElementById('feedbackReason');
     const feedbackTimePill = document.getElementById('feedbackTimePill');
-    const statusArea = document.getElementById('statusArea');
-    const statusDetail = document.getElementById('statusDetail');
+    const cameraErrorMsg = document.getElementById('cameraErrorMsg');
     const btnStart = document.getElementById('btnStart');
     const btnStop = document.getElementById('btnStop');
     const attendanceCount = document.getElementById('attendanceCount');
     const recentScansList = document.getElementById('recentScansList');
-    const statusIndicator = document.getElementById('scannerStatusIndicator');
 
     let html5QrCode = null;
     let isScanning = false;
@@ -224,6 +220,7 @@
     function selectEvent(eventId) {
       if (!eventId) {
         scannerSection.style.display = 'none';
+        stopCamera();
         return;
       }
       currentEventId = eventId;
@@ -238,6 +235,9 @@
       scannerSection.style.display = 'block';
       updateStats();
       fetchCurrentStats();
+
+      // Directly start camera upon selection
+      startCamera();
     }
 
     async function fetchCurrentStats() {
@@ -275,11 +275,6 @@
           </div>
         </li>
       `).join('');
-    }
-
-    function setStatus(type, mainText, detailText) {
-      statusArea.className = `status-area status-${type}`;
-      statusArea.innerHTML = `${mainText}<div class="status-detail">${detailText || ''}</div>`;
     }
 
     // Trigger Vibrant Camera Feedback Animation & Audio
@@ -329,7 +324,6 @@
       // Fast Reset: return to active camera scanning after 1.4 seconds
       resetTimer = setTimeout(() => {
         feedbackOverlay.className = 'camera-feedback-overlay';
-        setStatus('neutral', 'Ready to scan', 'Point camera at a student\'s QR code');
         scannerLocked = false;
       }, 1400);
     }
@@ -337,7 +331,6 @@
     async function onScanSuccess(decodedText) {
       if (scannerLocked || !currentEventId) return;
       scannerLocked = true;
-      setStatus('processing', 'Processing...', 'Verifying QR code...');
 
       try {
         const token = localStorage.getItem('token') || sessionStorage.getItem('token');
@@ -360,7 +353,6 @@
           const sDept = student.department || '';
           const sDiv = student.division || '';
 
-          setStatus('success', 'ENTRY ALLOWED', `${sName} (Roll: ${sRoll}${sErp ? ' | ERP: ' + sErp : ''})`);
           showCameraAnimation('approved', {
             name: sName,
             rollNo: sRoll,
@@ -374,33 +366,27 @@
           updateRecentScans(sName, sRoll, 'Allowed', true);
         } else {
           const errCode = json.error || json.message || '';
-          let userMsg = 'Unable to mark attendance.';
           let reason = 'Please verify student registration.';
 
           if (errCode === 'ALREADY_ATTENDED') {
             reason = 'Student has already checked in for this event.';
-            setStatus('warning', 'Already Attended', reason);
             showCameraAnimation('warning', { reason });
             updateRecentScans('Already Checked In', '', 'Duplicate', false);
           } else if (errCode === 'NOT_REGISTERED') {
             reason = 'Student is not registered for this event.';
-            setStatus('error', 'ENTRY DENIED', reason);
             showCameraAnimation('declined', { title: 'Not Registered', reason });
             updateRecentScans('Not Registered', '', 'Denied', false);
           } else if (errCode === 'INVALID_QR') {
             reason = 'Unrecognized student QR code.';
-            setStatus('error', 'ENTRY DENIED', reason);
             showCameraAnimation('declined', { title: 'Invalid QR Token', reason });
             updateRecentScans('Invalid QR', '', 'Denied', false);
           } else {
             reason = json.error || 'Registration check failed.';
-            setStatus('error', 'ENTRY DENIED', reason);
             showCameraAnimation('declined', { title: 'Entry Denied', reason });
             updateRecentScans('Denied', '', 'Denied', false);
           }
         }
       } catch (error) {
-        setStatus('error', 'Network Error', 'Unable to connect to server.');
         showCameraAnimation('declined', { title: 'Network Error', reason: 'Unable to connect to server' });
       }
     }
@@ -409,17 +395,20 @@
       // Ignore background non-scan frames
     }
 
-    btnStart.addEventListener('click', async () => {
+    async function startCamera() {
+      if (isScanning) return;
+      if (cameraErrorMsg) cameraErrorMsg.style.display = 'none';
+
       try {
-        html5QrCode = new Html5Qrcode("reader");
+        if (!html5QrCode) {
+          html5QrCode = new Html5Qrcode("reader");
+        }
         cameraStage.classList.add('active-scanning');
-        statusIndicator.textContent = 'Camera active (25 FPS)';
-        statusIndicator.style.color = 'var(--color-success)';
 
         await html5QrCode.start(
           { facingMode: "environment" },
           {
-            fps: 25,
+            fps: 15,
             qrbox: { width: 250, height: 250 },
             aspectRatio: 1.0
           },
@@ -430,30 +419,40 @@
         btnStop.style.display = 'inline-block';
         isScanning = true;
       } catch (err) {
-        console.error(err);
-        const isSecure = window.location.protocol === 'https:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-        let tip = 'Could not access camera. Check permissions or use manual code entry.';
-        if (!isSecure) {
-          tip = 'Mobile devices require HTTPS to access the camera. Access via HTTPS or a tunnel (e.g. ngrok / cloudflared).';
-        }
-        setStatus('error', 'Camera Error', tip);
-        cameraStage.classList.remove('active-scanning');
-        statusIndicator.textContent = 'Camera unavailable';
-        statusIndicator.style.color = 'var(--color-error)';
-      }
-    });
-
-    btnStop.addEventListener('click', async () => {
-      if (html5QrCode && isScanning) {
-        await html5QrCode.stop();
+        console.error('Camera startup error:', err);
         cameraStage.classList.remove('active-scanning');
         btnStart.style.display = 'inline-block';
         btnStop.style.display = 'none';
         isScanning = false;
-        statusIndicator.textContent = 'Camera stopped';
-        statusIndicator.style.color = 'var(--color-text-secondary)';
+
+        const isSecure = window.location.protocol === 'https:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+        let tip = 'Camera access denied or unavailable. Use manual QR check-in below.';
+        if (!isSecure) {
+          tip = 'Mobile browsers require HTTPS for camera access. Access via HTTPS (or ngrok/tunnel), or use manual QR check-in below.';
+        }
+        if (cameraErrorMsg) {
+          cameraErrorMsg.textContent = tip;
+          cameraErrorMsg.style.display = 'block';
+        }
       }
-    });
+    }
+
+    async function stopCamera() {
+      if (html5QrCode && isScanning) {
+        try {
+          await html5QrCode.stop();
+        } catch (e) {
+          console.warn('Camera stop error:', e);
+        }
+        cameraStage.classList.remove('active-scanning');
+        btnStart.style.display = 'inline-block';
+        btnStop.style.display = 'none';
+        isScanning = false;
+      }
+    }
+
+    btnStart.addEventListener('click', startCamera);
+    btnStop.addEventListener('click', stopCamera);
 
     // Manual input fallback
     const manualInput = document.getElementById('manualQrInput');

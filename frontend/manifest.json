@@ -2,12 +2,12 @@
   "name": "CampusHub — College Event Platform",
   "short_name": "CampusHub",
   "description": "College Event Management & Universal QR Attendance Platform",
-  "start_url": "/pages/student/dashboard.html",
+  "start_url": "/index.html",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait-primary",
-  "background_color": "#ffffff",
-  "theme_color": "#ffffff",
+  "background_color": "#f5f1e7",
+  "theme_color": "#f5f1e7",
   "lang": "en",
   "icons": [
     {

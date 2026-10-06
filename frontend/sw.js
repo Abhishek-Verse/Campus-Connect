@@ -1,23 +1,35 @@
 /* CampusHub Service Worker — PWA Offline Shell Support */
 
-const CACHE_NAME = 'campushub-v1';
+const CACHE_NAME = 'campushub-v2';
 
 const STATIC_SHELL = [
   '/',
   '/index.html',
   '/manifest.json',
+  '/pages/auth/login.html',
+  '/pages/auth/register.html',
+  '/pages/student/dashboard.html',
+  '/pages/student/my-qr.html',
+  '/pages/student/events.html',
+  '/pages/student/attendance.html',
+  '/pages/student/profile.html',
+  '/pages/club/dashboard.html',
+  '/pages/club/scanner.html',
   '/css/global.css',
   '/css/student.css',
   '/css/club.css',
   '/css/scanner.css',
   '/css/auth.css',
+  '/js/lib/qrcode.min.js',
   '/js/utils/navigation.js',
   '/js/utils/helpers.js',
+  '/js/utils/pwa.js',
   '/js/auth/auth.js',
   '/js/api/client.js',
   '/assets/icons/icon-192.png',
   '/assets/icons/icon-512.png',
-  '/assets/icons/apple-touch-icon.png'
+  '/assets/icons/apple-touch-icon.png',
+  '/assets/icons/icon.svg'
 ];
 
 self.addEventListener('install', (event) => {
