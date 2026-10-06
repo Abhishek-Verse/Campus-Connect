@@ -431,7 +431,12 @@
         isScanning = true;
       } catch (err) {
         console.error(err);
-        setStatus('error', 'Camera Error', 'Could not access camera. Please check permissions or use manual check-in.');
+        const isSecure = window.location.protocol === 'https:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+        let tip = 'Could not access camera. Check permissions or use manual code entry.';
+        if (!isSecure) {
+          tip = 'Mobile devices require HTTPS to access the camera. Access via HTTPS or a tunnel (e.g. ngrok / cloudflared).';
+        }
+        setStatus('error', 'Camera Error', tip);
         cameraStage.classList.remove('active-scanning');
         statusIndicator.textContent = 'Camera unavailable';
         statusIndicator.style.color = 'var(--color-error)';

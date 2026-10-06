@@ -1,0 +1,198 @@
+@import "tailwindcss";
+
+@theme {
+  --color-paper: #f5f1e7;
+  --color-cream: #fdfbf4;
+  --color-ink: #181611;
+  --color-panel: #fcfaf3;
+  --color-flame: #d63b22;
+  --color-glow: #d63b22;
+  --color-mint: #0b6a62;
+  --color-gold: #a16207;
+  --color-rose: #d6336c;
+  --color-lime-pop: #4d7c0f;
+
+  --font-sans: var(--ff-body), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--ff-display), Georgia, serif;
+  --font-mono: var(--ff-mono), ui-monospace, "SF Mono", monospace;
+  --font-accent: var(--ff-display), Georgia, serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: #f5f1e7;
+  color: #181611;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: #e8442e;
+  color: #fdfbf4;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #f5f1e7;
+}
+::-webkit-scrollbar-thumb {
+  background: #181611;
+  border-radius: 8px;
+  border: 3px solid #f5f1e7;
+}
+
+/* paper grain */
+.noise::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  pointer-events: none;
+  opacity: 0.05;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* cards */
+.glass {
+  background: #fcfaf3;
+  border: 1px solid rgba(24, 22, 17, 0.16);
+}
+
+.glass-strong {
+  background: #fdfbf4;
+  border: 1.5px solid #181611;
+  box-shadow: 7px 7px 0 rgba(24, 22, 17, 0.92);
+}
+
+.hard-shadow {
+  box-shadow: 5px 5px 0 #181611;
+}
+
+.sticker {
+  background: #fdfbf4;
+  border: 1.5px solid #181611;
+  box-shadow: 3px 3px 0 #181611;
+}
+
+.text-gradient {
+  background: linear-gradient(100deg, #d63b22 10%, #a16207 90%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.grid-lines {
+  background-image:
+    linear-gradient(rgba(24, 22, 17, 0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(24, 22, 17, 0.055) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(ellipse 95% 80% at 50% 0%, black 20%, transparent 78%);
+  -webkit-mask-image: radial-gradient(ellipse 95% 80% at 50% 0%, black 20%, transparent 78%);
+}
+
+.poster-dots {
+  background-image: radial-gradient(rgba(253, 251, 244, 0.18) 1.2px, transparent 1.2px);
+  background-size: 18px 18px;
+}
+
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee 38s linear infinite;
+}
+.marquee-track:hover {
+  animation-play-state: paused;
+}
+
+@keyframes float-slow {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  33% {
+    transform: translate3d(30px, -24px, 0) scale(1.04);
+  }
+  66% {
+    transform: translate3d(-24px, 20px, 0) scale(0.97);
+  }
+}
+.float-slow {
+  animation: float-slow 16s ease-in-out infinite;
+}
+
+@keyframes float-gentle {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
+}
+.float-gentle {
+  animation: float-gentle 7s ease-in-out infinite;
+}
+
+@keyframes spin-slow {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.spin-slow {
+  animation: spin-slow 22s linear infinite;
+}
+
+@keyframes pulse-ring {
+  0% {
+    box-shadow: 0 0 0 0 rgba(11, 106, 98, 0.45);
+  }
+  70% {
+    box-shadow: 0 0 0 12px rgba(11, 106, 98, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(11, 106, 98, 0);
+  }
+}
+.pulse-ring {
+  animation: pulse-ring 2.2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes beam {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(260%);
+  }
+}
+.beam::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  width: 38%;
+  background: linear-gradient(90deg, transparent, rgba(253, 251, 244, 0.25), transparent);
+  animation: beam 2.8s ease-in-out infinite;
+}
+
+input[type="date"],
+input[type="time"] {
+  color-scheme: light;
+}
+
+details > summary {
+  list-style: none;
+}
+details > summary::-webkit-details-marker {
+  display: none;
+}

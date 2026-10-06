@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Register Student — CampusHub</title>
   <link rel="manifest" href="/manifest.json">
-  <meta name="theme-color" content="#faf7f0">
+  <meta name="theme-color" content="#f5f1e7">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <link rel="apple-touch-icon" href="/assets/icons/apple-touch-icon.png">
@@ -16,11 +16,11 @@
     .auth-card-wide {
       width: 100%;
       max-width: 520px;
-      background-color: var(--color-surface);
-      border: 1px solid var(--color-border);
-      border-radius: var(--radius-card);
-      padding: 32px 28px;
-      box-shadow: var(--shadow-md);
+      background-color: var(--color-cream);
+      border: 1.5px solid var(--color-ink);
+      border-radius: 22px;
+      padding: 34px 30px;
+      box-shadow: 7px 7px 0 var(--color-ink);
     }
     .form-row {
       display: grid;
@@ -35,10 +35,10 @@
     }
   </style>
 </head>
-<body class="auth-page">
+<body class="auth-page noise">
   <div class="auth-card-wide">
     <div class="auth-logo">
-      <a href="/" class="auth-brand">CampusHub</a>
+      <a href="/" class="auth-brand"><span class="auth-brand-dot"></span>CampusHub</a>
       <p style="color: var(--color-text-secondary); font-size: 13px; font-weight: 500;">Create your student account & Universal QR pass</p>
     </div>
 
@@ -51,18 +51,21 @@
       </div>
 
       <div class="form-group">
-        <label for="email" class="form-label">GSuite / College Email Address <span class="text-error">*</span></label>
-        <input type="email" id="email" name="email" class="form-input" required placeholder="student@campushub.edu">
+        <label for="email" class="form-label">College Email Address <span class="text-error">*</span></label>
+        <input type="email" id="email" name="email" class="form-input" required placeholder="e.g. 1032250777@tcetmumbai.in">
+        <span class="form-help">Unique college identifier (e.g. 1032250777@tcetmumbai.in)</span>
       </div>
 
       <div class="form-row">
         <div class="form-group">
-          <label for="rollNo" class="form-label">Roll Number <span class="text-error">*</span></label>
-          <input type="text" id="rollNo" name="rollNo" class="form-input" required placeholder="e.g. 101 or 23">
+          <label for="erpId" class="form-label">ERP ID <span class="text-error">*</span></label>
+          <input type="text" id="erpId" name="erpId" class="form-input" required placeholder="e.g. s1032250777">
+          <span class="form-help">Unique institutional ERP ID</span>
         </div>
         <div class="form-group">
-          <label for="erpId" class="form-label">ERP ID</label>
-          <input type="text" id="erpId" name="erpId" class="form-input" placeholder="e.g. ERP-2026-4581">
+          <label for="rollNo" class="form-label">Class Roll Number <span class="text-error">*</span></label>
+          <input type="text" id="rollNo" name="rollNo" class="form-input" required placeholder="e.g. 23">
+          <span class="form-help">Class roll no (not required to be globally unique)</span>
         </div>
       </div>
 
@@ -133,11 +136,11 @@
 
     // Fill sample student details for testing
     qs('#fillSampleDataBtn').addEventListener('click', () => {
-      const rand = Math.floor(Math.random() * 900) + 100;
+      const rand = Math.floor(Math.random() * 900000) + 100000;
       qs('#name').value = `Aryan Sharma`;
-      qs('#email').value = `aryan${rand}@campushub.edu`;
-      qs('#rollNo').value = `${rand}`;
-      qs('#erpId').value = `ERP-2026-${rand}`;
+      qs('#email').value = `10322${rand}@tcetmumbai.in`;
+      qs('#erpId').value = `s10322${rand}`;
+      qs('#rollNo').value = `23`; // Same roll number to demonstrate roll number is non-unique
       qs('#department').value = 'Computer Engineering';
       qs('#division').value = 'A';
       qs('#password').value = 'password123';
@@ -160,8 +163,8 @@
       const password = qs('#password').value;
       const confirmPassword = qs('#confirmPassword').value;
 
-      if (!name || !email || !rollNo || !password) {
-        errorDiv.textContent = 'Please fill in all required fields.';
+      if (!name || !email || !rollNo || !erpId || !password) {
+        errorDiv.textContent = 'Please fill in all required fields (Name, Email, Roll Number, ERP ID, Password).';
         errorDiv.style.display = 'flex';
         return;
       }

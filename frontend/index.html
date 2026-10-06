@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CampusHub — College Event Management Platform</title>
   <link rel="manifest" href="/manifest.json">
-  <meta name="theme-color" content="#faf7f0">
+  <meta name="theme-color" content="#f5f1e7">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="CampusHub">
@@ -13,142 +13,411 @@
   <link rel="stylesheet" href="/css/global.css">
   <script type="module" src="/js/utils/pwa.js"></script>
   <style>
+    /* Landing-specific styles */
     .landing-header {
       position: sticky;
       top: 0;
       z-index: 100;
       display: flex;
       align-items: center;
+      justify-content: space-between;
       gap: 24px;
-      padding: 12px clamp(18px, 5vw, 72px);
-      background: var(--color-surface);
-      border-bottom: 1px solid var(--color-border);
+      padding: 14px clamp(18px, 5vw, 64px);
+      background: rgba(245, 241, 231, 0.9);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1.5px solid var(--color-ink);
     }
-    .landing-header > a { flex: 0 0 auto; }
     .landing-brand {
-      color: var(--color-text);
-      font-size: 1.25rem;
+      color: var(--color-ink);
+      font-family: var(--font-display);
+      font-size: 1.5rem;
       font-weight: 800;
-      letter-spacing: -.04em;
-    }
-    .landing-brand:hover { color: var(--color-primary); }
-    .landing-nav-links { display: flex; align-items: center; gap: 24px; margin-left: auto; }
-    .landing-nav-link { color: var(--color-text-secondary); font-size: 14px; font-weight: 600; }
-    .landing-nav-link:hover { color: var(--color-primary); }
-    .hero {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) minmax(360px, .88fr);
-      align-items: center;
-      gap: clamp(32px, 5vw, 72px);
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: clamp(48px, 7vw, 96px) clamp(20px, 5vw, 72px);
-    }
-    .hero-copy { max-width: 660px; }
-    .hero-kicker {
+      letter-spacing: -0.03em;
       display: flex;
       align-items: center;
-      gap: 10px;
-      margin-bottom: 20px;
-      color: var(--color-primary);
-      font-size: 12px;
-      font-weight: 800;
-      letter-spacing: .12em;
-      text-transform: uppercase;
+      gap: 8px;
+      text-decoration: none;
     }
-    .hero-kicker::before { content: ""; width: 9px; height: 9px; background: var(--color-primary); }
-    .hero h1 {
-      max-width: 13ch;
-      margin: 0 0 18px;
-      color: var(--color-text);
-      font-size: clamp(2.6rem, 5.1vw, 3.8rem);
+    .landing-brand:hover { color: var(--color-flame); }
+    .landing-brand-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--color-flame);
+      display: inline-block;
+    }
+    .landing-nav-links {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    .landing-nav-link {
+      color: rgba(24, 22, 17, 0.7);
+      font-size: 14px;
       font-weight: 600;
-      line-height: 1.04;
-      letter-spacing: -.045em;
+      text-decoration: none;
+      transition: color 0.15s ease;
     }
-    .hero p {
-      max-width: 56ch;
-      margin: 0 0 28px;
-      color: var(--color-text-secondary);
-      font-size: clamp(1rem, 1.5vw, 1.125rem);
+    .landing-nav-link:hover { color: var(--color-flame); }
+
+    /* Hero Section */
+    .hero-section {
+      position: relative;
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: clamp(48px, 7vw, 96px) clamp(20px, 5vw, 64px) clamp(40px, 5vw, 72px);
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      align-items: center;
+      gap: clamp(32px, 5vw, 64px);
+    }
+    .hero-kicker-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--color-cream);
+      border: 1.5px solid var(--color-ink);
+      box-shadow: 3px 3px 0 var(--color-ink);
+      border-radius: 9999px;
+      padding: 6px 14px;
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      color: var(--color-ink);
+      margin-bottom: 24px;
+    }
+    .kicker-pulse-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--color-flame);
+      box-shadow: 0 0 0 4px var(--color-flame-light);
+    }
+    .hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(2.8rem, 5.8vw, 4.6rem);
+      line-height: 1.02;
+      font-weight: 900;
+      letter-spacing: -0.035em;
+      color: var(--color-ink);
+      margin-bottom: 22px;
+    }
+    .hero-title .flame-word { color: var(--color-flame); }
+    .hero-title .italic-accent { font-style: italic; font-weight: 500; font-family: var(--font-accent); }
+    .hero-desc {
+      font-size: clamp(1rem, 1.4vw, 1.15rem);
       line-height: 1.65;
+      color: rgba(24, 22, 17, 0.65);
+      max-width: 580px;
+      margin-bottom: 32px;
     }
-    .hero-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; }
-    .hero-flow {
+    .hero-cta-row {
       display: flex;
       flex-wrap: wrap;
-      gap: 0;
-      margin-top: 36px;
-      color: var(--color-text-secondary);
-      font-size: 13px;
-      font-weight: 600;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 48px;
     }
-    .hero-flow span { display: inline-flex; align-items: center; gap: 9px; padding: 0 18px; border-left: 1px solid var(--color-border-strong); }
-    .hero-flow span:first-child { padding-left: 0; border-left: 0; }
-    .hero-flow b { color: var(--color-primary); font-size: 11px; letter-spacing: .08em; }
-    .hero-visual {
-      width: 100%;
-      max-width: 610px;
-      justify-self: end;
+    .hero-stats-bar {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      border-top: 1.5px solid rgba(24, 22, 17, 0.2);
+      border-bottom: 1.5px solid rgba(24, 22, 17, 0.2);
+      padding: 16px 0;
+      max-width: 460px;
+    }
+    .hero-stat-col {
+      padding: 0 16px;
+      border-right: 1.5px solid rgba(24, 22, 17, 0.15);
+    }
+    .hero-stat-col:first-child { padding-left: 0; }
+    .hero-stat-col:last-child { border-right: none; }
+    .hero-stat-num {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      font-weight: 900;
+      color: var(--color-ink);
+      line-height: 1;
+    }
+    .hero-stat-num span { color: var(--color-flame); }
+    .hero-stat-label {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(24, 22, 17, 0.45);
+      margin-top: 4px;
+    }
+
+    /* Hero Right Visual Stack */
+    .hero-visual-stage {
+      position: relative;
+      height: 480px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .floating-hero-card {
+      position: absolute;
+      width: 290px;
+      background: var(--color-cream);
+      border: 1.5px solid var(--color-ink);
+      border-radius: 18px;
       overflow: hidden;
-      border: 1px solid var(--color-border);
-      border-radius: 12px;
-      background: var(--color-inverse-surface);
-      box-shadow: var(--shadow-sm);
+      box-shadow: 6px 6px 0 var(--color-ink);
+      transition: all 0.3s ease;
     }
-    .hero-visual svg { width: 100%; height: auto; }
-    .features-section { max-width: 1280px; margin: 0 auto; padding: 56px clamp(20px, 5vw, 72px) 72px; }
-    .section-headline { margin-bottom: 28px; }
-    .section-headline h2 { margin: 0 0 8px; font-size: clamp(1.5rem, 2.4vw, 2rem); }
-    .section-headline p { color: var(--color-text-secondary); font-size: 15px; }
-    .features-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+    .floating-hero-card:hover {
+      transform: translate(-3px, -3px) rotate(0deg) !important;
+      box-shadow: 10px 10px 0 var(--color-ink);
+      z-index: 25 !important;
+    }
+    .hero-card-1 {
+      top: 20px;
+      left: 10px;
+      transform: rotate(-4deg);
+      z-index: 10;
+    }
+    .hero-card-2 {
+      top: 140px;
+      left: 90px;
+      transform: rotate(3deg);
+      z-index: 15;
+    }
+    .rotating-badge-wrap {
+      position: absolute;
+      top: -10px;
+      right: 10px;
+      width: 110px;
+      height: 110px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 30;
+    }
+    .rotating-badge-center {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--color-flame);
+      border: 1.5px solid var(--color-ink);
+      color: var(--color-cream);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+    .ticket-sticker-pill {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      background: var(--color-cream);
+      border: 1.5px solid var(--color-ink);
+      border-radius: 16px;
+      padding: 12px 18px;
+      box-shadow: 4px 4px 0 var(--color-ink);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      z-index: 20;
+      transform: rotate(-2deg);
+    }
+    .ticket-sticker-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      background: var(--color-mint-light);
+      color: var(--color-mint);
+      border: 1px solid var(--color-mint);
+      display: grid;
+      place-items: center;
+    }
+
+    /* Marquee Banner */
+    .marquee-section {
+      background: var(--color-ink);
+      color: var(--color-cream);
+      border-top: 1.5px solid var(--color-ink);
+      border-bottom: 1.5px solid var(--color-ink);
+      padding: 16px 0;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+    .marquee-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      margin-right: 48px;
+    }
+    .marquee-sparkle { color: var(--color-flame); font-size: 14px; }
+
+    /* Features Section */
+    .features-section {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 80px clamp(20px, 5vw, 64px);
+    }
+    .features-header {
+      text-align: center;
+      max-width: 680px;
+      margin: 0 auto 56px auto;
+    }
+    .features-kicker {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--color-flame);
+      margin-bottom: 12px;
+    }
+    .features-title {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 3.8vw, 2.9rem);
+      font-weight: 800;
+      line-height: 1.15;
+      color: var(--color-ink);
+    }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 20px;
+    }
     .feature-card {
-      min-width: 0;
-      padding: 20px;
-      border: 1px solid var(--color-border);
-      border-radius: var(--radius-card);
-      background: var(--color-surface);
+      background: var(--color-paper);
+      border: 1.5px solid var(--color-ink);
+      border-radius: 20px;
+      padding: 26px 24px;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      box-shadow: 4px 4px 0 var(--color-ink);
+      transition: all 0.2s ease;
     }
-    .feature-icon-box { width: 40px; height: 40px; border-radius: 8px; background: var(--color-primary-light); color: var(--color-primary); display: grid; place-items: center; }
-    .feature-card h3 { margin: 4px 0 0; font-size: 1rem; font-weight: 600; color: var(--color-text); }
-    .feature-card p { color: var(--color-text-secondary); font-size: .875rem; line-height: 1.55; }
-    .portals-banner { padding: 56px clamp(20px, 5vw, 72px); background: var(--color-surface-subtle); border-top: 1px solid var(--color-border); }
-    .portals-inner { max-width: 1136px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-    .portal-box { min-width: 0; display: flex; flex-direction: column; justify-content: space-between; gap: 20px; padding: 26px; border: 1px solid var(--color-border); border-radius: var(--radius-card); background: var(--color-surface); }
-    .portal-box-tag { margin-bottom: 10px; color: var(--color-primary); font-size: 11px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
-    .portal-box h3 { margin-bottom: 8px; font-size: 1.25rem; }
-    .portal-box p { max-width: 52ch; color: var(--color-text-secondary); font-size: .875rem; line-height: 1.55; }
-    .footer { padding: 26px 20px; color: var(--color-text-muted); font-size: 13px; text-align: center; }
-    @media (max-width: 1000px) {
-      .hero { grid-template-columns: minmax(0, 1fr) minmax(300px, .82fr); }
+    .feature-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 7px 7px 0 var(--color-ink);
+    }
+    .feature-icon-box {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      border: 1.5px solid var(--color-ink);
+      display: grid;
+      place-items: center;
+      margin-bottom: 18px;
+    }
+    .feature-card h3 {
+      font-family: var(--font-display);
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--color-ink);
+      margin-bottom: 8px;
+    }
+    .feature-card p {
+      color: rgba(24, 22, 17, 0.65);
+      font-size: 0.875rem;
+      line-height: 1.55;
+    }
+
+    /* Portals Banner */
+    .portals-banner {
+      background: var(--color-ink);
+      color: var(--color-cream);
+      padding: 80px clamp(20px, 5vw, 64px);
+      border-top: 1.5px solid var(--color-ink);
+    }
+    .portals-inner {
+      max-width: 1140px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+    .portal-box {
+      background: var(--color-cream);
+      color: var(--color-ink);
+      border: 1.5px solid var(--color-cream);
+      border-radius: 22px;
+      padding: 36px 32px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 24px;
+      box-shadow: 6px 6px 0 var(--color-flame);
+    }
+    .portal-box-tag {
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--color-flame);
+      margin-bottom: 8px;
+    }
+    .portal-box h3 {
+      font-family: var(--font-display);
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--color-ink);
+      margin-bottom: 8px;
+    }
+    .portal-box p {
+      color: rgba(24, 22, 17, 0.65);
+      font-size: 0.925rem;
+      line-height: 1.55;
+    }
+
+    /* Footer */
+    .footer {
+      background: var(--color-cream);
+      border-top: 1.5px solid var(--color-ink);
+      padding: 32px clamp(20px, 5vw, 64px);
+    }
+    .footer-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    .footer p {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(24, 22, 17, 0.5);
+    }
+
+    @media (max-width: 990px) {
+      .hero-section { grid-template-columns: 1fr; }
+      .hero-visual-stage { display: none; }
       .features-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    }
-    @media (max-width: 760px) {
-      .landing-header { padding: 10px 16px; }
-      .landing-nav-links { display: none; }
-      .hero { grid-template-columns: 1fr; gap: 34px; padding: 44px 20px 48px; }
-      .hero h1 { max-width: 12ch; font-size: clamp(2.45rem, 12vw, 3.8rem); }
-      .hero-visual { max-width: none; justify-self: stretch; }
-      .hero-flow { margin-top: 26px; }
-      .hero-flow span { padding: 0 10px; }
-      .features-section { padding: 42px 20px 52px; }
       .portals-inner { grid-template-columns: 1fr; }
-      .portals-banner { padding: 42px 20px; }
     }
-    @media (max-width: 460px) {
+    @media (max-width: 600px) {
       .features-grid { grid-template-columns: 1fr; }
-      .hero-flow { justify-content: space-between; font-size: 12px; }
-      .hero-flow span { gap: 6px; padding: 0 7px; }
-      .hero-flow b { font-size: 10px; }
+      .landing-nav-links { display: none; }
+      .hero-stats-bar { grid-template-columns: 1fr; gap: 12px; }
+      .hero-stat-col { border-right: none; padding: 6px 0; border-bottom: 1px dashed rgba(24, 22, 17, 0.15); }
+      .hero-stat-col:last-child { border-bottom: none; }
     }
   </style>
 </head>
-<body>
+<body class="noise">
   <header class="landing-header">
-    <a href="/" class="landing-brand">CampusHub</a>
+    <a href="/" class="landing-brand">
+      <span class="landing-brand-dot"></span>
+      CampusHub
+    </a>
     <div class="landing-nav-links">
       <a href="/pages/student/events.html" class="landing-nav-link">Explore Events</a>
       <a href="/pages/auth/login.html" class="landing-nav-link">Sign In</a>
@@ -157,123 +426,186 @@
   </header>
 
   <main>
-    <section class="hero" aria-labelledby="hero-title">
-      <div class="hero-copy">
-        <div class="hero-kicker">CampusHub · Campus events, in one place</div>
-        <h1 id="hero-title">Find your next campus event.</h1>
-        <p>Explore what’s happening, reserve your place, and check in with one student QR pass. Clubs manage the event and attendance in the same place.</p>
-        <div class="hero-actions">
-          <a href="/pages/student/events.html" class="btn btn-primary btn-lg">Explore events</a>
-          <a href="/pages/auth/login.html" class="btn btn-secondary btn-lg">Sign in</a>
+    <!-- HERO SECTION -->
+    <section class="hero-section" aria-labelledby="hero-title">
+      <div>
+        <div class="hero-kicker-pill">
+          <span class="kicker-pulse-dot"></span>
+          Thakur College of Engineering &amp; Technology
         </div>
-        <div class="hero-flow" aria-label="How CampusHub works">
-          <span><b>01</b> Discover</span>
-          <span><b>02</b> Register</span>
-          <span><b>03</b> Check in</span>
+        <h1 id="hero-title" class="hero-title">
+          Every event.<br>
+          One <span class="flame-word">campus.</span><br>
+          <span class="italic-accent">Zero FOMO.</span>
+        </h1>
+        <p class="hero-desc">
+          CampusHub is TCET&apos;s home for club events, fests, hackathons and workshops — register in seconds, check in with a QR code, and build a participation record that actually means something.
+        </p>
+        <div class="hero-cta-row">
+          <a href="/pages/student/events.html" class="btn btn-dark btn-lg">
+            Explore events &rarr;
+          </a>
+          <a href="/pages/auth/register.html" class="btn btn-secondary btn-lg">
+            Create free account
+          </a>
+        </div>
+        <div class="hero-stats-bar" aria-label="Platform Statistics">
+          <div class="hero-stat-col">
+            <div class="hero-stat-num">18<span>+</span></div>
+            <div class="hero-stat-label">Events Hosted</div>
+          </div>
+          <div class="hero-stat-col">
+            <div class="hero-stat-num">240<span>+</span></div>
+            <div class="hero-stat-label">Registrations</div>
+          </div>
+          <div class="hero-stat-col">
+            <div class="hero-stat-num">190<span>+</span></div>
+            <div class="hero-stat-label">QR Check-ins</div>
+          </div>
         </div>
       </div>
 
-      <div class="hero-visual">
-        <svg viewBox="0 0 640 500" role="img" aria-labelledby="campus-art-title campus-art-desc" xmlns="http://www.w3.org/2000/svg">
-          <title id="campus-art-title">Campus event, registration, and QR check-in</title>
-          <desc id="campus-art-desc">A solid illustration of a campus building, an event calendar, and a student QR pass.</desc>
-          <rect width="640" height="500" fill="#292621"/>
-          <path d="M0 373h640v127H0z" fill="#6b6256"/>
-          <path d="M74 336V202l108-74 108 74v134z" fill="#fffdf8"/>
-          <path d="M54 207 182 118l128 89h-36l-92-64-92 64z" fill="#f36f3d"/>
-          <path d="M102 218h160v118H102z" fill="#f4efe4"/>
-          <path d="M123 239h23v34h-23zm43 0h23v34h-23zm43 0h23v34h-23z" fill="#f36f3d"/>
-          <path d="M169 286h27v50h-27z" fill="#292621"/>
-          <path d="M77 338h213" stroke="#f36f3d" stroke-width="8"/>
-          <rect x="330" y="54" width="255" height="156" rx="10" fill="#fffdf8"/>
-          <path d="M330 64a10 10 0 0 1 10-10h235a10 10 0 0 1 10 10v28H330z" fill="#f36f3d"/>
-          <circle cx="353" cy="72" r="4" fill="#fffdf8"/><circle cx="369" cy="72" r="4" fill="#fffdf8"/>
-          <rect x="351" y="112" width="55" height="67" rx="5" fill="#fff0e5"/>
-          <text x="378" y="134" text-anchor="middle" fill="#6b6256" font-family="Manrope, sans-serif" font-size="11" font-weight="700">EVENT</text>
-          <text x="378" y="161" text-anchor="middle" fill="#c84e2d" font-family="Manrope, sans-serif" font-size="25" font-weight="700">01</text>
-          <rect x="421" y="112" width="130" height="11" rx="3" fill="#292621"/>
-          <rect x="421" y="135" width="105" height="8" rx="3" fill="#8e8578"/>
-          <rect x="421" y="153" width="119" height="8" rx="3" fill="#8e8578"/>
-          <rect x="421" y="173" width="68" height="7" rx="3" fill="#689c7d"/>
-          <rect x="365" y="280" width="201" height="166" rx="10" fill="#fffdf8"/>
-          <path d="M365 290a10 10 0 0 1 10-10h181a10 10 0 0 1 10 10v33H365z" fill="#f1c6aa"/>
-          <text x="465" y="302" text-anchor="middle" fill="#292621" font-family="Manrope, sans-serif" font-size="12" font-weight="700">STUDENT PASS</text>
-          <rect x="389" y="340" width="83" height="83" fill="#fffdf8" stroke="#e4d9c7" stroke-width="2"/>
-          <path d="M398 349h26v26h-26zm39 0h26v26h-26zm-39 39h26v26h-26zm33-39h8v8h-8zm-8 17h8v8h-8zm17 0h9v8h-9zm-9 13h8v8h-8zm17 13h8v22h-8zm-17 17h8v5h-8zm-8-30h8v13h-8z" fill="#292621"/>
-          <path d="m492 371 12 12 23-27" fill="none" stroke="#689c7d" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M514 368h25m-25 18h25m-25 18h25" stroke="#6b6256" stroke-width="5" stroke-linecap="round"/>
-          <circle cx="320" cy="396" r="22" fill="#f1c6aa"/>
-          <path d="M287 482v-43a33 33 0 0 1 66 0v43z" fill="#f36f3d"/>
-          <path d="M306 389c0-10 7-18 16-18s16 8 16 18" fill="#292621"/>
-          <path d="M297 440h46" stroke="#f1c6aa" stroke-width="8" stroke-linecap="round"/>
-          <path d="M310 466v16m20-16v16" stroke="#fff0e5" stroke-width="8" stroke-linecap="round"/>
-          <circle cx="552" cy="242" r="18" fill="#f1c6aa"/>
-          <path d="M524 276a28 28 0 0 1 56 0v19h-56z" fill="#fff0e5"/>
-          <path d="M38 430h165" stroke="#f36f3d" stroke-width="6" stroke-linecap="round"/>
-          <path d="M54 452h127" stroke="#6b6256" stroke-width="5" stroke-linecap="round"/>
-        </svg>
+      <div class="hero-visual-stage" aria-hidden="true">
+        <!-- Floating Card 1 -->
+        <div class="floating-hero-card hero-card-1">
+          <div style="height: 140px; background: #181611; position: relative; border-bottom: 1.5px solid #181611;">
+            <div style="position: absolute; inset: 0; background: radial-gradient(120% 140% at 20% 10%, rgba(214,59,34,0.4) 0%, transparent 60%); display: flex; align-items: center; justify-content: center;">
+              <span style="font-family: var(--font-display); font-size: 56px; font-style: italic; color: var(--color-flame); opacity: 0.4;">AI</span>
+            </div>
+            <span class="badge badge-info" style="position: absolute; top: 10px; left: 10px; font-size: 9px;">TECHNICAL</span>
+          </div>
+          <div style="padding: 14px 16px;">
+            <div style="font-family: var(--font-display); font-weight: 700; font-size: 14px; margin-bottom: 4px;">National AI Hackathon</div>
+            <div style="font-family: var(--font-mono); font-size: 10px; color: rgba(24,22,17,0.5); text-transform: uppercase;">CODING CLUB · AUDITORIUM</div>
+          </div>
+        </div>
+
+        <!-- Floating Card 2 -->
+        <div class="floating-hero-card hero-card-2 float-gentle">
+          <div style="height: 140px; background: #181611; position: relative; border-bottom: 1.5px solid #181611;">
+            <div style="position: absolute; inset: 0; background: radial-gradient(120% 140% at 20% 10%, rgba(11,106,98,0.4) 0%, transparent 60%); display: flex; align-items: center; justify-content: center;">
+              <span style="font-family: var(--font-display); font-size: 56px; font-style: italic; color: var(--color-mint); opacity: 0.4;">CF</span>
+            </div>
+            <span class="badge badge-success" style="position: absolute; top: 10px; left: 10px; font-size: 9px;">CULTURAL</span>
+          </div>
+          <div style="padding: 14px 16px;">
+            <div style="font-family: var(--font-display); font-weight: 700; font-size: 14px; margin-bottom: 4px;">Sojourn Annual Cultural Fest</div>
+            <div style="font-family: var(--font-mono); font-size: 10px; color: rgba(24,22,17,0.5); text-transform: uppercase;">CULTURAL CLUB · MAIN GROUND</div>
+          </div>
+        </div>
+
+        <!-- Rotating Badge -->
+        <div class="rotating-badge-wrap">
+          <div class="spin-slow" style="position: absolute; inset: 0;">
+            <svg viewBox="0 0 100 100" style="width: 100%; height: 100%;">
+              <defs>
+                <path id="badgeCirc" d="M 50,50 m -37,0 a 37,37 0 1,1 74,0 a 37,37 0 1,1 -74,0"/>
+              </defs>
+              <text font-family="'JetBrains Mono', monospace" font-size="9" font-weight="700" letter-spacing="0.2em" fill="#181611">
+                <textPath href="#badgeCirc">CAMPUSHUB · TCET · MUMBAI ·</textPath>
+              </text>
+            </svg>
+          </div>
+          <div class="rotating-badge-center">✦</div>
+        </div>
+
+        <!-- Ticket Sticker -->
+        <div class="ticket-sticker-pill">
+          <div class="ticket-sticker-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><path d="M14 14h2v2h-2z"/></svg>
+          </div>
+          <div>
+            <div style="font-size: 12.5px; font-weight: 700; color: var(--color-ink);">QR Ticket Issued</div>
+            <div style="font-family: var(--font-mono); font-size: 10.5px; color: rgba(24,22,17,0.5);">One pass for all events</div>
+          </div>
+        </div>
       </div>
     </section>
 
+    <!-- MARQUEE TICKER -->
+    <section class="marquee-section" aria-label="Event Categories">
+      <div class="marquee-track">
+        <span class="marquee-item"><span class="marquee-sparkle">✦</span> TECHNICAL FESTS</span>
+        <span class="marquee-item"><span class="marquee-sparkle">✦</span> CODING &amp; HACKATHONS</span>
+        <span class="marquee-item"><span class="marquee-sparkle">✦</span> CULTURAL NIGHTS</span>
+        <span class="marquee-item"><span class="marquee-sparkle">✦</span> ROBOTICS &amp; IOT</span>
+        <span class="marquee-item"><span class="marquee-sparkle">✦</span> SPORTS TOURNAMENTS</span>
+        <span class="marquee-item"><span class="marquee-sparkle">✦</span> WORKSHOPS &amp; GUEST TALKS</span>
+        <span class="marquee-item"><span class="marquee-sparkle">✦</span> ENTREPRENEURSHIP SUMMITS</span>
+        <!-- Duplicated for continuous loop -->
+        <span class="marquee-item"><span class="marquee-sparkle">✦</span> TECHNICAL FESTS</span>
+        <span class="marquee-item"><span class="marquee-sparkle">✦</span> CODING &amp; HACKATHONS</span>
+        <span class="marquee-item"><span class="marquee-sparkle">✦</span> CULTURAL NIGHTS</span>
+        <span class="marquee-item"><span class="marquee-sparkle">✦</span> ROBOTICS &amp; IOT</span>
+        <span class="marquee-item"><span class="marquee-sparkle">✦</span> SPORTS TOURNAMENTS</span>
+        <span class="marquee-item"><span class="marquee-sparkle">✦</span> WORKSHOPS &amp; GUEST TALKS</span>
+        <span class="marquee-item"><span class="marquee-sparkle">✦</span> ENTREPRENEURSHIP SUMMITS</span>
+      </div>
+    </section>
+
+    <!-- BUILT DIFFERENT / FEATURES SECTION -->
     <section class="features-section">
-      <div class="section-headline">
-        <h2>Built for College Operations</h2>
-        <p>Engineered for maximum reliability, speed, and strict verification across campus activities.</p>
+      <div class="features-header">
+        <p class="features-kicker">02 · Built different</p>
+        <h2 class="features-title">
+          Not just a notice board — <span style="font-family: var(--font-accent); font-style: italic; font-weight: 500;">a campus OS</span>
+        </h2>
       </div>
 
       <div class="features-grid">
         <div class="feature-card">
-          <div class="feature-icon-box">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          <div class="feature-icon-box" style="background: var(--color-mint-light); color: var(--color-mint);">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/></svg>
           </div>
-          <h3>Event Discovery & Capacity</h3>
-          <p>Explore upcoming workshops, cultural festivals, and technical symposiums with real-time seat tracking and instant student registration.</p>
+          <h3>QR Check-in</h3>
+          <p>Every student gets a cryptographically unique Universal QR pass. Clubs scan at the gate and attendance records itself instantly.</p>
         </div>
 
         <div class="feature-card">
-          <div class="feature-icon-box">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><path d="M14 14h2v2h-2z"/><path d="M18 14h3v3h-3z"/><path d="M14 18h3v3h-3z"/><path d="M19 19h2v2h-2z"/></svg>
+          <div class="feature-icon-box" style="background: var(--color-flame-light); color: var(--color-flame);">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20"/><path d="m17 5-5-3-5 3"/><path d="m17 19-5 3-5-3"/></svg>
           </div>
-          <h3>Universal Student QR</h3>
-          <p>A single permanent, cryptographically-opaque QR identity pass for each student. Works across every registered event without generating separate tickets.</p>
+          <h3>Live Capacity</h3>
+          <p>Real-time seat counters update across student browsers. Hit the limit and registration closes automatically — zero overbooking.</p>
         </div>
 
         <div class="feature-card">
-          <div class="feature-icon-box">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          <div class="feature-icon-box" style="background: var(--color-gold-light); color: var(--color-gold);">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
           </div>
-          <h3>High-Speed Camera Scanner</h3>
-          <p>Club organizers scan attendee passes directly through mobile or desktop web cameras with instant audible chime and visual Entry Allowed/Denied HUDs.</p>
+          <h3>Verified Attendance</h3>
+          <p>Auditable rosters prevent duplicate check-ins. Export clean Excel spreadsheets formatted for faculty viva and institutional records.</p>
         </div>
 
         <div class="feature-card">
-          <div class="feature-icon-box">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          <div class="feature-icon-box" style="background: var(--color-panel); color: var(--color-ink);">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
           </div>
-          <h3>Attendance Export & Notices</h3>
-          <p>Download clean, auditable attendance rosters formatted directly in Excel (.xlsx) and broadcast instant announcements to registered students.</p>
+          <h3>Instant Broadcasts</h3>
+          <p>Organizers push high-priority notices and venue updates directly to registered student dashboards in real time.</p>
         </div>
       </div>
     </section>
 
+    <!-- PORTALS SECTION -->
     <section class="portals-banner">
       <div class="portals-inner">
         <div class="portal-box">
           <div>
             <div class="portal-box-tag">Student Access</div>
             <h3>Student Portal</h3>
-            <p>View your personalized digital ID pass, browse all campus club activities, track attendance history, and receive official notices.</p>
+            <p>Access your permanent digital QR pass, explore upcoming campus club activities, track attendance history, and stay plugged in.</p>
           </div>
           <div>
-            <a href="/pages/auth/login.html" class="btn btn-secondary">Student Sign In &rarr;</a>
+            <a href="/pages/auth/login.html" class="btn btn-dark">Student Sign In &rarr;</a>
           </div>
         </div>
 
         <div class="portal-box">
           <div>
             <div class="portal-box-tag">Club Operations</div>
-            <h3>Club Portal</h3>
-            <p>Publish events, set capacities, manage registrations, run the live attendance camera scanner, and generate audit reports.</p>
+            <h3>Club Console</h3>
+            <p>Publish events, set seat limits, manage attendee lists, launch high-speed camera check-ins, and export Excel reports.</p>
           </div>
           <div>
             <a href="/pages/auth/login.html" class="btn btn-primary">Club Member Sign In &rarr;</a>
@@ -284,7 +616,18 @@
   </main>
 
   <footer class="footer">
-    <p>&copy; 2026 CampusHub • Institutional College Event & Attendance Platform</p>
+    <div class="footer-inner">
+      <a href="/" class="landing-brand" style="font-size: 1.25rem;">
+        <span class="landing-brand-dot"></span>
+        CampusHub
+      </a>
+      <p>Thakur College of Engineering &amp; Technology · Kandivali, Mumbai</p>
+      <div style="display: flex; gap: 16px;">
+        <a href="/pages/student/events.html" class="landing-nav-link">Events</a>
+        <a href="/pages/auth/login.html" class="landing-nav-link">Sign In</a>
+        <a href="/pages/auth/register.html" class="landing-nav-link">Register</a>
+      </div>
+    </div>
   </footer>
 </body>
 </html>

@@ -1,22 +1,28 @@
-/* CampusHub Authentication Styles — UI/UX Pro Max Edition */
+/* ==========================================================================
+   CampusHub Authentication Styles — Neo-Brutalist Elegance
+   ========================================================================== */
 
 .auth-page {
   display: flex;
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  background-color: var(--color-surface-subtle);
+  background-color: var(--color-paper);
   padding: var(--space-4);
+  position: relative;
+  overflow: hidden;
 }
 
 .auth-card {
   width: 100%;
-  max-width: 440px;
-  background-color: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-card);
-  padding: 32px 28px;
-  box-shadow: var(--shadow-md);
+  max-width: 460px;
+  background-color: var(--color-cream);
+  border: 1.5px solid var(--color-ink);
+  border-radius: 22px;
+  padding: 36px 32px;
+  box-shadow: 7px 7px 0 var(--color-ink);
+  position: relative;
+  z-index: 10;
 }
 
 .auth-logo {
@@ -25,36 +31,51 @@
 }
 
 .auth-brand {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   margin-bottom: var(--space-2);
-  color: var(--color-text);
-  font-size: 1.5rem;
+  color: var(--color-ink);
+  font-family: var(--font-display);
+  font-size: 1.75rem;
   font-weight: 800;
-  letter-spacing: -0.04em;
+  letter-spacing: -0.03em;
   line-height: 1.1;
+  text-decoration: none;
 }
 
-.auth-brand:hover { color: var(--color-primary); }
+.auth-brand:hover {
+  color: var(--color-flame);
+}
+
+.auth-brand-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--color-flame);
+  display: inline-block;
+}
 
 .auth-logo h1 {
-  font-size: 1.5rem;
+  font-family: var(--font-display);
+  font-size: 1.6rem;
   font-weight: 800;
-  color: var(--color-text);
+  color: var(--color-ink);
   margin-bottom: var(--space-1);
 }
 
 .auth-logo p {
-  color: var(--color-text-secondary);
+  color: rgba(24, 22, 17, 0.6);
   font-size: 0.875rem;
 }
 
 /* Segmented Dual Portal Control */
 .portal-tabs {
   display: flex;
-  background: var(--color-surface-subtle);
+  background: var(--color-panel);
   padding: 4px;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  border: 1.5px solid var(--color-ink);
   margin-bottom: var(--space-4);
   gap: 4px;
 }
@@ -62,35 +83,38 @@
 .portal-tab {
   flex: 1;
   text-align: center;
-  padding: 8px 12px;
-  font-size: 0.8125rem;
-  font-weight: 600;
+  padding: 9px 12px;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   cursor: pointer;
-  border-radius: var(--radius-xs);
-  color: var(--color-text-secondary);
+  border-radius: 8px;
+  color: rgba(24, 22, 17, 0.55);
   transition: all 0.15s ease;
   background: transparent;
   border: none;
 }
 
 .portal-tab:hover {
-  color: var(--color-text);
+  color: var(--color-ink);
 }
 
 .portal-tab.active {
-  background: var(--color-surface);
-  color: var(--color-primary);
-  box-shadow: var(--shadow-xs);
+  background: var(--color-ink);
+  color: var(--color-cream);
   font-weight: 700;
+  box-shadow: 2px 2px 0 var(--color-flame);
 }
 
 .portal-desc {
-  background: var(--color-surface-subtle);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-sm);
+  background: var(--color-panel);
+  border: 1px solid rgba(24, 22, 17, 0.15);
+  border-radius: 12px;
   padding: 10px 14px;
   font-size: 0.8125rem;
-  color: var(--color-text-secondary);
+  color: rgba(24, 22, 17, 0.7);
   margin-bottom: var(--space-4);
   line-height: 1.45;
 }
@@ -102,6 +126,10 @@
   align-items: center;
 }
 
+.password-input-wrap input {
+  padding-right: 44px;
+}
+
 .password-toggle-btn {
   position: absolute;
   right: 8px;
@@ -110,34 +138,43 @@
   background: none;
   border: none;
   cursor: pointer;
-  color: var(--color-text-muted);
+  color: rgba(24, 22, 17, 0.4);
   padding: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: var(--radius-xs);
+  border-radius: 6px;
+  transition: color 0.15s ease;
 }
 .password-toggle-btn:hover {
-  color: var(--color-text);
+  color: var(--color-ink);
 }
 
-/* Quick Demo Fill Credentials Helper */
+/* Demo Fill Credentials Helper */
 .demo-accounts-bar {
-  margin-top: 16px;
-  padding-top: 16px;
-  border-top: 1px dashed var(--color-border);
+  margin-top: 18px;
+  padding: 14px;
+  border: 1.5px dashed rgba(24, 22, 17, 0.25);
+  border-radius: 14px;
+  background: var(--color-panel);
 }
 
 .demo-accounts-bar-title {
-  font-size: 11px;
+  font-family: var(--font-mono);
+  font-size: 10px;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--color-text-muted);
+  letter-spacing: 0.12em;
+  color: rgba(24, 22, 17, 0.5);
   margin-bottom: 8px;
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+
+.demo-accounts-bar-title span {
+  color: var(--color-flame);
+  font-weight: 800;
 }
 
 .demo-chips {
@@ -147,23 +184,26 @@
 }
 
 .demo-chip-btn {
-  background: var(--color-surface-subtle);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-xs);
-  padding: 5px 9px;
+  background: var(--color-cream);
+  border: 1.5px solid var(--color-ink);
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-family: var(--font-mono);
   font-size: 11px;
   font-weight: 600;
-  color: var(--color-text-secondary);
+  color: var(--color-ink);
   cursor: pointer;
   transition: all 0.15s ease;
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 5px;
+  box-shadow: 2px 2px 0 var(--color-ink);
 }
 .demo-chip-btn:hover {
-  background: var(--color-surface-hover);
-  border-color: var(--color-primary-border);
-  color: var(--color-primary);
+  background: var(--color-ink);
+  color: var(--color-cream);
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0 var(--color-flame);
 }
 
 .auth-form {
@@ -175,27 +215,48 @@
   margin-top: var(--space-6);
   text-align: center;
   font-size: 0.875rem;
-  color: var(--color-text-secondary);
+  color: rgba(24, 22, 17, 0.6);
 }
 
 .auth-footer a {
-  color: var(--color-primary);
-  font-weight: 600;
+  color: var(--color-flame);
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.auth-footer a:hover {
+  color: var(--color-ink);
 }
 
 #auth-error {
   margin-bottom: var(--space-4);
-  padding: 10px 14px;
-  background-color: var(--color-error-light);
-  border: 1px solid var(--color-error-border);
-  color: var(--color-error);
-  border-radius: var(--radius-sm);
+  padding: 11px 15px;
+  background-color: var(--color-rose-light);
+  border: 1.5px solid var(--color-rose);
+  color: var(--color-rose);
+  border-radius: 12px;
   font-size: 0.8125rem;
-  font-weight: 500;
+  font-weight: 600;
   display: none;
+  box-shadow: 3px 3px 0 var(--color-rose);
 }
 #auth-error:not(:empty) {
   display: flex;
   align-items: center;
   gap: 8px;
+}
+
+@media (max-width: 480px) {
+  .auth-page {
+    padding: 12px;
+  }
+  .auth-card {
+    padding: 24px 18px;
+    border-radius: 18px;
+    box-shadow: 4px 4px 0 var(--color-ink);
+  }
+  .portal-tab {
+    padding: 8px 6px;
+    font-size: 0.7rem;
+  }
 }

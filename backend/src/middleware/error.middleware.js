@@ -18,9 +18,16 @@ export const errorHandler = (err, req, res, next) => {
   }
 
   if (err.code === 'P2002') {
+    const targets = Array.isArray(err.meta?.target) ? err.meta.target : [err.meta?.target];
+    let msg = 'Unique constraint violation';
+    if (targets.some(t => String(t).includes('email'))) {
+      msg = 'An account with this email address already exists.';
+    } else if (targets.some(t => String(t).includes('erp'))) {
+      msg = 'An account with this ERP ID already exists.';
+    }
     return res.status(400).json({
       success: false,
-      error: 'Unique constraint violation',
+      error: msg,
       details: err.meta?.target
     });
   }

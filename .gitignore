@@ -41,3 +41,10 @@ uploads/
 
 # Kilo
 .kilo/
+
+# Launch video render outputs
+brag-output/
+brag-output-*/
+
+# AI agent internals
+.agents/
