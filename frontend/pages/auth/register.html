@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Register Student — CampusHub</title>
+  <title>Register — CampusHub</title>
   <link rel="manifest" href="/manifest.json">
   <meta name="theme-color" content="#f5f1e7">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -39,11 +39,22 @@
   <div class="auth-card-wide">
     <div class="auth-logo">
       <a href="/" class="auth-brand"><span class="auth-brand-dot"></span>CampusHub</a>
-      <p style="color: var(--color-text-secondary); font-size: 13px; font-weight: 500;">Create your student account & Universal QR pass</p>
+      <p id="portalSubtitle" style="color: var(--color-text-secondary); font-size: 13px; font-weight: 500;">Create your student account & Universal QR pass</p>
+    </div>
+
+    <!-- Segmented Dual Portal Tabs -->
+    <div class="portal-tabs" role="tablist">
+      <button type="button" class="portal-tab active" id="tabStudent" role="tab" aria-selected="true">Student Registration</button>
+      <button type="button" class="portal-tab" id="tabClub" role="tab" aria-selected="false">Register New Club</button>
+    </div>
+
+    <div class="portal-desc" id="portalDesc">
+      <strong>Student Pass:</strong> Generate your permanent Universal QR pass and access all college events.
     </div>
 
     <div id="auth-error"></div>
 
+    <!-- Student Registration Form -->
     <form id="register-form" class="auth-form" novalidate>
       <div class="form-group">
         <label for="name" class="form-label">Full Name <span class="text-error">*</span></label>
@@ -65,7 +76,7 @@
         <div class="form-group">
           <label for="rollNo" class="form-label">Class Roll Number <span class="text-error">*</span></label>
           <input type="text" id="rollNo" name="rollNo" class="form-input" required placeholder="e.g. 23">
-          <span class="form-help">Class roll no (not required to be globally unique)</span>
+          <span class="form-help">Class roll no</span>
         </div>
       </div>
 
@@ -106,22 +117,80 @@
         </div>
         <div class="form-group">
           <label for="confirmPassword" class="form-label">Confirm Password <span class="text-error">*</span></label>
-          <input type="password" id="confirmPassword" name="confirmPassword" class="form-input" required minlength="6" placeholder="Confirm password">
+          <input type="password" id="confirmPassword" name="confirmPassword" class="form-input" required minlength="6" placeholder="Repeat password">
         </div>
       </div>
 
-      <button type="submit" class="btn btn-primary w-full mt-2" style="padding: 10px;">Create Account & Generate QR</button>
+      <button type="submit" class="btn btn-primary w-full mt-2" id="submitBtn">Create Account & Generate QR</button>
     </form>
 
-    <div style="margin-top: 14px; text-align: center;">
-      <button type="button" id="fillSampleDataBtn" class="demo-chip-btn" style="margin: 0 auto;">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-        Fill Sample Student Data
-      </button>
-    </div>
+    <!-- Club Registration Form (Toggled via Tab) -->
+    <form id="register-club-form" class="auth-form" style="display: none;" novalidate>
+      <div class="form-group">
+        <label for="clubName" class="form-label">Club / Organization Name <span class="text-error">*</span></label>
+        <input type="text" id="clubName" name="clubName" class="form-input" required placeholder="e.g. Rotaract Club of TCET, Green Club TCET">
+        <span class="form-help">Official registered student body or chapter name</span>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="clubCategory" class="form-label">Club Category <span class="text-error">*</span></label>
+          <select id="clubCategory" name="clubCategory" class="form-select" required>
+            <option value="">Select Category...</option>
+            <option value="TECHNICAL">Technical Chapter / Coding</option>
+            <option value="CULTURAL">Cultural & Performing Arts</option>
+            <option value="SUSTAINABILITY">Environmental & Sustainability</option>
+            <option value="SOCIAL">Social Service & Welfare (NSS/Rotaract)</option>
+            <option value="SPORTS">Sports & Athletics</option>
+            <option value="ENTREPRENEURSHIP">E-Cell & Startups</option>
+            <option value="LITERATURE">Literature, Debate & MUN</option>
+            <option value="MEDIA">Media & Photography</option>
+            <option value="OTHER">Other Student Body</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="clubCode" class="form-label">Club Code / Identifier</label>
+          <input type="text" id="clubCode" name="clubCode" class="form-input" placeholder="e.g. CLUB-ROTARACT">
+          <span class="form-help">Optional unique identifier</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="clubDesc" class="form-label">Club Description & Purpose <span class="text-error">*</span></label>
+        <textarea id="clubDesc" name="clubDesc" class="form-input" rows="2" style="resize:vertical;" required placeholder="Briefly describe what your club does, activities, and mission on campus..."></textarea>
+      </div>
+
+      <div style="border-top: 1px dashed var(--color-ink-muted, #ccc); margin: 16px 0; padding-top: 12px;">
+        <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--color-text-secondary);">Lead Organizer Account Details</span>
+      </div>
+
+      <div class="form-group">
+        <label for="leadName" class="form-label">Lead Organizer / Faculty In-Charge <span class="text-error">*</span></label>
+        <input type="text" id="leadName" name="leadName" class="form-input" required placeholder="e.g. Tanmay Deshmukh / Prof. Coordinator">
+      </div>
+
+      <div class="form-group">
+        <label for="leadEmail" class="form-label">Official College / Lead Email <span class="text-error">*</span></label>
+        <input type="email" id="leadEmail" name="leadEmail" class="form-input" required placeholder="e.g. rotaract@campushub.edu or lead@tcetmumbai.in">
+        <span class="form-help">Used to log in to the club organizer dashboard</span>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="clubPassword" class="form-label">Account Password <span class="text-error">*</span></label>
+          <input type="password" id="clubPassword" name="clubPassword" class="form-input" required minlength="6" placeholder="Min 6 characters">
+        </div>
+        <div class="form-group">
+          <label for="confirmClubPassword" class="form-label">Confirm Password <span class="text-error">*</span></label>
+          <input type="password" id="confirmClubPassword" name="confirmClubPassword" class="form-input" required minlength="6" placeholder="Repeat password">
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary w-full mt-2" id="submitClubBtn">Register Club & Access Console</button>
+    </form>
 
     <div class="auth-footer">
-      Already registered? <a href="/pages/auth/login.html">Sign in here</a>
+      Already have an account? <a href="/pages/auth/login.html" class="auth-link">Sign in here</a>
     </div>
   </div>
 
@@ -130,26 +199,62 @@
     import { setToken, setUser, isAuthenticated, getUserRole } from '/js/auth/auth.js';
     import { qs, preventDoubleSubmit } from '/js/utils/helpers.js';
 
-    const form = qs('#register-form');
+    if (isAuthenticated()) {
+      const role = getUserRole();
+      window.location.href = (role === 'CLUB_MEMBER' || role === 'ADMIN')
+        ? '/pages/club/dashboard.html'
+        : '/pages/student/dashboard.html';
+    }
+
+    const tabStudent = qs('#tabStudent');
+    const tabClub = qs('#tabClub');
+    const portalSubtitle = qs('#portalSubtitle');
+    const portalDesc = qs('#portalDesc');
+    const studentForm = qs('#register-form');
+    const clubForm = qs('#register-club-form');
     const errorDiv = qs('#auth-error');
-    const btn = form.querySelector('button[type="submit"]');
 
-    // Fill sample student details for testing
-    qs('#fillSampleDataBtn').addEventListener('click', () => {
-      const rand = Math.floor(Math.random() * 900000) + 100000;
-      qs('#name').value = `Aryan Sharma`;
-      qs('#email').value = `10322${rand}@tcetmumbai.in`;
-      qs('#erpId').value = `s10322${rand}`;
-      qs('#rollNo').value = `23`; // Same roll number to demonstrate roll number is non-unique
-      qs('#department').value = 'Computer Engineering';
-      qs('#division').value = 'A';
-      qs('#password').value = 'password123';
-      qs('#confirmPassword').value = 'password123';
-    });
+    function switchMode(mode) {
+      errorDiv.textContent = '';
+      errorDiv.style.display = 'none';
 
-    preventDoubleSubmit(form);
+      if (mode === 'club') {
+        tabClub.classList.add('active');
+        tabClub.setAttribute('aria-selected', 'true');
+        tabStudent.classList.remove('active');
+        tabStudent.setAttribute('aria-selected', 'false');
 
-    form.addEventListener('submit', async (e) => {
+        studentForm.style.display = 'none';
+        clubForm.style.display = 'block';
+
+        portalSubtitle.textContent = 'Register a new college club / body';
+        portalDesc.innerHTML = '<strong>Club Console:</strong> Register your campus club, publish upcoming events, and access the live camera scanner.';
+      } else {
+        tabStudent.classList.add('active');
+        tabStudent.setAttribute('aria-selected', 'true');
+        tabClub.classList.remove('active');
+        tabClub.setAttribute('aria-selected', 'false');
+
+        clubForm.style.display = 'none';
+        studentForm.style.display = 'block';
+
+        portalSubtitle.textContent = 'Create your student account & Universal QR pass';
+        portalDesc.innerHTML = '<strong>Student Pass:</strong> Generate your permanent Universal QR pass and access all college events.';
+      }
+    }
+
+    tabStudent.addEventListener('click', () => switchMode('student'));
+    tabClub.addEventListener('click', () => switchMode('club'));
+
+    // Check URL parameters for direct club registration link (e.g. ?type=club)
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('type') === 'club') {
+      switchMode('club');
+    }
+
+    // 1. Student Registration Handler
+    preventDoubleSubmit(studentForm);
+    studentForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       errorDiv.textContent = '';
       errorDiv.style.display = 'none';
@@ -162,6 +267,7 @@
       const email = qs('#email').value.trim();
       const password = qs('#password').value;
       const confirmPassword = qs('#confirmPassword').value;
+      const btn = qs('#submitBtn');
 
       if (!name || !email || !rollNo || !erpId || !password) {
         errorDiv.textContent = 'Please fill in all required fields (Name, Email, Roll Number, ERP ID, Password).';
@@ -211,6 +317,74 @@
         errorDiv.textContent = error.message || 'Registration failed. Please try again.';
         errorDiv.style.display = 'flex';
         btn.textContent = 'Create Account & Generate QR';
+        btn.disabled = false;
+      }
+    });
+
+    // 2. Club Registration Handler
+    preventDoubleSubmit(clubForm);
+    clubForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      errorDiv.textContent = '';
+      errorDiv.style.display = 'none';
+
+      const clubName = qs('#clubName').value.trim();
+      const clubCategory = qs('#clubCategory').value;
+      const clubDesc = qs('#clubDesc').value.trim();
+      const clubCode = qs('#clubCode').value.trim();
+      const leadName = qs('#leadName').value.trim();
+      const leadEmail = qs('#leadEmail').value.trim();
+      const password = qs('#clubPassword').value;
+      const confirmPassword = qs('#confirmClubPassword').value;
+      const btn = qs('#submitClubBtn');
+
+      if (!clubName || !clubCategory || !clubDesc || !leadName || !leadEmail || !password) {
+        errorDiv.textContent = 'Please fill in all required fields to register your club.';
+        errorDiv.style.display = 'flex';
+        return;
+      }
+
+      if (password.length < 6) {
+        errorDiv.textContent = 'Password must be at least 6 characters long.';
+        errorDiv.style.display = 'flex';
+        return;
+      }
+
+      if (password !== confirmPassword) {
+        errorDiv.textContent = 'Passwords do not match.';
+        errorDiv.style.display = 'flex';
+        return;
+      }
+
+      btn.textContent = 'Registering Club on AWS...';
+      btn.disabled = true;
+
+      try {
+        const payload = {
+          name: clubName,
+          category: clubCategory,
+          description: clubDesc,
+          rollNo: clubCode || undefined,
+          leadName,
+          leadEmail,
+          leadPassword: password
+        };
+
+        const response = await api.clubs.create(payload);
+        const token = response.data?.token || response.token;
+        const user = response.data?.user || response.user;
+
+        if (token && user) {
+          setToken(token);
+          setUser(user);
+          window.location.href = '/pages/club/dashboard.html';
+        } else {
+          window.location.href = '/pages/auth/login.html?clubRegistered=true';
+        }
+      } catch (error) {
+        errorDiv.textContent = error.message || 'Club registration failed. Please try again.';
+        errorDiv.style.display = 'flex';
+        btn.textContent = 'Register Club & Access Console';
         btn.disabled = false;
       }
     });

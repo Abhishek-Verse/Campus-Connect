@@ -23,7 +23,7 @@
       <div class="page-content">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 16px;">
           <div>
-            <h2 style="font-size: 1.5rem; font-weight: 800; color: var(--color-text); margin: 0 0 4px 0;">Club Operations</h2>
+            <h2 id="clubHeading" style="font-size: 1.5rem; font-weight: 800; color: var(--color-text); margin: 0 0 4px 0;">Club Operations</h2>
             <p style="font-size: 13px; color: var(--color-text-secondary); margin: 0;">Monitor event registrations, live check-ins, and club announcements</p>
           </div>
           <div class="dashboard-actions" style="margin-bottom: 0;">
@@ -34,6 +34,10 @@
             <a href="/pages/club/scanner.html" class="btn btn-secondary btn-sm">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
               <span>Open Scanner</span>
+            </a>
+            <a href="/pages/auth/register.html?type=club" class="btn btn-secondary btn-sm" title="Register another college club">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+              <span>+ New Club</span>
             </a>
           </div>
         </div>
@@ -116,7 +120,7 @@
   <nav class="bottom-nav" id="bottomNav"></nav>
 
   <script type="module">
-    import { requireAuth, requireRole } from '/js/auth/auth.js';
+    import { requireAuth, requireRole, getUser } from '/js/auth/auth.js';
     import { renderNavigation } from '/js/utils/navigation.js';
     import { renderSkeletonRows } from '/js/utils/helpers.js';
     import api from '/js/api/client.js';
@@ -124,6 +128,13 @@
     requireAuth();
     requireRole('CLUB_MEMBER');
     renderNavigation();
+
+    const currentUser = getUser();
+    const clubName = currentUser?.clubMemberships?.[0]?.club?.name || currentUser?.clubName;
+    if (clubName) {
+      const headingEl = document.getElementById('clubHeading');
+      if (headingEl) headingEl.textContent = `${clubName} Operations`;
+    }
 
     async function loadDashboard() {
       const upcomingList = document.getElementById('upcomingEventsList');

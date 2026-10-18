@@ -1,6 +1,7 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import { registerSchema, loginSchema } from '../backend/src/validators/auth.validators.js';
+import { createClubSchema } from '../backend/src/validators/club.validators.js';
 import { createEventSchema, updateEventSchema } from '../backend/src/validators/event.validators.js';
 import { scanSchema } from '../backend/src/validators/attendance.validators.js';
 import { createNoticeSchema } from '../backend/src/validators/notice.validators.js';
@@ -141,5 +142,27 @@ describe('JWT Utility', () => {
 
     const decoded = verifyToken(token);
     assert.equal(decoded.userId, userId);
+  });
+});
+
+describe('Club Validator', () => {
+  it('should validate club creation data with lead organizer account', () => {
+    const payload = {
+      name: 'Rotaract Club of TCET',
+      category: 'SOCIAL',
+      description: 'Community service and youth leadership',
+      leadName: 'Tanmay Deshmukh',
+      leadEmail: 'rotaract@campushub.edu',
+      leadPassword: 'password123'
+    };
+    const parsed = createClubSchema.parse(payload);
+    assert.equal(parsed.name, 'Rotaract Club of TCET');
+    assert.equal(parsed.leadEmail, 'rotaract@campushub.edu');
+  });
+
+  it('should reject club name shorter than 2 characters', () => {
+    assert.throws(() => {
+      createClubSchema.parse({ name: 'A' });
+    });
   });
 });

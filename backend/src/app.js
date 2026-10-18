@@ -13,6 +13,7 @@ import eventRoutes from './routes/event.routes.js';
 import registrationRoutes from './routes/registration.routes.js';
 import attendanceRoutes from './routes/attendance.routes.js';
 import noticeRoutes from './routes/notice.routes.js';
+import clubRoutes from './routes/club.routes.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -67,6 +68,7 @@ app.use('/api/v1', registrationRoutes);
 app.use('/api/v1', attendanceRoutes);
 app.use('/api/v1/events', eventRoutes);
 app.use('/api/v1/notices', noticeRoutes);
+app.use('/api/v1/clubs', clubRoutes);
 
 app.use(errorHandler);
 

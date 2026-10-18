@@ -113,6 +113,14 @@ export const api = {
     create(data) { return apiRequest('/notices', { method: 'POST', body: data }); },
     update(id, data) { return apiRequest(`/notices/${id}`, { method: 'PATCH', body: data }); },
     delete(id) { return apiRequest(`/notices/${id}`, { method: 'DELETE' }); }
+  },
+  clubs: {
+    list(params) {
+      const qs = params ? '?' + new URLSearchParams(params).toString() : '';
+      return apiRequest(`/clubs${qs}`);
+    },
+    get(id) { return apiRequest(`/clubs/${id}`); },
+    create(data) { return apiRequest('/clubs', { method: 'POST', body: data }); }
   }
 };
 

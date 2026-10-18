@@ -69,9 +69,17 @@
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
           Coding Club
         </button>
-        <button type="button" class="demo-chip-btn" id="demoCulturalClubBtn">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/></svg>
-          Cultural Club
+        <button type="button" class="demo-chip-btn" id="demoRotaractBtn">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
+          Rotaract TCET
+        </button>
+        <button type="button" class="demo-chip-btn" id="demoGreenClubBtn">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22v-9"/><path d="M9 13a4 4 0 0 1 6 0 4 4 0 0 1-6 0"/><path d="M5 10c0 6 7 12 7 12s7-6 7-12a7 7 0 0 0-14 0"/></svg>
+          Green Club TCET
+        </button>
+        <button type="button" class="demo-chip-btn" id="demoIsteBtn">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/></svg>
+          ISTE TCET
         </button>
       </div>
     </div>
@@ -125,9 +133,23 @@
       inputEmail.focus();
     });
 
-    qs('#demoCulturalClubBtn').addEventListener('click', () => {
+    qs('#demoRotaractBtn').addEventListener('click', () => {
       switchPortal('CLUB');
-      inputEmail.value = 'culturalclub@campushub.edu';
+      inputEmail.value = 'rotaract@campushub.edu';
+      inputPassword.value = 'password123';
+      inputEmail.focus();
+    });
+
+    qs('#demoGreenClubBtn').addEventListener('click', () => {
+      switchPortal('CLUB');
+      inputEmail.value = 'greenclub@campushub.edu';
+      inputPassword.value = 'password123';
+      inputEmail.focus();
+    });
+
+    qs('#demoIsteBtn').addEventListener('click', () => {
+      switchPortal('CLUB');
+      inputEmail.value = 'iste@campushub.edu';
       inputPassword.value = 'password123';
       inputEmail.focus();
     });
@@ -147,6 +169,7 @@
         labelEmail.textContent = 'Email Address';
         inputEmail.placeholder = 'student@campushub.edu';
         submitBtn.textContent = 'Sign In as Student';
+        authFooter.innerHTML = 'Don\'t have a student account? <a href="/pages/auth/register.html">Register here</a>';
         authFooter.style.display = 'block';
       } else {
         tabClub.classList.add('active');
@@ -156,9 +179,10 @@
         portalSubtitle.textContent = 'Club Organizer Portal Sign In';
         portalDesc.innerHTML = '<strong>Club Access:</strong> Authorized club organizers can manage events, launch attendance scanner, and export reports.';
         labelEmail.textContent = 'Official Club Email';
-        inputEmail.placeholder = 'codingclub@campushub.edu';
+        inputEmail.placeholder = 'rotaract@campushub.edu';
         submitBtn.textContent = 'Sign In to Club Portal';
-        authFooter.style.display = 'none';
+        authFooter.innerHTML = 'Want to register a new college club? <a href="/pages/auth/register.html?type=club">Register Club here &rarr;</a>';
+        authFooter.style.display = 'block';
       }
     }
 
@@ -176,6 +200,14 @@
       errorDiv.style.color = 'var(--color-success)';
       errorDiv.style.display = 'flex';
       errorDiv.textContent = 'Account created successfully! Please sign in with your email address.';
+    }
+    if (urlParams.get('clubRegistered') === 'true') {
+      switchPortal('CLUB');
+      errorDiv.style.background = 'var(--color-success-light)';
+      errorDiv.style.borderColor = 'var(--color-success-border)';
+      errorDiv.style.color = 'var(--color-success)';
+      errorDiv.style.display = 'flex';
+      errorDiv.textContent = 'Club registered successfully! Please sign in with your organizer credentials.';
     }
 
     preventDoubleSubmit(form);
