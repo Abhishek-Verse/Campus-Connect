@@ -29,6 +29,7 @@ describe('Auth Validators', () => {
       email: 'aarav@college.edu',
       password: 'password123',
       rollNo: 'CS-2024-042',
+      erpId: 's1032250042',
       role: 'student'
     };
     const parsed = registerSchema.parse(input);
