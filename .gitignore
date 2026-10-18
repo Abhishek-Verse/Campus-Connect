@@ -31,6 +31,7 @@ build/
 
 # AWS
 .aws/
+*.pem
 
 # Uploads
 uploads/

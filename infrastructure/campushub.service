@@ -1,0 +1,18 @@
+# ==============================================================================
+# Systemd service unit for CampusHub on Ubuntu EC2 (Commented out for now)
+# ==============================================================================
+# [Unit]
+# Description=CampusHub Node.js Express Application
+# After=network.target
+# 
+# [Service]
+# Type=simple
+# User=ubuntu
+# WorkingDirectory=/opt/campushub/backend
+# ExecStart=/usr/bin/node src/server.js
+# Restart=on-failure
+# RestartSec=5s
+# Environment=NODE_ENV=production
+# 
+# [Install]
+# WantedBy=multi-user.target

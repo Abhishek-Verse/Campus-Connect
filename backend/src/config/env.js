@@ -16,6 +16,10 @@ const envSchema = z.object({
   PORT: z.string().optional().default('3000'),
   JWT_SECRET: z.string().min(10),
   JWT_EXPIRES_IN: z.string().default('7d'),
+  AWS_REGION: z.string().optional(),
+  AWS_S3_BUCKET: z.string().optional(),
+  AWS_ACCESS_KEY_ID: z.string().optional(),
+  AWS_SECRET_ACCESS_KEY: z.string().optional(),
 });
 
 const _env = envSchema.safeParse(process.env);
