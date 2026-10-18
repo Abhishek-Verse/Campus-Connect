@@ -629,5 +629,41 @@
       </div>
     </div>
   </footer>
+
+  <script type="module">
+    import { isAuthenticated, getUser, getUserRole, logout } from '/js/auth/auth.js';
+
+    if (isAuthenticated()) {
+      const user = getUser();
+      const role = getUserRole();
+      const dashUrl = (role === 'CLUB_MEMBER' || role === 'ADMIN')
+        ? '/pages/club/dashboard.html'
+        : '/pages/student/dashboard.html';
+      const firstName = user?.name ? user.name.split(' ')[0] : 'My';
+
+      // Update Header nav links
+      const navLinks = document.querySelector('.landing-nav-links');
+      if (navLinks) {
+        navLinks.innerHTML = `
+          <a href="/pages/student/events.html" class="landing-nav-link">Explore Events</a>
+          <a href="${dashUrl}" class="btn btn-primary btn-sm">Dashboard (${firstName}) &rarr;</a>
+          <button type="button" id="landingSignOutBtn" class="btn btn-secondary btn-sm" style="padding: 4px 10px; font-size: 11px;">Sign Out</button>
+        `;
+        document.getElementById('landingSignOutBtn')?.addEventListener('click', () => {
+          logout();
+          window.location.reload();
+        });
+      }
+
+      // Update Hero CTA row
+      const heroCtaRow = document.querySelector('.hero-cta-row');
+      if (heroCtaRow) {
+        heroCtaRow.innerHTML = `
+          <a href="/pages/student/events.html" class="btn btn-dark btn-lg">Explore events &rarr;</a>
+          <a href="${dashUrl}" class="btn btn-primary btn-lg">Open My Portal (${firstName}) &rarr;</a>
+        `;
+      }
+    }
+  </script>
 </body>
 </html>

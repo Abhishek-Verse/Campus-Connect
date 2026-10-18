@@ -196,14 +196,34 @@
 
   <script type="module">
     import { api } from '/js/api/client.js';
-    import { setToken, setUser, isAuthenticated, getUserRole } from '/js/auth/auth.js';
+    import { setToken, setUser, isAuthenticated, getUserRole, getUser, logout } from '/js/auth/auth.js';
     import { qs, preventDoubleSubmit } from '/js/utils/helpers.js';
 
+    // If already logged in, show an informative banner instead of aggressively kicking the user out
     if (isAuthenticated()) {
+      const currentUser = getUser();
       const role = getUserRole();
-      window.location.href = (role === 'CLUB_MEMBER' || role === 'ADMIN')
-        ? '/pages/club/dashboard.html'
-        : '/pages/student/dashboard.html';
+      const dashUrl = (role === 'CLUB_MEMBER' || role === 'ADMIN') ? '/pages/club/dashboard.html' : '/pages/student/dashboard.html';
+      const sessionBanner = document.createElement('div');
+      sessionBanner.id = 'activeSessionBanner';
+      sessionBanner.style.cssText = 'background: rgba(24, 22, 17, 0.05); border: 1.5px solid var(--color-ink); border-radius: 12px; padding: 12px 14px; margin-bottom: 16px; font-size: 13px;';
+      sessionBanner.innerHTML = `
+        <div style="font-weight: 700; color: var(--color-text); margin-bottom: 4px;">Signed in as ${currentUser?.name || 'User'} (${currentUser?.email || ''})</div>
+        <div style="font-size: 12px; color: var(--color-text-secondary); margin-bottom: 8px;">You can continue registering a new account, or return to your active portal:</div>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+          <a href="${dashUrl}" class="btn btn-sm btn-primary" style="font-size: 11px; padding: 5px 12px;">Go to My Dashboard &rarr;</a>
+          <button type="button" id="signOutToSwitchBtn" class="btn btn-sm btn-secondary" style="font-size: 11px; padding: 5px 12px;">Sign Out</button>
+        </div>
+      `;
+      const card = qs('.auth-card-wide');
+      const tabs = qs('.portal-tabs');
+      if (card && tabs) {
+        card.insertBefore(sessionBanner, tabs);
+      }
+      qs('#signOutToSwitchBtn')?.addEventListener('click', () => {
+        logout();
+        window.location.reload();
+      });
     }
 
     const tabStudent = qs('#tabStudent');

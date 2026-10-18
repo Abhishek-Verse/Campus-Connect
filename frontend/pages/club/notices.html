@@ -137,7 +137,7 @@
             <div class="notice-header">
               <div>
                 <h3 class="notice-title">${notice.title}</h3>
-                <div class="notice-meta">${new Date(notice.createdAt).toLocaleString()} ${notice.eventTitle ? `• Event: ${notice.eventTitle}` : ''}</div>
+                <div class="notice-meta">${new Date(notice.publishedAt || notice.createdAt || Date.now()).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} ${notice.eventTitle ? `• Event: ${notice.eventTitle}` : ''}</div>
               </div>
               <span class="badge-${notice.priority.toLowerCase()}">${notice.priority}</span>
             </div>
@@ -225,10 +225,9 @@
       }
     });
 
-    document.addEventListener('DOMContentLoaded', () => {
-      loadEvents();
-      loadNotices();
-    });
+    // Call directly as module script runs after DOM is ready
+    loadEvents();
+    loadNotices();
   </script>
 </body>
 </html>
